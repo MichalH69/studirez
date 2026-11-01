@@ -601,7 +601,14 @@ const isMobile = () => MQ.matches;
 /* ================== FIREBASE ==================
    Doplň objekt z Firebase konzole: Project settings → Your apps → Web app → SDK setup → Config.
    Dokud je tu null, appka běží v lokálním režimu (data jen v tomhle prohlížeči). */
-const FIREBASE_CONFIG = null;
+const FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyBjRLiRyXA5lB-k2GOC8vxwbMPdGTbP2WY',
+  authDomain: 'studio-rezervace.firebaseapp.com',
+  projectId: 'studio-rezervace',
+  storageBucket: 'studio-rezervace.firebasestorage.app',
+  messagingSenderId: '954412688066',
+  appId: '1:954412688066:web:30f52e601d1bcc01ded15b',
+};
 const FB_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
 
 /* Kdo jsem – pamatuje si jen tohle zařízení */
