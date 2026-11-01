@@ -1,0 +1,1501 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2d363b">
+<title>Studio Playlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg0:#161b1e; --bg1:#1f262a; --win:#2b3439;
+  --line:#101416;
+  --grid-a:#283035; --grid-b:#242b30; --grid-line:#191f22; --grid-half:#20272b;
+  --text:#c9d3d8; --dim:#7f8d94; --faint:#58646a;
+  --orange:#ff9a3c; --orange-dim:#7a4a1d; --green:#9ad14f; --red:#ff5a4d;
+  --lcd:#0b0f11;
+  --hdrW:150px; --laneH:68px;
+  --mono:'Share Tech Mono', ui-monospace, Consolas, monospace;
+  --cond:'Barlow Condensed', 'Segoe UI', sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg0); color:var(--text);
+  font-family:'Barlow','Segoe UI',Tahoma,sans-serif; font-size:13px;
+  display:flex; flex-direction:column; overflow:hidden;
+  -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit}
+input,select{font:inherit}
+
+/* ---------- TOP BAR ---------- */
+.topbar{
+  display:flex; align-items:stretch; gap:6px; padding:6px;
+  background:linear-gradient(#414c53,#2d363b); border-bottom:1px solid var(--line);
+  flex-wrap:wrap; flex:none;
+}
+.module{
+  background:linear-gradient(#262e33,#1e2529); border:1px solid var(--line); border-radius:3px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 1px 0 rgba(255,255,255,.06);
+  display:flex; align-items:center; gap:6px; padding:4px 8px; min-height:42px;
+}
+.brand{gap:8px; font-family:var(--cond); font-weight:700; font-size:18px; letter-spacing:.06em; color:#e6ecef}
+.brand b{color:var(--orange); font-weight:600}
+.brand svg{width:26px;height:26px}
+.hint{width:290px; flex-direction:column; align-items:flex-start; justify-content:center; gap:1px; overflow:hidden}
+#hintTitle{font-weight:600; color:#e2e8eb; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%}
+#hintText{color:var(--dim); font-size:11.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%}
+.hint.err #hintTitle{color:var(--red)}
+.hint.ok #hintTitle{color:var(--green)}
+
+.transport{gap:3px; padding:4px 5px}
+.tbtn{
+  width:34px; height:30px; border-radius:3px; border:1px solid var(--line); cursor:pointer;
+  background:linear-gradient(#4a565d,#353f45); color:#cfd8dc;
+  display:grid; place-items:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.12); padding:0;
+}
+.tbtn:hover{background:linear-gradient(#56636b,#3d484e)}
+.tbtn:active{background:linear-gradient(#2c3439,#3a444a)}
+.tbtn svg{width:15px;height:15px;fill:currentColor}
+.tbtn.play{color:var(--green)}
+.tbtn.rec{color:var(--red)}
+
+.lcdbox{flex-direction:column; align-items:flex-start; gap:1px; padding:3px 8px}
+.lcdbox small{font-size:9px; letter-spacing:.14em; color:var(--dim); font-weight:600}
+.lcd-row{display:flex; align-items:center; gap:6px}
+.net{display:inline-block; width:6px; height:6px; border-radius:50%; margin-left:4px; vertical-align:1px; background:#555}
+.net.on{background:var(--green); box-shadow:0 0 6px var(--green)}
+.net.local{background:var(--orange); box-shadow:0 0 6px var(--orange)}
+.net.err{background:var(--red); box-shadow:0 0 6px var(--red)}
+.lcd{
+  font-family:var(--mono); color:var(--orange); background:var(--lcd);
+  text-shadow:0 0 6px rgba(255,154,60,.55); padding:1px 7px; border:1px solid #000;
+  border-radius:2px; box-shadow:inset 0 0 8px #000; font-size:18px; line-height:1.1; letter-spacing:.04em;
+}
+.lcd-sub{font-family:var(--mono); color:var(--dim); font-size:11px}
+
+.tools{gap:3px; padding:4px 5px}
+.tool{
+  width:34px; height:30px; border-radius:3px; border:1px solid var(--line); cursor:pointer;
+  background:linear-gradient(#3a444a,#2c3439); color:#9fb0b8; display:grid; place-items:center; padding:0;
+}
+.tool svg{width:17px;height:17px}
+.tool:hover{color:#e3eaed}
+.tool[aria-pressed="true"]{color:var(--orange); box-shadow:inset 0 0 0 1px rgba(255,154,60,.35), 0 0 8px rgba(255,154,60,.25)}
+
+.user{cursor:pointer; gap:8px; padding:4px 10px; margin-left:auto}
+.user:hover{border-color:#000; background:linear-gradient(#2c353a,#22292d)}
+.led{width:9px;height:9px;border-radius:50%; background:#3a2b22; box-shadow:inset 0 1px 1px rgba(0,0,0,.6); flex:none; display:inline-block}
+.user .led{background:var(--uc,#555); box-shadow:0 0 8px var(--uc,transparent)}
+#userName{font-weight:700; font-size:14px}
+.user small{font-family:var(--mono); font-size:10px; color:var(--red); letter-spacing:.1em}
+.user.none small{color:var(--dim)}
+
+/* ---------- WINDOWS ---------- */
+.workspace{flex:1; min-height:0; display:flex; flex-direction:column; gap:6px; padding:6px}
+.win{
+  background:var(--win); border:1px solid var(--line); border-radius:3px;
+  display:flex; flex-direction:column; min-height:0;
+  box-shadow:0 6px 22px rgba(0,0,0,.45);
+}
+.win-title{
+  height:25px; flex:none; display:flex; align-items:center; gap:8px; padding:0 6px 0 9px;
+  background:linear-gradient(#4b575e,#3a444a); border-bottom:1px solid var(--line);
+  font-weight:600; font-size:12px; color:#e3e9ec; border-radius:3px 3px 0 0;
+}
+.win-title .crumb{color:var(--orange)}
+.win-title .sp{flex:1}
+.win-x{
+  width:20px;height:20px;border-radius:2px;border:1px solid var(--line); background:linear-gradient(#56636b,#434e55);
+  cursor:pointer; display:grid; place-items:center; color:#cfd8dc; font-size:11px; line-height:1; padding:0;
+}
+.win-x:hover{background:#b8473d; color:#fff}
+.win-toolbar{
+  flex:none; display:flex; align-items:center; gap:10px; padding:4px 8px; flex-wrap:wrap;
+  background:#262e33; border-bottom:1px solid var(--line); font-size:11.5px; color:var(--dim);
+}
+.chip{display:inline-flex; align-items:center; gap:5px; padding:2px 7px; background:var(--lcd); border:1px solid #000; border-radius:2px; font-family:var(--mono); color:var(--orange); font-size:11px}
+.legend{display:inline-flex; align-items:center; gap:5px}
+.sw{width:22px; height:11px; border-radius:2px; background:#5a8d36; border:1px solid #000}
+.sw.priv{background:repeating-linear-gradient(135deg,#5a8d36 0 3px,#2b3a22 3px 6px)}
+.sw.mine{box-shadow:0 0 0 1px #fff}
+.toolbar-sp{flex:1}
+
+.playlist{flex:1}
+.pl-scroll{flex:1; overflow:auto; position:relative; background:var(--bg1); touch-action:pan-x pan-y}
+.pl-grid{display:grid; width:max-content; min-width:100%; position:relative}
+
+.corner{
+  position:sticky; top:0; left:0; z-index:5; height:26px;
+  background:linear-gradient(#3a444a,#2e373c); border-bottom:1px solid var(--line); border-right:1px solid var(--line);
+  display:flex; align-items:center; padding:0 9px; font-size:10px; letter-spacing:.12em; color:var(--dim); font-weight:600;
+}
+.ruler{
+  position:sticky; top:0; z-index:4; height:26px; overflow:hidden;
+  background:linear-gradient(#3a444a,#2e373c); border-bottom:1px solid var(--line);
+}
+.tick{position:absolute; bottom:0; width:0; border-left:1px solid #6b777d}
+.tick.major{height:12px}
+.tick.major span{position:absolute; left:4px; bottom:6px; font-family:var(--mono); font-size:12px; color:#d9e1e4; white-space:nowrap}
+.tick.major span em{font-style:normal; color:var(--orange); font-size:9px; margin-left:2px; vertical-align:top}
+.tick.nx span{color:#e9b884}
+.tick.minor{height:5px; border-color:#56626a}
+.ruler .ovf-r{position:absolute; top:0; bottom:0; background:repeating-linear-gradient(135deg,rgba(255,154,60,.12) 0 5px,transparent 5px 10px); border-left:1px dashed var(--orange-dim); color:var(--orange); font-size:10px; display:flex; align-items:center; padding-left:6px; font-family:var(--mono); white-space:nowrap}
+.ph-mark{position:absolute; bottom:0; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:9px solid var(--orange); transform:translateX(-6px); filter:drop-shadow(0 0 4px rgba(255,154,60,.7))}
+
+.trk{
+  position:sticky; left:0; z-index:3; height:var(--laneH);
+  background:linear-gradient(90deg,#3d474d,#353e44); border-bottom:1px solid var(--line); border-right:1px solid var(--line);
+  display:flex; align-items:center; gap:8px; padding:0 8px 0 7px;
+}
+.trk .led{background:#2f3a2a}
+.trk.today .led{background:var(--green); box-shadow:0 0 7px var(--green)}
+.trk-txt{flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.15}
+.trk-txt b{font-weight:600; font-size:13px; color:#e3e9ec; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.trk.today .trk-txt b{color:var(--orange)}
+.trk-txt small{font-family:var(--mono); color:var(--dim); font-size:11px}
+.trk-meter{width:7px; height:44px; background:#0c1012; border:1px solid #000; position:relative; flex:none}
+.trk-meter i{position:absolute; left:0; right:0; bottom:0; background:linear-gradient(to top,#5fd34a,#c8e04a 70%,#ffb03b); background-size:100% 44px; background-position:bottom}
+
+.lane{
+  position:relative; height:var(--laneH); border-bottom:1px solid var(--line);
+  background-image:
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-half) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-a) 50%,var(--grid-b) 50%);
+  background-size:var(--px) 100%, calc(var(--px) / 2) 100%, calc(var(--px) * 2) 100%;
+  cursor:crosshair;
+}
+.lane.today{box-shadow:inset 0 0 0 9999px rgba(154,209,79,.035)}
+.lane .past{position:absolute; top:0; bottom:0; left:0; pointer-events:none; background:repeating-linear-gradient(135deg,rgba(0,0,0,.22) 0 6px,rgba(0,0,0,.30) 6px 12px)}
+.lane .ovf{position:absolute; top:0; bottom:0; pointer-events:none; background:repeating-linear-gradient(135deg,rgba(255,154,60,.05) 0 6px,transparent 6px 12px); border-left:1px dashed rgba(255,154,60,.25)}
+.lane .midnight,.ruler .midnight{position:absolute; top:0; bottom:0; width:0; border-left:1px solid rgba(255,154,60,.45); pointer-events:none}
+.lane .ph{position:absolute; top:0; bottom:0; width:0; border-left:1px solid rgba(255,190,120,.85); box-shadow:0 0 6px rgba(255,154,60,.7); pointer-events:none; z-index:2}
+
+/* clips */
+.clip{
+  position:absolute; top:3px; bottom:3px; border-radius:2px; overflow:hidden;
+  background:color-mix(in srgb,var(--c) 30%,#141a1d);
+  border:1px solid color-mix(in srgb,var(--c) 55%,#000);
+  display:flex; flex-direction:column; cursor:pointer; z-index:1;
+  touch-action:none;
+}
+.clip.mine{cursor:grab}
+.clip.mine:active{cursor:grabbing}
+.clip-head{
+  height:16px; flex:none; background:var(--c); color:#0e1214;
+  font-size:11px; font-weight:700; padding:0 4px; display:flex; align-items:center; gap:4px;
+  white-space:nowrap; overflow:hidden;
+  background-image:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,0));
+}
+.clip-head .nm{overflow:hidden; text-overflow:ellipsis; min-width:0}
+.clip-head .nm i{font-style:normal; font-weight:500}
+.clip-head .tm{margin-left:auto; font-family:var(--mono); font-weight:400; font-size:10.5px; opacity:.85; flex:none}
+.clip-head svg{width:10px; height:10px; flex:none}
+.clip-head .lk{display:inline-flex; align-items:center; gap:2px; flex:none; font-family:var(--mono); font-weight:400; font-size:10px; background:rgba(0,0,0,.18); border-radius:2px; padding:0 3px}
+.clip-head .dots{display:flex; gap:2px; flex:none}
+.clip-head .dot{width:8px; height:8px; border-radius:50%; background:var(--m); box-shadow:0 0 0 1px rgba(0,0,0,.65)}
+.clip-body{flex:1; display:flex; flex-direction:column; min-height:0; position:relative}
+.clip-row{flex:1; position:relative; min-height:0; min-width:0; background:color-mix(in srgb,var(--m) 34%,#161c1f); border-top:1px solid rgba(0,0,0,.35)}
+.clip-row:first-child{border-top:0}
+.clip-row svg{position:absolute; left:0; top:1px; width:100%; height:calc(100% - 2px)}
+.clip-row path{fill:color-mix(in srgb,var(--m) 80%,#fff)}
+.clip-row .rn{position:absolute; left:4px; top:50%; transform:translateY(-50%); font-size:9.5px; font-weight:700; color:#fff; text-shadow:0 1px 2px #000; letter-spacing:.03em; z-index:1; white-space:nowrap}
+.clip.private .clip-body::after{content:""; position:absolute; inset:0; background:repeating-linear-gradient(135deg,rgba(0,0,0,.42) 0 4px,transparent 4px 9px)}
+.clip.past-c{filter:saturate(.4) brightness(.75)}
+.clip.sel{box-shadow:0 0 0 2px #fff, 0 0 14px var(--c); z-index:3}
+.clip.ghost{opacity:.85; border-style:dashed; border-color:#fff; z-index:3}
+.clip.drag{z-index:4; box-shadow:0 0 0 1px #fff, 0 6px 16px rgba(0,0,0,.6)}
+.clip.bad{box-shadow:0 0 0 2px var(--red); filter:grayscale(.5)}
+.clip:focus-visible{outline:2px solid var(--orange); outline-offset:1px}
+.grip{position:absolute; top:0; bottom:0; width:8px; cursor:ew-resize; z-index:2}
+.grip.l{left:0} .grip.r{right:0}
+.grip:hover{background:rgba(255,255,255,.18)}
+
+/* ---------- VIEW SWITCH ---------- */
+.viewsw{gap:3px; padding:4px 5px}
+.vbtn{
+  height:30px; padding:0 10px; display:flex; align-items:center; gap:7px; cursor:pointer;
+  border:1px solid var(--line); border-radius:3px; background:linear-gradient(#3a444a,#2c3439); color:#9fb0b8;
+  font-family:var(--mono); font-size:12px; letter-spacing:.1em;
+}
+.vbtn:hover{color:#e3eaed}
+.vbtn[aria-pressed="true"]{color:var(--orange); box-shadow:inset 0 0 0 1px rgba(255,154,60,.35)}
+.vbtn[aria-pressed="true"] .led{background:var(--green); box-shadow:0 0 6px var(--green)}
+.trk{cursor:pointer}
+.trk:hover{background:linear-gradient(90deg,#465158,#3b454b)}
+.trk:focus-visible{outline:2px solid var(--orange); outline-offset:-2px}
+.trk .ds{display:none}
+
+/* ---------- DAY VIEW ---------- */
+.m-view{display:none; flex-direction:column; flex:1; min-height:0}
+body.v-day .m-view{display:flex}
+body.v-day .pl-scroll, body.v-day .playlist .win-toolbar{display:none}
+.m-days{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; padding:6px; background:#262e33; border-bottom:1px solid var(--line); flex:none}
+.m-day{
+  border:1px solid var(--line); border-radius:3px; background:linear-gradient(#3e494f,#323b41); padding:6px 3px 5px;
+  display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; min-height:52px; min-width:0;
+}
+.m-day:hover{background:linear-gradient(#465158,#3b454b)}
+.m-day b{font-size:13px; font-weight:600}
+.m-day small{font-family:var(--mono); font-size:12px; color:var(--dim)}
+.m-day.today b{color:var(--green)}
+.m-day.on{background:linear-gradient(#4a4036,#3a332c); box-shadow:inset 0 0 0 1px var(--orange)}
+.m-day.on b{color:var(--orange)}
+.m-mini{position:relative; width:100%; height:6px; margin-top:2px; background:#0b0f11; border:1px solid #000; border-radius:1px; overflow:hidden}
+.m-mini i{position:absolute; top:0; bottom:0; background:var(--c)}
+.m-dayhead{display:flex; align-items:center; gap:6px; padding:6px; background:linear-gradient(#3a444a,#2e373c); border-bottom:1px solid var(--line); flex:none}
+.m-dayhead .tbtn{width:46px; height:36px}
+.m-dayhead .tbtn svg{width:18px; height:18px}
+#mTitle{flex:1; min-width:0; text-align:center; font-weight:600; font-size:15px; color:#e3e9ec; line-height:1.2}
+#mTitle .mono{font-family:var(--mono); font-weight:400; color:var(--dim)}
+#mTitle em{font-style:normal; color:var(--green); font-size:12px; margin-left:4px}
+#mTitle small{display:block; font-weight:400; font-size:11.5px; color:var(--dim)}
+.m-scroll{flex:1; min-height:0; overflow-y:auto; overflow-x:hidden; background:var(--bg1); touch-action:pan-y; overscroll-behavior:contain}
+.m-grid{display:grid; grid-template-columns:58px 1fr; position:relative}
+.m-gutter{position:relative; background:linear-gradient(90deg,#3a444a,#2e373c); border-right:1px solid var(--line)}
+.m-gutter span{position:absolute; right:6px; margin-top:3px; font-family:var(--mono); font-size:12px; color:#d9e1e4}
+.m-gutter span.nx{color:#e9b884}
+.m-lane{
+  position:relative; cursor:pointer;
+  background-image:
+    linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px),
+    linear-gradient(to bottom,var(--grid-half) 1px,transparent 1px),
+    linear-gradient(to bottom,var(--grid-a) 50%,var(--grid-b) 50%);
+  background-size:100% var(--ph), 100% calc(var(--ph) / 2), 100% calc(var(--ph) * 2);
+}
+.m-lane .past{position:absolute; left:0; right:0; top:0; pointer-events:none; background:repeating-linear-gradient(135deg,rgba(0,0,0,.22) 0 6px,rgba(0,0,0,.30) 6px 12px)}
+.m-lane .midnight{position:absolute; left:0; right:0; height:0; border-top:1px solid rgba(255,154,60,.5); pointer-events:none}
+.m-lane .ph{position:absolute; left:-6px; right:0; height:0; border-top:2px solid var(--orange); box-shadow:0 0 8px rgba(255,154,60,.8); pointer-events:none; z-index:5}
+.m-lane .ph::before{content:""; position:absolute; left:0; top:-6px; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid var(--orange)}
+.m-lane .clip{left:6px; right:6px; bottom:auto; touch-action:manipulation; border-radius:3px; cursor:pointer}
+.m-lane .clip-head{height:26px; font-size:13.5px; padding:0 7px; gap:6px}
+.m-lane .clip-head .tm{font-size:12px}
+.m-lane .clip-head .lk{font-size:11.5px; padding:1px 4px}
+.m-lane .clip-head svg{width:12px; height:12px}
+.m-lane .clip-head .dot{width:10px; height:10px}
+.m-lane .clip-body{flex-direction:row}
+.m-lane .clip-row{border-top:0; border-left:1px solid rgba(0,0,0,.35)}
+.m-lane .clip-row:first-child{border-left:0}
+.m-lane .clip-row .rn{top:8px; transform:none; font-size:11.5px}
+
+/* ---------- MIXER ---------- */
+.mixer{flex:none}
+.mixer[hidden]{display:none}
+.mixer-body{display:flex; gap:4px; padding:8px; overflow-x:auto; background:#22292d}
+.strip{
+  width:96px; flex:none; background:linear-gradient(#343d43,#293136); border:1px solid var(--line); border-radius:3px;
+  display:flex; flex-direction:column; align-items:center; padding:5px 5px 7px; gap:6px;
+}
+.strip.master{width:120px; background:linear-gradient(#3a3631,#2b2a28)}
+.strip-name{
+  width:100%; text-align:center; font-weight:700; font-size:12px; padding:2px 0; border-radius:2px;
+  background:var(--c); color:#0e1214; background-image:linear-gradient(rgba(255,255,255,.25),rgba(255,255,255,0));
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.strip.me .strip-name{box-shadow:0 0 0 1px #fff}
+.strip .lcd{font-size:15px; width:100%; text-align:center}
+.strip-main{display:flex; gap:6px; height:130px; align-items:stretch}
+.meter{width:9px; background:#0a0d0f; border:1px solid #000; position:relative}
+.meter i{position:absolute; left:0; right:0; bottom:0; background:linear-gradient(to top,#4fd14a 0%,#c8e04a 60%,#ffb03b 82%,#ff4d3d 100%); background-size:100% 128px; background-position:bottom; transform-origin:bottom; animation:vu 1.6s ease-in-out infinite alternate}
+.meter i::after{content:""; position:absolute; inset:0; background:repeating-linear-gradient(to top,transparent 0 3px,rgba(0,0,0,.55) 3px 4px)}
+@keyframes vu{0%{transform:scaleY(1)}30%{transform:scaleY(.9)}55%{transform:scaleY(.97)}80%{transform:scaleY(.86)}100%{transform:scaleY(.99)}}
+.fader{width:6px; background:#0a0d0f; border:1px solid #000; position:relative; margin:0 9px}
+.fader-cap{
+  position:absolute; left:50%; width:28px; height:13px; transform:translate(-50%,50%);
+  background:linear-gradient(#b5c0c6,#79858b 45%,#5a666c 55%,#8f9ba1); border:1px solid #000; border-radius:2px;
+  box-shadow:0 2px 4px rgba(0,0,0,.6);
+}
+.fader-cap::after{content:""; position:absolute; left:3px; right:3px; top:50%; height:1px; background:#111}
+.scale{display:flex; flex-direction:column; justify-content:space-between; font-family:var(--mono); font-size:9px; color:var(--faint); text-align:right}
+.strip-foot{font-size:11px; color:var(--dim); text-align:center; line-height:1.3}
+.strip-foot b{color:#e3e9ec; font-weight:600}
+.mixer-note{align-self:center; color:var(--faint); font-size:11.5px; padding:0 12px; max-width:240px; line-height:1.4}
+
+/* ---------- DIALOGS ---------- */
+.backdrop{position:fixed; inset:0; background:rgba(5,8,10,.6); display:flex; align-items:center; justify-content:center; padding:16px; z-index:50}
+.backdrop[hidden]{display:none}
+.dialog{width:min(460px,100%); max-height:100%; overflow:auto; overscroll-behavior:contain}
+.dlg-body{padding:12px; display:flex; flex-direction:column; gap:12px}
+.field{display:flex; flex-direction:column; gap:5px; min-width:0}
+.field>span{font-size:10px; letter-spacing:.12em; color:var(--dim); font-weight:600; text-transform:uppercase}
+.field-row{display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:8px}
+select,input[type=text],input[type=url]{
+  background:var(--lcd); color:var(--text); border:1px solid #000; border-radius:2px; padding:6px 7px;
+  box-shadow:inset 0 0 6px #000; width:100%; min-width:0; -webkit-user-select:text; user-select:text;
+}
+select{font-family:var(--mono); color:var(--orange); cursor:pointer}
+select:focus,input:focus{outline:1px solid var(--orange)}
+.seg{display:grid; grid-template-columns:1fr 1fr; gap:6px}
+.seg button{
+  display:grid; grid-template-columns:auto 1fr; align-items:center; column-gap:7px; text-align:left;
+  padding:7px 9px; border:1px solid var(--line); border-radius:3px; cursor:pointer;
+  background:linear-gradient(#3e494f,#323b41); font-weight:600;
+}
+.seg button small{grid-column:2; font-weight:400; color:var(--dim); font-size:11px}
+.seg button.on{background:linear-gradient(#4a4036,#3a332c); box-shadow:inset 0 0 0 1px rgba(255,154,60,.45)}
+.seg button.on .led{background:var(--orange); box-shadow:0 0 7px var(--orange)}
+.members{display:flex; flex-wrap:wrap; gap:5px; align-items:center}
+.mchip{display:inline-flex; align-items:center; gap:5px; padding:3px 8px 3px 6px; border-radius:2px; background:color-mix(in srgb,var(--m) 25%,#1b2124); border:1px solid color-mix(in srgb,var(--m) 50%,#000); font-weight:600; font-size:12px}
+.mchip .led{background:var(--m); box-shadow:0 0 5px var(--m)}
+.mchip small{color:var(--dim); font-weight:400}
+.det-head{
+  display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:3px;
+  background:var(--c); color:#0e1214; background-image:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,0));
+  border:1px solid color-mix(in srgb,var(--c) 55%,#000);
+}
+.det-head b{font-size:15px}
+.det-head .nt{font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
+.det-head .tag{margin-left:auto; flex:none; font-family:var(--mono); font-size:11px; background:rgba(0,0,0,.2); padding:1px 6px; border-radius:2px}
+.det-head svg{width:12px;height:12px;flex:none}
+.info{display:grid; grid-template-columns:auto 1fr; gap:6px 14px; font-size:13px; margin:0}
+.info dt{color:var(--dim); font-size:11px; text-transform:uppercase; letter-spacing:.1em; padding-top:2px}
+.info dd{margin:0; font-weight:600}
+.info dd.mono{font-family:var(--mono); color:var(--orange); font-weight:400}
+.dlg-err{min-height:16px; color:var(--red); font-size:12px}
+.dlg-err:empty{min-height:0}
+.dlg-note{color:var(--dim); font-size:12px; line-height:1.4}
+.dlg-actions{display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap}
+.btn{
+  padding:6px 13px; border:1px solid var(--line); border-radius:3px; cursor:pointer; font-weight:600;
+  background:linear-gradient(#4a565d,#384248); box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
+}
+.btn:hover{background:linear-gradient(#56636b,#3f4a50)}
+.btn.primary{color:var(--orange); box-shadow:inset 0 0 0 1px rgba(255,154,60,.4), 0 0 8px rgba(255,154,60,.15)}
+.btn.danger{color:#ff8a80; margin-right:auto}
+.btn.danger.arm{background:#8d2f27; color:#fff}
+
+/* links */
+.links{display:flex; flex-direction:column; gap:4px}
+.link{display:flex; align-items:center; gap:4px; background:var(--lcd); border:1px solid #000; border-radius:2px; box-shadow:inset 0 0 6px #000}
+.link a{flex:1; min-width:0; display:flex; align-items:center; gap:9px; padding:6px 8px; color:var(--text); text-decoration:none; min-height:44px}
+.link a:hover .l-name, .link a:focus-visible .l-name{color:var(--orange); text-decoration:underline}
+.link a:focus-visible{outline:1px solid var(--orange)}
+.l-ico{width:28px; height:28px; flex:none; display:grid; place-items:center; border-radius:3px; background:#232b30; border:1px solid #000; color:var(--dim)}
+.l-ico.drive{background:#2a2a1c; color:#f5c542}
+.l-ico svg{width:16px; height:16px}
+.l-txt{min-width:0; display:flex; flex-direction:column; line-height:1.25}
+.l-name{font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.l-meta{font-size:11px; color:var(--dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.l-del{flex:none; width:36px; height:36px; margin-right:4px; border:0; background:none; color:var(--faint); cursor:pointer; border-radius:2px}
+.l-del:hover{color:#fff; background:#8d2f27}
+.links-empty{color:var(--faint); font-size:12px; padding:2px 0 4px; line-height:1.4}
+.link-add{display:grid; grid-template-columns:1fr auto; gap:6px}
+.link-add #lUrl{grid-column:1 / -1}
+
+/* channel rack */
+.rack-rows{display:flex; flex-direction:column; gap:4px; padding:10px; background:#262e33}
+.rack-row{display:flex; align-items:center; gap:8px}
+.rack-row.on .led{background:var(--green); box-shadow:0 0 7px var(--green)}
+.rack-name{
+  width:118px; height:30px; flex:none; text-align:left; padding:0 8px 0 12px; position:relative; cursor:pointer;
+  border:1px solid var(--line); border-radius:3px; background:linear-gradient(#56636b,#434e55); font-weight:600;
+}
+.rack-name::before{content:""; position:absolute; left:3px; top:4px; bottom:4px; width:4px; border-radius:1px; background:var(--c)}
+.rack-name:hover{background:linear-gradient(#617078,#4b575e)}
+.rack-row.on .rack-name{box-shadow:inset 0 0 0 1px var(--orange); color:var(--orange)}
+.steps{display:flex; gap:3px; min-width:0}
+.step{width:22px; height:30px; border-radius:2px; border:1px solid #000; background:linear-gradient(#4a555b,#3a4449); display:grid; place-items:end center; font-size:8.5px; color:#8c9aa1; padding-bottom:2px; font-weight:600}
+.step.we{background:linear-gradient(#5a4a4c,#463a3c)}
+.step.on{background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),var(--c)); color:#111; box-shadow:0 0 6px color-mix(in srgb,var(--c) 60%,transparent)}
+.rack-foot{padding:8px 12px 12px; color:var(--dim); font-size:12px; line-height:1.4}
+
+/* FAB + toast (jen mobil) */
+.fab{
+  display:none; position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom)); z-index:40;
+  align-items:center; gap:9px; height:54px; padding:0 22px; border-radius:27px; border:1px solid #000; cursor:pointer;
+  background:linear-gradient(#4a565d,#353f45); color:#fff; font-weight:700; letter-spacing:.1em; font-size:14px;
+  box-shadow:0 8px 20px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.fab i{width:14px; height:14px; border-radius:50%; background:var(--red); box-shadow:0 0 10px var(--red)}
+.toast{
+  display:none; position:fixed; left:12px; right:12px; bottom:calc(84px + env(safe-area-inset-bottom)); z-index:60;
+  background:#11161a; border:1px solid #000; border-left:3px solid var(--green); border-radius:3px; padding:9px 12px;
+  box-shadow:0 8px 20px rgba(0,0,0,.6); opacity:0; transform:translateY(8px); transition:opacity .2s, transform .2s; pointer-events:none;
+}
+.toast.show{opacity:1; transform:none}
+.toast.err{border-left-color:var(--red)}
+.toast b{display:block; font-size:14px}
+.toast span{color:var(--dim); font-size:12px}
+
+/* =================== MOBILE =================== */
+@media (max-width:760px){
+  body{height:100dvh}
+  .topbar{gap:4px; padding:5px; padding-top:calc(5px + env(safe-area-inset-top))}
+  .module{min-height:44px; padding:3px 6px}
+  .hint,.brand,#timeBox,#btnRec,.lcd-sub,.user small{display:none}
+  .tbtn,.tool{width:40px; height:38px}
+  .lcdbox{padding:3px 7px}
+  .lcd{font-size:20px}
+  .user{padding:3px 10px}
+  .workspace{padding:0; gap:0}
+  .win{border-radius:0; border-left:0; border-right:0; box-shadow:none}
+  :root{--hdrW:60px; --laneH:60px}
+  .playlist>.win-title,.playlist .win-toolbar{display:none}
+  .pl-scroll{padding-bottom:84px}
+  .trk{padding:0 4px 0 6px; gap:5px}
+  .trk .dl,.trk-meter{display:none}
+  .trk .ds{display:inline}
+  .trk-txt b{font-size:13px}
+  .pl-scroll .clip{touch-action:manipulation}
+  .pl-scroll .clip-head{font-size:10.5px; padding:0 3px}
+  .tick.major span{font-size:10.5px; left:2px}
+  .lane{cursor:pointer}
+  #tRack{display:none}
+  .vbtn{height:38px; padding:0 9px}
+  .m-days{gap:3px}
+  .m-day{min-height:56px}
+  .m-dayhead .tbtn{height:40px}
+  .m-scroll{padding-bottom:90px}
+  .m-grid{grid-template-columns:50px 1fr}
+
+  .fab{display:flex}
+  .toast{display:block}
+  body.mx .playlist{display:none}
+  body.mx .mixer{flex:1}
+  body.mx .fab{display:none}
+  .mixer-body{flex:1; align-items:flex-start}
+  .mixer-note{display:none}
+
+  .backdrop{align-items:flex-end; padding:0}
+  .dialog{width:100%; max-height:92dvh; border-radius:10px 10px 0 0; border-bottom:0; padding-bottom:env(safe-area-inset-bottom)}
+  .dialog>.win-title{height:40px; font-size:14px; border-radius:10px 10px 0 0}
+  .win-x{width:34px; height:30px; font-size:14px}
+  .dlg-body{padding:14px; gap:14px}
+  .field-row{grid-template-columns:1fr 1fr}
+  .field-row .field:first-child{grid-column:1 / -1}
+  select,input[type=text],input[type=url]{font-size:16px; min-height:44px}
+  .seg button{min-height:56px}
+  .btn{min-height:46px; flex:1; font-size:14px}
+  .btn.danger{margin-right:0}
+  .info{font-size:14px}
+  .rack-name{width:96px; height:40px}
+  .step{width:auto; flex:1; height:40px; min-width:0}
+  .steps{flex:1}
+}
+@media (prefers-reduced-motion:reduce){ .meter i{animation:none} .toast{transition:none} }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="module brand" data-hint="Studio|Rezervace studia pro Herb, Olb, Žaludos a Beky">
+    <svg viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="4" fill="#1a2024" stroke="#000"/><path d="M5 13h2l2-6 3 12 3-9 2 5 2-2h2" fill="none" stroke="#ff9a3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>STUDIO<b>.flp</b></span>
+  </div>
+  <div class="module hint" id="hint" aria-live="polite">
+    <div id="hintTitle">Playlist</div>
+    <div id="hintText">Táhni v prázdné stopě a vytvoř session</div>
+  </div>
+  <div class="module transport">
+    <button class="tbtn" id="btnPrev" aria-label="Předchozí týden" data-hint="Předchozí týden|Klávesa ←">
+      <svg viewBox="0 0 16 16"><path d="M8 3v10L2 8zM15 3v10L9 8z"/></svg></button>
+    <button class="tbtn play" id="btnNow" aria-label="Skočit na teď" data-hint="Skočit na teď|Aktuální týden a čas · mezerník">
+      <svg viewBox="0 0 16 16"><path d="M4 2l10 6-10 6z"/></svg></button>
+    <button class="tbtn rec" id="btnRec" aria-label="Nová session" data-hint="Nová session (REC)|Najde nejbližší volné 2 h · klávesa R">
+      <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/></svg></button>
+    <button class="tbtn" id="btnNext" aria-label="Další týden" data-hint="Další týden|Klávesa →">
+      <svg viewBox="0 0 16 16"><path d="M1 3v10l6-5zM8 3v10l6-5z"/></svg></button>
+  </div>
+  <div class="module viewsw" role="group" aria-label="Pohled">
+    <button class="vbtn" id="vWeek" aria-pressed="true" data-hint="Týdenní pohled|Všech 7 dní jako stopy v playlistu · klávesa T"><i class="led"></i>TÝDEN</button>
+    <button class="vbtn" id="vDay" aria-pressed="false" data-hint="Denní pohled|Jeden den na výšku · klávesa D"><i class="led"></i>DEN</button>
+  </div>
+  <div class="module lcdbox" data-hint="Číslo týdne|ISO týden a jeho rozsah">
+    <small>TÝDEN <i class="net" id="net"></i></small>
+    <div class="lcd-row"><div class="lcd" id="lcdWeek">--</div><div class="lcd-sub" id="lcdRange"></div></div>
+  </div>
+  <div class="module lcdbox" id="timeBox" data-hint="Aktuální čas|Oranžová čára v playlistu">
+    <small>TEĎ</small>
+    <div class="lcd" id="lcdTime">--:--:--</div>
+  </div>
+  <div class="module tools">
+    <button class="tool" id="tMixer" aria-pressed="true" aria-label="Mixer – statistiky" data-hint="Mixer – statistiky týdne|F9">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 2v14M9 2v14M14 2v14"/><rect x="2" y="10" width="4" height="3" fill="currentColor"/><rect x="7" y="5" width="4" height="3" fill="currentColor"/><rect x="12" y="8" width="4" height="3" fill="currentColor"/></svg></button>
+    <button class="tool" id="tRack" aria-pressed="false" aria-label="Channel rack – kdo jsi" data-hint="Channel rack – kdo jsi|F6">
+      <svg viewBox="0 0 18 18" fill="currentColor"><rect x="1" y="3" width="4" height="3"/><rect x="7" y="3" width="3" height="3"/><rect x="12" y="3" width="3" height="3" opacity=".4"/><rect x="1" y="8" width="4" height="3"/><rect x="7" y="8" width="3" height="3" opacity=".4"/><rect x="12" y="8" width="3" height="3"/><rect x="1" y="13" width="4" height="3"/><rect x="7" y="13" width="3" height="3"/><rect x="12" y="13" width="3" height="3"/></svg></button>
+  </div>
+  <button class="module user none" id="userChip" data-hint="Armed kanál|Klikni pro změnu uživatele (F6)">
+    <i class="led"></i><span id="userName">nikdo</span><small>ARM</small>
+  </button>
+</header>
+
+<main class="workspace">
+  <section class="win playlist" aria-label="Playlist">
+    <div class="win-title">
+      <span>Playlist</span><span>–</span><span>Arrangement</span><span class="crumb">›</span><span id="plCrumb"></span>
+    </div>
+    <div class="win-toolbar">
+      <span class="chip" data-hint="Snap|Vše se přichytává na půl hodiny">⌖ SNAP ½ h</span>
+      <span class="legend" data-hint="Otevřená session|Ostatní se můžou přidat"><i class="sw"></i>otevřená</span>
+      <span class="legend" data-hint="Soukromá session|Studio je jen pro majitele"><i class="sw priv"></i>soukromá</span>
+      <span class="legend" data-hint="Tvoje session|Můžeš ji táhnout a měnit délku za okraje"><i class="sw mine"></i>tvoje</span>
+      <span class="toolbar-sp"></span>
+      <span>táhni = nová · klik = detail · táhni klip = přesun · okraj = délka</span>
+    </div>
+    <div class="pl-scroll" id="plScroll">
+      <div class="pl-grid" id="plGrid"></div>
+    </div>
+
+    <!-- mobilní denní pohled -->
+    <div class="m-view" id="mView">
+      <div class="m-days" id="mDays" role="tablist" aria-label="Dny v týdnu"></div>
+      <div class="m-dayhead">
+        <button class="tbtn" id="mPrev" aria-label="Předchozí den"><svg viewBox="0 0 16 16"><path d="M11 2L4 8l7 6z"/></svg></button>
+        <div id="mTitle" aria-live="polite"></div>
+        <button class="tbtn" id="mNext" aria-label="Další den"><svg viewBox="0 0 16 16"><path d="M5 2l7 6-7 6z"/></svg></button>
+      </div>
+      <div class="m-scroll" id="mScroll"><div class="m-grid" id="mGrid"></div></div>
+    </div>
+  </section>
+
+  <section class="win mixer" id="mixer" aria-label="Mixer">
+    <div class="win-title">
+      <span>Mixer</span><span class="crumb">›</span><span id="mxCrumb"></span><span class="sp"></span>
+      <button class="win-x" id="mixerClose" aria-label="Zavřít mixer">✕</button>
+    </div>
+    <div class="mixer-body" id="mixerBody"></div>
+  </section>
+</main>
+
+<button class="fab" id="fab" aria-label="Nová session"><i></i>REC</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Inspector / detail -->
+<div class="backdrop" id="inspBack" hidden>
+  <div class="win dialog" role="dialog" aria-modal="true" aria-labelledby="inspTitle">
+    <div class="win-title"><span id="inspTitle">Session</span><span class="sp"></span><button class="win-x" data-close aria-label="Zavřít">✕</button></div>
+    <div class="dlg-body" id="inspBody"></div>
+  </div>
+</div>
+
+<!-- Channel rack -->
+<div class="backdrop" id="rackBack" hidden>
+  <div class="win dialog" role="dialog" aria-modal="true" aria-labelledby="rackTitle">
+    <div class="win-title"><span id="rackTitle">Channel rack</span><span class="crumb">›</span><span>Kdo jsi?</span><span class="sp"></span><button class="win-x" data-close aria-label="Zavřít">✕</button></div>
+    <div class="rack-rows" id="rackRows"></div>
+    <div class="rack-foot">Klikni na svůj kanál, tím ho „armneš“. Kroky ukazují, které dny tohoto týdne máš session. Volba se uloží v prohlížeči.</div>
+  </div>
+</div>
+
+<script>
+/* ================== DATA ================== */
+const PEOPLE = [
+  { name:'Herb',    color:'#8fd14f' },
+  { name:'Olb',     color:'#ff9f40' },
+  { name:'Žaludos', color:'#4fb3ff' },
+  { name:'Beky',    color:'#ff5fa2' },
+];
+const P = Object.fromEntries(PEOPLE.map(p => [p.name, p]));
+const DAY_NAMES = ['Pondělí','Úterý','Středa','Čtvrtek','Pátek','Sobota','Neděle'];
+const DAY_SHORT = ['Po','Út','St','Čt','Pá','So','Ne'];
+const MIN_START = 8*60, MAX_END = 30*60;     // 08:00 … 06:00 (+1)
+const BASE_START = 10*60, BASE_END = 24*60;  // výchozí rozsah 10:00–24:00
+const SNAP = 30;
+const MQ = window.matchMedia('(max-width: 760px)');
+const isMobile = () => MQ.matches;
+
+/* ================== FIREBASE ==================
+   Doplň objekt z Firebase konzole: Project settings → Your apps → Web app → SDK setup → Config.
+   Dokud je tu null, appka běží v lokálním režimu (data jen v tomhle prohlížeči). */
+const FIREBASE_CONFIG = null;
+const FB_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
+
+/* Kdo jsem – pamatuje si jen tohle zařízení */
+const store = {
+  userKey:'studio-daw-user',
+  getUser(){ try { return localStorage.getItem(this.userKey); } catch(e){ return null; } },
+  setUser(u){ try { localStorage.setItem(this.userKey, u); } catch(e){} },
+};
+
+/* ================== HELPERS ================== */
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2,'0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseYmd = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const addDays = (d,n) => new Date(d.getFullYear(), d.getMonth(), d.getDate()+n);
+const startOfWeek = d => addDays(new Date(d.getFullYear(), d.getMonth(), d.getDate()), -((d.getDay()+6)%7));
+const isoWeek = d => { const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = t.getUTCDay()||7; t.setUTCDate(t.getUTCDate()+4-day); const y0 = new Date(Date.UTC(t.getUTCFullYear(),0,1)); return Math.ceil(((t-y0)/864e5+1)/7); };
+const fmtT = m => `${pad(Math.floor(m/60)%24)}:${pad(m%60)}`;
+const fmtTL = m => fmtT(m) + (m >= 1440 ? ' (+1)' : '');
+const fmtH = min => (Math.round(min/6)/10).toString().replace('.',',') + ' h';
+const fmtDate = s => { const d = parseYmd(s); return `${d.getDate()}. ${d.getMonth()+1}.`; };
+const dayIdx = s => (parseYmd(s).getDay()+6)%7;
+const atMin = (day, m) => { const d = parseYmd(day); return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, m); };
+const startAt = b => atMin(b.day, b.start);
+const endAt   = b => atMin(b.day, b.end);
+const isPast = b => endAt(b) < new Date();
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const snap = m => Math.round(m/SNAP)*SNAP;
+const uid = () => Math.random().toString(36).slice(2,10);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function hashStr(s){ let h = 2166136261; for (const c of s){ h ^= c.charCodeAt(0); h = Math.imul(h,16777619); } return h>>>0; }
+function rng(seed){ return () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed>>>15, 1|seed); t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14)>>>0)/4294967296; }; }
+const waveCache = {};
+function wavePath(seed){
+  if (waveCache[seed]) return waveCache[seed];
+  const r = rng(hashStr(seed)); let d = '', env = .55;
+  for (let i=0; i<64; i++){
+    env = clamp(env + (r()-.5)*.38, .15, 1);
+    const a = Math.max(.6, env*(.4 + r()*.6)*9.5);
+    d += `M${i*2} ${(10-a).toFixed(1)}h1.3v${(2*a).toFixed(1)}h-1.3z`;
+  }
+  return waveCache[seed] = d;
+}
+
+const ICON_LOCK = '<svg viewBox="0 0 10 10" aria-hidden="true"><rect x="1.5" y="4.5" width="7" height="5" rx="1" fill="#0e1214"/><path d="M3 4.5V3a2 2 0 0 1 4 0v1.5" fill="none" stroke="#0e1214" stroke-width="1.3"/></svg>';
+const ICON_LINK = '<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6.5 9.5l3-3"/><path d="M7.5 4.5l1-1a2.8 2.8 0 0 1 4 4l-1 1"/><path d="M8.5 11.5l-1 1a2.8 2.8 0 0 1-4-4l1-1"/></svg>';
+const ICON_FOLDER = '<svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M1.5 3.5A1 1 0 0 1 2.5 2.5h3.6l1.4 1.5h6a1 1 0 0 1 1 1v7.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"/></svg>';
+const ICON_DOC = '<svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M3.5 1.5h6l3 3v10h-9z" opacity=".9"/><path d="M5.5 8h5M5.5 10.5h5" stroke="#2a2a1c" stroke-width="1.2"/></svg>';
+
+/* ================== STATE ================== */
+const state = {
+  user: null,
+  week: startOfWeek(new Date()),
+  view: 'week',        // 'week' | 'day' – výchozí je týden
+  mday: null,          // vybraný den v denním pohledu
+  mScrolled: null,
+  bookings: [],
+  drag: null,
+  draft: null,
+  selected: null,
+  mixer: !isMobile(),
+  pxh: 60, pph: 58,
+  range: { s: BASE_START, e: BASE_END, ovf: true },
+};
+
+const weekDays = () => Array.from({length:7}, (_,i) => ymd(addDays(state.week, i)));
+const weekBookings = () => { const d = new Set(weekDays()); return state.bookings.filter(b => d.has(b.day)); };
+const find = id => state.bookings.find(b => b.id === id);
+
+/* ================== BACKEND (Firestore / lokální) ==================
+   Všechny zápisy jdou přes `api`. Data se vrací přes onData() – u Firestore živě od všech. */
+const notReady = async () => flash('Ještě se připojuju…', 'Zkus to za vteřinu', 'err');
+let api = { mode:'init', create:notReady, update:notReady, remove:notReady, join:notReady, leave:notReady, addLink:notReady, removeLink:notReady };
+
+function setNet(mode){
+  const el = $('#net'); if (!el) return;
+  el.className = 'net ' + mode;
+  el.title = { on:'Online – synchronizováno se všemi', local:'Lokální režim – data jen v tomhle prohlížeči', err:'Spojení s databází selhalo' }[mode] || '';
+  el.parentElement.parentElement.dataset.hint = `Týden · ${el.title}|ISO týden a jeho rozsah`;
+}
+
+async function initBackend(onData){
+  if (!FIREBASE_CONFIG) return localBackend(onData);
+  try {
+    const [{ initializeApp }, fs] = await Promise.all([ import(FB_SDK + 'firebase-app.js'), import(FB_SDK + 'firebase-firestore.js') ]);
+    const app = initializeApp(FIREBASE_CONFIG);
+    let db;
+    try { db = fs.initializeFirestore(app, { localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() }) }); }
+    catch(e){ db = fs.getFirestore(app); }
+    const col = fs.collection(db, 'bookings');
+    const ref = id => fs.doc(col, id);
+    fs.onSnapshot(col,
+      snap => { setNet('on'); onData(snap.docs.map(d => ({ id:d.id, ...d.data() }))); },
+      err => { setNet('err'); flash('Spojení s databází selhalo', err.code || err.message, 'err'); });
+    const w = p => p.catch(err => { flash('Nepodařilo se uložit', err.code || err.message, 'err'); });
+    const clean = b => ({ day:b.day, start:b.start, end:b.end, owner:b.owner, type:b.type, members:b.members, note:b.note || '', links:b.links || [] });
+    return {
+      mode:'firebase',
+      create:     b       => w(fs.setDoc(fs.doc(col), clean(b))),
+      update:     (id, p) => w(fs.updateDoc(ref(id), p)),
+      remove:     id      => w(fs.deleteDoc(ref(id))),
+      join:       (id, u) => w(fs.updateDoc(ref(id), { members: fs.arrayUnion(u) })),
+      leave:      (id, u) => w(fs.updateDoc(ref(id), { members: fs.arrayRemove(u) })),
+      addLink:    (id, l) => w(fs.updateDoc(ref(id), { links: fs.arrayUnion(l) })),
+      removeLink: (id, l) => w(fs.updateDoc(ref(id), { links: fs.arrayRemove(l) })),
+    };
+  } catch(e){
+    console.error(e);
+    flash('Firebase se nenačetl', 'Běžím v lokálním režimu', 'err');
+    return localBackend(onData);
+  }
+}
+
+function localBackend(onData){
+  const key = 'studio-daw-v2';
+  let list = [];
+  try { list = (JSON.parse(localStorage.getItem(key) || '{}').bookings) || []; } catch(e){}
+  const commit = () => {
+    try { localStorage.setItem(key, JSON.stringify({ bookings:list })); } catch(e){}
+    onData(list.map(b => ({ ...b, members:[...b.members], links:[...(b.links || [])] })));
+  };
+  const get = id => list.find(b => b.id === id);
+  setNet('local');
+  setTimeout(commit, 0);
+  return {
+    mode:'local',
+    create:     async b       => { list.push({ ...b, id:uid(), links:b.links || [] }); commit(); },
+    update:     async (id, p) => { const b = get(id); if (b){ Object.assign(b, p); commit(); } },
+    remove:     async id      => { list = list.filter(b => b.id !== id); commit(); },
+    join:       async (id, u) => { const b = get(id); if (b && !b.members.includes(u)){ b.members.push(u); commit(); } },
+    leave:      async (id, u) => { const b = get(id); if (b){ b.members = b.members.filter(m => m !== u); commit(); } },
+    addLink:    async (id, l) => { const b = get(id); if (b){ b.links = [...(b.links || []), l]; commit(); } },
+    removeLink: async (id, l) => { const b = get(id); if (b){ b.links = (b.links || []).filter(x => x.id !== l.id); commit(); } },
+  };
+}
+
+function onData(list){
+  state.bookings = list.map(b => ({ ...b, members:b.members || [], links:b.links || [] }));
+  if (state.drag) return;              // po puštění se překreslí samo
+  renderTop(); renderPlaylist(); renderMixer();
+  if (!$('#rackBack').hidden) renderRack();
+  if (ins && ins.mode === 'detail' && !$('#inspBack').hidden){
+    // zachovej rozepsaný odkaz, když někdo jiný mezitím něco změní
+    const uv = $('#lUrl') ? $('#lUrl').value : '', nv = $('#lName') ? $('#lName').value : '';
+    const focusId = document.activeElement && document.activeElement.id;
+    renderDetail();
+    if ($('#lUrl')){ $('#lUrl').value = uv; $('#lName').value = nv; }
+    if (focusId && document.getElementById(focusId)) document.getElementById(focusId).focus();
+  }
+}
+
+/* ================== VALIDATION ================== */
+function validate(b, ignoreId, orig){
+  if (b.end - b.start < 30) return 'Minimální délka je 30 minut';
+  if (b.start < MIN_START || b.end > MAX_END) return 'Session musí být mezi 08:00 a 06:00 (+1)';
+  const startChanged = !orig || orig.day !== b.day || orig.start !== b.start;
+  if (startChanged && startAt(b) < new Date()) return 'Do minulosti rezervovat nejde';
+  for (const o of state.bookings){
+    if (o.id === ignoreId || o.day !== b.day) continue;
+    if (b.start < o.end && o.start < b.end){
+      if (o.type === 'open' && !o.members.includes(state.user))
+        return `Tady už je otevřená session (${o.owner}), klikni na ni a přidej se`;
+      return `Překrývá se ${o.type==='private'?'se soukromou session':'se session'} (${o.owner} ${fmtT(o.start)}–${fmtT(o.end)})`;
+    }
+  }
+  return null;
+}
+
+/* ================== LINKS ================== */
+function normalizeUrl(raw){
+  let s = (raw || '').trim();
+  if (!s) return null;
+  if (!/^https?:\/\//i.test(s)) s = 'https://' + s;
+  try {
+    const u = new URL(s);
+    if (!/^https?:$/.test(u.protocol) || !u.hostname.includes('.')) return null;
+    return u.href;
+  } catch(e){ return null; }
+}
+function linkInfo(url){
+  let u; try { u = new URL(url); } catch(e){ return { host:url, kind:'Odkaz', drive:false, folder:false }; }
+  const host = u.hostname.replace(/^www\./,''), p = u.pathname;
+  if (host === 'drive.google.com'){
+    const folder = p.includes('/folders/');
+    return { host, kind: folder ? 'Složka na Disku' : 'Soubor na Disku', drive:true, folder };
+  }
+  if (host === 'docs.google.com'){
+    const kind = p.includes('/spreadsheets/') ? 'Tabulka' : p.includes('/presentation/') ? 'Prezentace' : p.includes('/forms/') ? 'Formulář' : 'Dokument';
+    return { host, kind, drive:true, folder:false };
+  }
+  return { host, kind:host, drive:false, folder:false };
+}
+
+/* ================== HINT BAR / TOAST ================== */
+let hintTimer = null, toastTimer = null, hintLocked = false;
+function setHint(title, text, kind){
+  $('#hintTitle').textContent = title;
+  $('#hintText').textContent = text || '';
+  $('#hint').className = 'module hint' + (kind ? ' '+kind : '');
+}
+function flash(title, text, kind='ok'){
+  setHint(title, text, kind); hintLocked = true;
+  clearTimeout(hintTimer); hintTimer = setTimeout(() => { hintLocked = false; setHint('Playlist','Táhni v prázdné stopě a vytvoř session'); }, 3200);
+  const t = $('#toast');
+  t.innerHTML = `<b>${esc(title)}</b>${text ? `<span>${esc(text)}</span>` : ''}`;
+  t.className = 'toast show ' + kind;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+document.addEventListener('mouseover', e => {
+  if (hintLocked || state.drag) return;
+  const el = e.target.closest('[data-hint]');
+  if (!el) return;
+  const [t, x] = el.dataset.hint.split('|');
+  setHint(t, x);
+});
+
+/* ================== RENDER: TOP ================== */
+function renderTop(){
+  $('#lcdWeek').textContent = pad(isoWeek(state.week));
+  const end = addDays(state.week, 6);
+  $('#lcdRange').textContent = `${state.week.getDate()}.${state.week.getMonth()+1}.–${end.getDate()}.${end.getMonth()+1}.${end.getFullYear()}`;
+  $('#plCrumb').textContent = `Týden ${isoWeek(state.week)}`;
+  $('#mxCrumb').textContent = `Statistiky týdne ${isoWeek(state.week)}`;
+  const chip = $('#userChip');
+  if (state.user){ chip.classList.remove('none'); chip.style.setProperty('--uc', P[state.user].color); $('#userName').textContent = state.user; }
+  else { chip.classList.add('none'); $('#userName').textContent = 'nikdo'; }
+  $('#tMixer').setAttribute('aria-pressed', state.mixer);
+  $('#mixer').hidden = !state.mixer;
+  document.body.classList.toggle('mx', state.mixer && isMobile());
+  document.body.classList.toggle('v-day', state.view === 'day');
+  $('#vWeek').setAttribute('aria-pressed', state.view === 'week');
+  $('#vDay').setAttribute('aria-pressed', state.view === 'day');
+}
+function setView(v){
+  state.view = v; state.mScrolled = null;
+  if (isMobile()) state.mixer = false;
+  renderAll();
+}
+function tickClock(){ const n = new Date(); $('#lcdTime').textContent = `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`; }
+
+/* ================== RENDER: PLAYLIST ================== */
+function computeRange(){
+  const days = new Set(weekDays());
+  let s = BASE_START, e = BASE_END;
+  const items = [...weekBookings()];
+  if (state.draft) items.push(state.draft);
+  if (state.drag && state.drag.preview) items.push(state.drag.preview);
+  for (const b of items){
+    if (!days.has(b.day)) continue;
+    s = Math.min(s, Math.floor(b.start/60)*60);
+    e = Math.max(e, Math.ceil(b.end/60)*60);
+  }
+  return { s, e, ovf: e < MAX_END };
+}
+
+function clipHTML(b, opts = {}){
+  const r = state.range, v = !!opts.v;
+  let pos, big;
+  if (v){
+    const top = (b.start - r.s)/60*state.pph, h = Math.max(22, (b.end - b.start)/60*state.pph - 2);
+    pos = `top:${top+1}px;height:${h}px`; big = h >= 40;
+  } else {
+    const left = (b.start - r.s)/60*state.pxh, w = Math.max(6, (b.end - b.start)/60*state.pxh);
+    pos = `left:${left}px;width:${w}px`; big = w > 120;
+  }
+  const mine = b.owner === state.user;
+  const past = isPast(b);
+  const editable = mine && !past && !opts.ghost && !v;
+  const cls = ['clip', b.type, mine?'mine':'', past?'past-c':'', state.selected===b.id?'sel':'', opts.ghost?'ghost':'', opts.drag?'drag':'', opts.bad?'bad':''].join(' ');
+  const rows = b.type === 'private' ? [b.owner] : b.members;
+  const others = b.members.filter(m => m !== b.owner);
+  const nl = (b.links || []).length;
+  const dots = others.length ? `<span class="dots">${others.map(m=>`<i class="dot" style="--m:${P[m].color}"></i>`).join('')}</span>` : '';
+  const lk = nl ? `<span class="lk">${ICON_LINK}${nl}</span>` : '';
+  const tm = big ? `<span class="tm">${fmtT(b.start)}–${fmtT(b.end)}</span>` : '';
+  const hint = `${b.owner}${b.note?' · '+b.note:''}|${DAY_SHORT[dayIdx(b.day)]} ${fmtT(b.start)}–${fmtTL(b.end)} · ${b.type==='private'?'soukromá':'otevřená'}${others.length?' · +'+others.join(', '):''}${nl?` · ${nl} odkaz${nl>1&&nl<5?'y':nl>=5?'ů':''}`:''}`;
+  const body = rows.map(m => `<div class="clip-row" style="--m:${P[m].color}">${rows.length>1?`<span class="rn">${esc(m)}</span>`:''}<svg viewBox="0 0 128 20" preserveAspectRatio="none" aria-hidden="true"><path d="${wavePath(b.id+m)}"/></svg></div>`).join('');
+  return `<div class="${cls}" data-id="${b.id}" tabindex="0" role="button" aria-label="${esc(hint.replace('|',', '))}" data-hint="${esc(hint)}" style="${pos};--c:${P[b.owner].color}">
+    <div class="clip-head">${b.type==='private'?ICON_LOCK:''}<span class="nm">${esc(b.owner)}${b.note?` <i>· ${esc(b.note)}</i>`:''}</span>${tm}${lk}${dots}</div>
+    <div class="clip-body">${body}</div>
+    ${editable?'<div class="grip l"></div><div class="grip r"></div>':''}
+  </div>`;
+}
+
+function renderPlaylist(){
+  if (state.view === 'day') return renderDay();
+  const r = state.range = computeRange();
+  const sc = $('#plScroll'), grid = $('#plGrid');
+  const hdrW = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hdrW')) || 150;
+  const mob = isMobile();
+  const ovf = r.ovf && !mob;   // na mobilu se netahá – celý den se vejde na šířku displeje
+  const totalH = (r.e - r.s)/60 + (ovf ? 1 : 0);
+  const pxh = state.pxh = mob
+    ? Math.max(14, (sc.clientWidth - hdrW - 2) / totalH)
+    : Math.max(52, Math.floor((sc.clientWidth - hdrW - 2) / 15));
+  $('#plCrumb').textContent = `Týden ${isoWeek(state.week)}`;
+  const W = totalH * pxh;
+  const X = m => (m - r.s)/60*pxh;
+  grid.style.gridTemplateColumns = `var(--hdrW) ${W}px`;
+  grid.style.setProperty('--px', pxh+'px');
+
+  const now = new Date();
+  let nm = now.getHours()*60 + now.getMinutes();
+  if (nm < r.s && nm + 1440 <= r.e) nm += 1440;
+  const showPh = nm >= r.s && nm <= r.e;
+
+  let rul = '';
+  for (let m = r.s; m <= r.e; m += 30){
+    if (m % 60 === 0) rul += `<div class="tick major${m>=1440?' nx':''}" style="left:${X(m)}px"><span>${pad((m/60)%24)}${m===1440?'<em>+1</em>':''}</span></div>`;
+    else rul += `<div class="tick minor" style="left:${X(m)}px"></div>`;
+  }
+  if (ovf) rul +=`<div class="ovf-r" style="left:${X(r.e)}px;width:${pxh}px" data-hint="Přes půlnoc|Táhni klip sem a časová osa se prodlouží (max 06:00)">+1 h ↦</div>`;
+  if (1440 > r.s && 1440 < r.e) rul += `<div class="midnight" style="left:${X(1440)}px"></div>`;
+  if (showPh) rul += `<div class="ph-mark" style="left:${X(nm)}px"></div>`;
+
+  let html = `<div class="corner">DEN</div><div class="ruler">${rul}</div>`;
+  const todayStr = ymd(now);
+  const d = state.drag;
+
+  weekDays().forEach((day, i) => {
+    const isToday = day === todayStr;
+    let list = state.bookings.filter(b => b.day === day);
+    if (d && d.preview && d.id) list = list.filter(b => b.id !== d.id);
+    const occ = list.reduce((a,b) => a + (b.end-b.start), 0);
+    const occPct = clamp(occ / (r.e - r.s) * 100, 0, 100);
+    const pastMin = clamp((now - atMin(day, r.s))/60000, 0, totalH*60);
+
+    let lane = '';
+    if (pastMin > 0) lane += `<div class="past" style="width:${pastMin/60*pxh}px"></div>`;
+    if (ovf) lane +=`<div class="ovf" style="left:${X(r.e)}px;width:${pxh}px"></div>`;
+    if (1440 > r.s && 1440 < r.e) lane += `<div class="midnight" style="left:${X(1440)}px"></div>`;
+    if (showPh) lane += `<div class="ph" style="left:${X(nm)}px"></div>`;
+    for (const b of list) lane += clipHTML(b);
+    if (d && d.preview && d.preview.day === day) lane += clipHTML(d.preview, { drag:true, ghost:d.mode==='create', bad:!!d.error });
+    if (state.draft && state.draft.day === day) lane += clipHTML(state.draft, { ghost:true });
+
+    html += `<div class="trk${isToday?' today':''}" data-day="${day}" role="button" tabindex="0" aria-label="${DAY_NAMES[i]} ${fmtDate(day)} – otevřít denní pohled" data-hint="${DAY_NAMES[i]} ${fmtDate(day)}|Obsazeno ${fmtH(occ)} · klikni pro denní pohled">
+        <i class="led"></i>
+        <div class="trk-txt"><b><span class="dl">${DAY_NAMES[i]}</span><span class="ds">${DAY_SHORT[i]}</span></b><small>${isMobile() ? parseYmd(day).getDate()+'.' : fmtDate(day)}${isToday && !isMobile() ?' · dnes':''}</small></div>
+        <div class="trk-meter"><i style="height:${occPct}%"></i></div>
+      </div>
+      <div class="lane${isToday?' today':''}" data-day="${day}">${lane}</div>`;
+  });
+  grid.innerHTML = html;
+}
+
+/* ================== RENDER: DAY VIEW ================== */
+function renderDay(){
+  const r = state.range = computeRange();
+  const days = weekDays(), now = new Date(), todayStr = ymd(now);
+  if (!days.includes(state.mday)) state.mday = days.includes(todayStr) ? todayStr : days[0];
+  const span = r.e - r.s, pph = state.pph;
+  const Y = m => (m - r.s)/60*pph;
+
+  $('#mDays').innerHTML = days.map((d,i) => {
+    const bars = state.bookings.filter(b => b.day === d)
+      .map(b => `<i style="left:${(b.start-r.s)/span*100}%;width:${(b.end-b.start)/span*100}%;--c:${P[b.owner].color}"></i>`).join('');
+    const on = d === state.mday;
+    return `<button class="m-day${on?' on':''}${d===todayStr?' today':''}" role="tab" aria-selected="${on}" data-day="${d}" aria-label="${DAY_NAMES[i]} ${fmtDate(d)}"><b>${DAY_SHORT[i]}</b><small>${parseYmd(d).getDate()}.</small><span class="m-mini">${bars}</span></button>`;
+  }).join('');
+
+  const day = state.mday, di = dayIdx(day);
+  const list = state.bookings.filter(b => b.day === day);
+  $('#plCrumb').textContent = `Týden ${isoWeek(state.week)} › ${DAY_NAMES[di]} ${fmtDate(day)}`;
+  const occ = list.reduce((a,b) => a + (b.end-b.start), 0);
+  $('#mTitle').innerHTML = `${DAY_NAMES[di]} <span class="mono">${fmtDate(day)}</span>${day===todayStr?'<em>dnes</em>':''}<small>${list.length ? `${list.length} session · ${fmtH(occ)}` : 'volno · ťukni do osy pro rezervaci'}</small>`;
+
+  const H = span/60*pph;
+  let gut = '';
+  for (let m = r.s; m < r.e; m += 60) gut += `<span class="${m>=1440?'nx':''}" style="top:${Y(m)}px">${pad((m/60)%24)}:00</span>`;
+
+  let lane = '';
+  const nowRel = (now - parseYmd(day))/60000;           // minuty od půlnoci tohoto dne
+  const pastMin = clamp(nowRel - r.s, 0, span);
+  if (pastMin > 0) lane += `<div class="past" style="height:${pastMin/60*pph}px"></div>`;
+  if (1440 > r.s && 1440 < r.e) lane += `<div class="midnight" style="top:${Y(1440)}px"></div>`;
+  const showPh = nowRel >= r.s && nowRel <= r.e;
+  if (showPh) lane += `<div class="ph" style="top:${Y(nowRel)}px"></div>`;
+  for (const b of list) lane += clipHTML(b, { v:true });
+  if (state.draft && state.draft.day === day) lane += clipHTML(state.draft, { v:true, ghost:true });
+
+  const g = $('#mGrid');
+  g.style.setProperty('--ph', pph+'px');
+  g.innerHTML = `<div class="m-gutter" style="height:${H}px">${gut}</div><div class="m-lane" data-day="${day}" style="height:${H}px">${lane}</div>`;
+
+  if (state.mScrolled !== day){
+    state.mScrolled = day;
+    let t = 0;
+    if (showPh) t = Y(nowRel) - 120;
+    else if (list.length) t = Y(Math.min(...list.map(b => b.start))) - 40;
+    $('#mScroll').scrollTop = Math.max(0, t);
+  }
+}
+
+function shiftDay(n){
+  const days = weekDays();
+  const i = days.indexOf(state.mday) + n;
+  if (i < 0){ state.week = addDays(state.week, -7); state.mday = ymd(addDays(state.week, 6)); renderAll(); }
+  else if (i > 6){ state.week = addDays(state.week, 7); state.mday = ymd(state.week); renderAll(); }
+  else { state.mday = days[i]; renderPlaylist(); }
+}
+
+/* ================== RENDER: MIXER ================== */
+function renderMixer(){
+  if (!state.mixer) return;
+  const wb = weekBookings();
+  const st = Object.fromEntries(PEOPLE.map(p => [p.name, { min:0, n:0, partners:{} }]));
+  let total = 0; const perDay = Array(7).fill(0);
+  for (const b of wb){
+    const du = b.end - b.start; total += du; perDay[dayIdx(b.day)] += du;
+    for (const m of b.members){
+      st[m].min += du; st[m].n++;
+      for (const o of b.members) if (o !== m) st[m].partners[o] = (st[m].partners[o]||0) + 1;
+    }
+  }
+  const maxMin = Math.max(600, ...PEOPLE.map(p => st[p.name].min)) * 1.15;
+  const scale = `<div class="scale"><span>${Math.round(maxMin/60)}</span><span>${Math.round(maxMin/120)}</span><span>0</span></div>`;
+  const strip = (name, color, min, foot, extra='') => {
+    const pct = clamp(min / maxMin * 100, 0, 100);
+    return `<div class="strip ${extra}" style="--c:${color}" data-hint="${name}|${fmtH(min)} ve studiu tento týden">
+      <div class="strip-name">${esc(name)}</div>
+      <div class="lcd">${fmtH(min)}</div>
+      <div class="strip-main">
+        <div class="meter"><i style="height:${pct}%;animation-delay:-${(hashStr(name)%160)/100}s"></i></div>
+        <div class="fader"><div class="fader-cap" style="bottom:${pct}%"></div></div>
+        ${scale}
+      </div>
+      <div class="strip-foot">${foot}</div>
+    </div>`;
+  };
+  const busiest = perDay.indexOf(Math.max(...perDay));
+  let html = strip('MASTER', '#ff9a3c', total, `<b>${wb.length}</b> session<br>${total ? 'nejvíc: '+DAY_SHORT[busiest] : 'ticho…'}`, 'master');
+  for (const p of PEOPLE){
+    const s = st[p.name];
+    const top = Object.entries(s.partners).sort((a,b) => b[1]-a[1])[0];
+    html += strip(p.name, p.color, s.min, `<b>${s.n}</b> session<br>${top ? 'nejvíc s '+esc(top[0]) : 'sólo'}`, p.name===state.user?'me':'');
+  }
+  html += `<div class="mixer-note">Fadery ukazují hodiny ve studiu za zobrazený týden. Když se přidáš k cizí session, započítá se ti taky.</div>`;
+  $('#mixerBody').innerHTML = html;
+}
+
+/* ================== RENDER: CHANNEL RACK ================== */
+function renderRack(){
+  const days = weekDays(), wb = weekBookings();
+  $('#rackRows').innerHTML = PEOPLE.map(p => {
+    const steps = days.map((d,i) => {
+      const on = wb.some(b => b.day === d && b.members.includes(p.name));
+      return `<span class="step${i>=5?' we':''}${on?' on':''}">${DAY_SHORT[i]}</span>`;
+    }).join('');
+    return `<div class="rack-row${state.user===p.name?' on':''}" style="--c:${p.color}">
+      <i class="led"></i>
+      <button class="rack-name" data-user="${esc(p.name)}">${esc(p.name)}</button>
+      <div class="steps">${steps}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderAll(){ renderTop(); renderPlaylist(); renderMixer(); if (!$('#rackBack').hidden) renderRack(); }
+
+/* ================== CREATE HELPER ================== */
+function tryCreate(day, m){
+  let b, err;
+  for (const len of [120, 60, 30]){
+    b = { id:'__new', day, start:m, end:Math.min(MAX_END, m+len), owner:state.user, type:'open', members:[state.user], note:'', links:[] };
+    err = validate(b, null, null); if (!err) break;
+  }
+  if (err){ renderPlaylist(); flash('Tady to nepůjde', err, 'err'); return; }
+  state.draft = b; openEditor(b, true);
+}
+
+/* ================== DESKTOP DRAG & DROP ================== */
+const laneEl = day => document.querySelector(`.lane[data-day="${day}"]`);
+const minuteAt = (clientX, lane) => state.range.s + (clientX - lane.getBoundingClientRect().left) / state.pxh * 60;
+function laneAtY(y){
+  for (const l of document.querySelectorAll('.lane')){ const r = l.getBoundingClientRect(); if (y >= r.top && y < r.bottom) return l; }
+  return null;
+}
+
+$('#plScroll').addEventListener('pointerdown', e => {
+  if (e.button !== 0) return;
+  const lane = e.target.closest('.lane'); if (!lane) return;
+  const clip = e.target.closest('.clip');
+  if (clip && clip.classList.contains('ghost')) return;
+  if (!state.user && !clip){ openRack(); flash('Nejdřív se armni','Vyber v channel racku, kdo jsi', 'err'); return; }
+  if (clip){
+    const b = find(clip.dataset.id); if (!b) return;
+    const grip = e.target.closest('.grip');
+    const canEdit = state.user && b.owner === state.user && !isPast(b) && !isMobile();
+    const mode = !canEdit ? 'click' : grip ? (grip.classList.contains('l') ? 'resize-l' : 'resize-r') : 'move';
+    state.drag = { mode, id:b.id, x0:e.clientX, y0:e.clientY, moved:false, offset:minuteAt(e.clientX, lane) - b.start, preview:null, error:null, touch:e.pointerType==='touch' };
+    e.preventDefault();
+  } else {
+    const m = Math.floor(minuteAt(e.clientX, lane)/SNAP)*SNAP;
+    state.drag = { mode:'create', day:lane.dataset.day, anchor:m, x0:e.clientX, y0:e.clientY, moved:false, preview:null, error:null, touch:e.pointerType==='touch' };
+    if (e.pointerType !== 'touch') e.preventDefault();
+  }
+});
+
+window.addEventListener('pointermove', e => {
+  const d = state.drag; if (!d) return;
+  if (!d.moved && Math.hypot(e.clientX-d.x0, e.clientY-d.y0) < 5) return;
+  if (!d.moved && d.touch && d.mode === 'create'){ state.drag = null; return; }
+  d.moved = true;
+  if (d.mode === 'click') return;
+
+  const sc = $('#plScroll'), sr = sc.getBoundingClientRect();
+  if (e.clientX > sr.right - 40) sc.scrollLeft += 14;
+  else if (e.clientX < sr.left + 160 && sc.scrollLeft > 0) sc.scrollLeft -= 14;
+
+  if (d.mode === 'create'){
+    const m = clamp(snap(minuteAt(e.clientX, laneEl(d.day))), MIN_START, MAX_END);
+    let s, en;
+    if (m > d.anchor){ s = d.anchor; en = Math.max(m, d.anchor+30); } else { s = m; en = d.anchor + 30; }
+    d.preview = { id:'__new', day:d.day, start:clamp(s,MIN_START,MAX_END-30), end:clamp(en,MIN_START+30,MAX_END), owner:state.user, type:'open', members:[state.user], note:'', links:[] };
+    d.error = validate(d.preview, null, null);
+  } else {
+    const b = find(d.id);
+    let p = { ...b };
+    if (d.mode === 'move'){
+      const lane = laneAtY(e.clientY) || laneEl(d.preview ? d.preview.day : b.day) || laneEl(b.day);
+      if (!lane) return;
+      const du = b.end - b.start;
+      const s = clamp(snap(minuteAt(e.clientX, lane) - d.offset), MIN_START, MAX_END - du);
+      p = { ...b, day:lane.dataset.day, start:s, end:s+du };
+    } else {
+      const lane = laneEl(b.day); if (!lane) return;
+      const m = snap(minuteAt(e.clientX, lane));
+      if (d.mode === 'resize-r') p.end = clamp(m, b.start+30, MAX_END);
+      else p.start = clamp(m, MIN_START, b.end-30);
+    }
+    d.preview = p;
+    d.error = validate(p, b.id, b);
+  }
+  renderPlaylist();
+  const p = d.preview;
+  if (d.error) setHint('Tady to nepůjde', d.error, 'err');
+  else setHint(`${DAY_NAMES[dayIdx(p.day)]} ${fmtT(p.start)}–${fmtTL(p.end)}`, `Délka ${fmtH(p.end-p.start)}`);
+});
+
+window.addEventListener('pointerup', () => {
+  const d = state.drag; if (!d) return;
+  state.drag = null;
+  if (d.mode === 'create'){
+    if (!d.moved) return tryCreate(d.day, d.anchor);
+    if (!d.preview || d.error){ renderPlaylist(); flash('Tady to nepůjde', d.error || 'Zkus jiné místo', 'err'); return; }
+    state.draft = d.preview; openEditor(d.preview, true); return;
+  }
+  const b = find(d.id);
+  if (!d.moved || d.mode === 'click' || !d.preview){ renderPlaylist(); openDetail(b); return; }
+  if (d.error){ flash('Vráceno zpět', d.error, 'err'); }
+  else {
+    Object.assign(b, { day:d.preview.day, start:d.preview.start, end:d.preview.end });   // hned ukázat, DB potvrdí
+    api.update(b.id, { day:b.day, start:b.start, end:b.end });
+    flash('Session upravena', `${DAY_NAMES[dayIdx(b.day)]} ${fmtT(b.start)}–${fmtTL(b.end)}`);
+  }
+  renderAll();
+});
+window.addEventListener('pointercancel', () => { if (state.drag){ state.drag = null; renderPlaylist(); } });
+
+$('#plGrid').addEventListener('click', e => {
+  const t = e.target.closest('.trk');
+  if (t){ state.mday = t.dataset.day; setView('day'); }
+});
+$('#plScroll').addEventListener('keydown', e => {
+  const t = e.target.closest && e.target.closest('.trk');
+  if (t && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); e.stopPropagation(); state.mday = t.dataset.day; setView('day'); return; }
+  const clip = e.target.closest && e.target.closest('.clip');
+  if (clip && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); e.stopPropagation(); const b = find(clip.dataset.id); if (b) openDetail(b); }
+});
+
+/* ================== MOBILE EVENTS ================== */
+$('#mDays').addEventListener('click', e => {
+  const b = e.target.closest('[data-day]'); if (!b) return;
+  state.mday = b.dataset.day; renderPlaylist();
+});
+$('#mPrev').onclick = () => shiftDay(-1);
+$('#mNext').onclick = () => shiftDay(1);
+
+let swipe = null, swiped = false;
+$('#mScroll').addEventListener('pointerdown', e => { swipe = { x:e.clientX, y:e.clientY }; swiped = false; });
+$('#mScroll').addEventListener('pointercancel', () => { swipe = null; });
+$('#mScroll').addEventListener('pointerup', e => {
+  if (!swipe) return;
+  const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y; swipe = null;
+  if (Math.abs(dx) > 70 && Math.abs(dy) < 50){ swiped = true; shiftDay(dx < 0 ? 1 : -1); }
+});
+$('#mGrid').addEventListener('click', e => {
+  if (swiped){ swiped = false; return; }
+  const clip = e.target.closest('.clip');
+  if (clip){ if (!clip.classList.contains('ghost')) openDetail(find(clip.dataset.id)); return; }
+  const lane = e.target.closest('.m-lane'); if (!lane) return;
+  if (!state.user){ openRack(); flash('Nejdřív se armni','Vyber, kdo jsi', 'err'); return; }
+  const m = Math.floor((state.range.s + (e.clientY - lane.getBoundingClientRect().top)/state.pph*60)/SNAP)*SNAP;
+  tryCreate(lane.dataset.day, m);
+});
+$('#mGrid').addEventListener('keydown', e => {
+  const clip = e.target.closest && e.target.closest('.clip');
+  if (clip && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); openDetail(find(clip.dataset.id)); }
+});
+
+/* ================== DETAIL (rozkliknutá session) ================== */
+let ins = null;
+function showDialog(){
+  $('#inspBack').hidden = false;
+  renderPlaylist();
+  if (!isMobile()){ const f = $('#inspBody').querySelector('select, .btn.primary, .btn'); if (f) f.focus(); }
+}
+function memberChips(b){
+  return b.members.map(m => `<span class="mchip" style="--m:${P[m].color}"><i class="led"></i>${esc(m)}${m===b.owner?' <small>· host</small>':''}</span>`).join('');
+}
+
+function openDetail(b){
+  if (!b) return;
+  ins = { mode:'detail', id:b.id };
+  state.selected = b.id;
+  renderDetail();
+  showDialog();
+}
+
+function renderDetail(){
+  const b = find(ins.id); if (!b){ closeInspector(); return; }
+  const me = state.user, past = isPast(b), di = dayIdx(b.day);
+  const isOwner = b.owner === me, isMember = !!me && b.members.includes(me);
+  const links = b.links || [];
+  $('#inspTitle').textContent = `Session · ${b.owner}`;
+
+  let actions = '', note = '';
+  if (past) note = 'Tahle session už proběhla.';
+  else if (b.type === 'private' && !isOwner) note = 'Soukromá session, v tomhle čase je studio zabrané.';
+  if (!past && b.type === 'open' && me && !isMember) actions += '<button class="btn primary" id="bJoin">+ Přidat se</button>';
+  if (!past && isMember && !isOwner) actions += '<button class="btn danger" id="bLeave">Odejít ze session</button>';
+  if (!past && isOwner) actions += '<button class="btn" id="bEdit">Upravit</button>';
+
+  const linkRows = links.map(l => {
+    const li = linkInfo(l.url);
+    const name = l.label || li.kind;
+    const canDel = me && (l.by === me || isOwner);
+    return `<div class="link">
+      <a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">
+        <span class="l-ico${li.drive?' drive':''}">${li.folder ? ICON_FOLDER : li.drive ? ICON_DOC : ICON_LINK}</span>
+        <span class="l-txt"><span class="l-name">${esc(name)}</span><span class="l-meta">${esc(li.drive ? li.kind : li.host)} · ${esc(l.by)}</span></span>
+      </a>
+      ${canDel ? `<button class="l-del" data-del="${l.id}" aria-label="Odebrat odkaz ${esc(name)}">✕</button>` : ''}
+    </div>`;
+  }).join('');
+
+  const addForm = isMember ? `
+    <form class="link-add" id="linkForm" autocomplete="off">
+      <input type="url" id="lUrl" inputmode="url" placeholder="https://drive.google.com/…" aria-label="Odkaz na Google Disk">
+      <input type="text" id="lName" maxlength="40" placeholder="Název (nepovinné)" aria-label="Název odkazu">
+      <button class="btn primary" type="submit">+ Přidat</button>
+    </form>
+    <div class="dlg-err" id="lErr"></div>`
+    : `<div class="links-empty">${me ? (b.type==='open' && !past ? 'Odkazy můžou přidávat lidi ze session, přidej se.' : 'Odkazy můžou přidávat jen lidi ze session.') : 'Nejdřív se armni v channel racku.'}</div>`;
+
+  $('#inspBody').innerHTML = `
+    <div class="det-head" style="--c:${P[b.owner].color}">
+      ${b.type==='private' ? ICON_LOCK : ''}<b>${esc(b.owner)}</b>${b.note ? `<span class="nt">· ${esc(b.note)}</span>` : ''}
+      <span class="tag">${b.type==='private' ? 'SOUKROMÁ' : 'OTEVŘENÁ'}</span>
+    </div>
+    <dl class="info">
+      <dt>Kdy</dt><dd class="mono">${DAY_NAMES[di]} ${fmtDate(b.day)} · ${fmtT(b.start)}–${fmtTL(b.end)}</dd>
+      <dt>Délka</dt><dd class="mono">${fmtH(b.end-b.start)}</dd>
+      <dt>Jdou</dt><dd><div class="members">${memberChips(b)}</div></dd>
+    </dl>
+    ${note ? `<div class="dlg-note">${note}</div>` : ''}
+    <div class="field">
+      <span>Odkazy · Google Disk (${links.length})</span>
+      <div class="links">${linkRows || '<div class="links-empty">Zatím žádné odkazy. Hoď sem složku se stemy, bounce nebo projekt.</div>'}</div>
+      ${addForm}
+    </div>
+    <div class="dlg-actions">${actions}<button class="btn" data-close>Zavřít</button></div>`;
+
+  const j = $('#bJoin'); if (j) j.onclick = () => {
+    api.join(b.id, me);
+    flash('Přidal ses ●', `${b.owner} · ${DAY_NAMES[di]} ${fmtT(b.start)}–${fmtTL(b.end)}`);
+  };
+  const l = $('#bLeave'); if (l) l.onclick = () => {
+    api.leave(b.id, me); closeInspector();
+    flash('Odešel jsi ze session', `${b.owner} · ${DAY_NAMES[di]}`);
+  };
+  const ed = $('#bEdit'); if (ed) ed.onclick = () => openEditor(b, false);
+
+  const form = $('#linkForm');
+  if (form) form.onsubmit = e => {
+    e.preventDefault();
+    const url = normalizeUrl($('#lUrl').value);
+    if (!url){ $('#lErr').textContent = 'Tohle nevypadá jako odkaz'; $('#lUrl').focus(); return; }
+    if ((b.links || []).some(x => x.url === url)){ $('#lErr').textContent = 'Tenhle odkaz už tu je'; return; }
+    const label = $('#lName').value.trim();
+    $('#lUrl').value = ''; $('#lName').value = ''; $('#lErr').textContent = '';
+    api.addLink(b.id, { id:uid(), url, label, by:me, at:Date.now() });
+    flash('Odkaz přidán', label || linkInfo(url).kind);
+  };
+  $('#inspBody').querySelectorAll('[data-del]').forEach(btn => btn.onclick = () => {
+    const l = (b.links || []).find(x => x.id === btn.dataset.del);
+    if (l) api.removeLink(b.id, l);
+    flash('Odkaz odebrán', '');
+  });
+}
+
+/* ================== EDITOR (nová / úprava) ================== */
+function timeOptions(from, to, sel){
+  let o = '';
+  for (let m = from; m <= to; m += SNAP) o += `<option value="${m}"${m===sel?' selected':''}>${fmtTL(m)}</option>`;
+  return o;
+}
+
+function openEditor(b, isNew){
+  if (!b) return;
+  ins = { mode:'edit', isNew, orig:{ ...b, members:[...b.members] }, type:b.type, armDelete:false };
+  state.selected = isNew ? null : b.id;
+  if (isNew){ state.draft = b; state.mday = b.day; }
+  const body = $('#inspBody');
+  $('#inspTitle').textContent = isNew ? 'Nová session' : 'Upravit session';
+  const days = weekDays(); if (!days.includes(b.day)) days.unshift(b.day);
+  const others = b.members.filter(m => m !== b.owner);
+  body.innerHTML = `
+    <div class="field-row">
+      <label class="field"><span>Den</span><select id="fDay">${days.map(d => `<option value="${d}"${d===b.day?' selected':''}>${DAY_NAMES[dayIdx(d)]} ${fmtDate(d)}</option>`).join('')}</select></label>
+      <label class="field"><span>Od</span><select id="fStart">${timeOptions(MIN_START, MAX_END-30, b.start)}</select></label>
+      <label class="field"><span>Do</span><select id="fEnd">${timeOptions(MIN_START+30, MAX_END, b.end)}</select></label>
+    </div>
+    <div class="field"><span>Typ session</span>
+      <div class="seg" role="radiogroup">
+        <button type="button" role="radio" data-type="open"><i class="led"></i>Otevřená<small>ostatní se můžou přidat</small></button>
+        <button type="button" role="radio" data-type="private"><i class="led"></i>Soukromá<small>studio jen pro tebe</small></button>
+      </div>
+    </div>
+    <label class="field"><span>Poznámka</span><input type="text" id="fNote" maxlength="60" placeholder="např. nahráváme vokály" value="${esc(b.note||'')}"></label>
+    ${others.length ? `<div class="dlg-note" id="privWarn" hidden>Když session přepneš na soukromou, ${esc(others.join(', '))} z ní vypadne.</div>` : ''}
+    <div class="dlg-err" id="fErr"></div>
+    <div class="dlg-actions">
+      ${!isNew ? '<button class="btn danger" id="bDel">Smazat</button>' : ''}
+      <button class="btn" id="bCancel">${isNew ? 'Zrušit' : 'Zpět'}</button>
+      <button class="btn primary" id="bSave">${isNew ? '● Rezervovat' : 'Uložit'}</button>
+    </div>`;
+  const sync = () => {
+    body.querySelectorAll('.seg button').forEach(x => { const on = x.dataset.type === ins.type; x.classList.toggle('on', on); x.setAttribute('aria-checked', on); });
+    const w = $('#privWarn'); if (w) w.hidden = ins.type !== 'private';
+    const c = readForm();
+    $('#fErr').textContent = validate(c, isNew ? null : c.id, isNew ? null : ins.orig) || '';
+    if (isNew){ state.draft = c; state.mday = c.day; renderPlaylist(); }
+  };
+  body.querySelectorAll('.seg button').forEach(x => x.onclick = () => { ins.type = x.dataset.type; sync(); });
+  $('#fStart').onchange = () => { const s = +$('#fStart').value; if (+$('#fEnd').value <= s) $('#fEnd').value = Math.min(MAX_END, s+60); sync(); };
+  $('#fEnd').onchange = () => { const s = +$('#fStart').value; if (+$('#fEnd').value <= s) $('#fStart').value = Math.max(MIN_START, +$('#fEnd').value-60); sync(); };
+  $('#fDay').onchange = sync;
+  $('#fNote').oninput = () => { if (isNew){ state.draft = readForm(); renderPlaylist(); } };
+  $('#fNote').onkeydown = e => { if (e.key === 'Enter') saveEditor(); };
+  $('#bSave').onclick = saveEditor;
+  $('#bCancel').onclick = () => isNew ? closeInspector() : openDetail(find(b.id));
+  const del = $('#bDel');
+  if (del) del.onclick = () => {
+    if (!ins.armDelete){ ins.armDelete = true; del.classList.add('arm'); del.textContent = 'Opravdu smazat?'; return; }
+    deleteBooking(ins.orig.id);
+  };
+  sync();
+  showDialog();
+}
+
+function readForm(){
+  const cur = find(ins.orig.id);
+  return { ...ins.orig, members:[...ins.orig.members], links: cur ? (cur.links || []) : [],
+    day:$('#fDay').value, start:+$('#fStart').value, end:+$('#fEnd').value, type:ins.type, note:$('#fNote').value.trim() };
+}
+function saveEditor(){
+  const wasNew = ins.isNew;
+  const c = readForm();
+  if (c.type === 'private') c.members = [c.owner];
+  const err = validate(c, wasNew ? null : c.id, wasNew ? null : ins.orig);
+  if (err){ $('#fErr').textContent = err; return; }
+  if (wasNew) api.create(c);
+  else {
+    const patch = { day:c.day, start:c.start, end:c.end, type:c.type, note:c.note };
+    if (c.type === 'private') patch.members = c.members;   // jinak členy nepřepisuj (mohl se mezitím někdo přidat)
+    api.update(c.id, patch);
+  }
+  closeInspector();
+  if (!weekDays().includes(c.day)) state.week = startOfWeek(parseYmd(c.day));
+  state.mday = c.day;
+  renderAll();
+  flash(wasNew ? 'Zarezervováno ●' : 'Uloženo', `${DAY_NAMES[dayIdx(c.day)]} ${fmtT(c.start)}–${fmtTL(c.end)}`);
+}
+function deleteBooking(id){
+  const b = find(id);
+  api.remove(id); closeInspector();
+  if (b) flash('Smazáno', `${DAY_NAMES[dayIdx(b.day)]} ${fmtT(b.start)}–${fmtTL(b.end)}`);
+}
+function closeInspector(){
+  $('#inspBack').hidden = true; state.draft = null; state.selected = null; ins = null; renderPlaylist();
+}
+
+/* ================== CHANNEL RACK ================== */
+function openRack(){ renderRack(); $('#rackBack').hidden = false; $('#tRack').setAttribute('aria-pressed','true'); if (!isMobile()){ const b = $('#rackRows .rack-name'); if (b) b.focus(); } }
+function closeRack(){ $('#rackBack').hidden = true; $('#tRack').setAttribute('aria-pressed','false'); }
+$('#rackRows').addEventListener('click', e => {
+  const row = e.target.closest('.rack-row'); if (!row) return;
+  const b = row.querySelector('[data-user]');
+  state.user = b.dataset.user; store.setUser(state.user);
+  closeRack(); renderAll();
+  flash(`${state.user} armed ●`, 'Teď můžeš rezervovat a přidávat se');
+});
+
+/* ================== QUICK REC ================== */
+function quickRec(){
+  if (!state.user){ openRack(); return; }
+  const now = new Date(), today = ymd(now);
+  let days = weekDays().filter(d => d >= today);
+  if (state.view === 'day' && state.mday && days.includes(state.mday)) days = [state.mday, ...days.filter(d => d !== state.mday)];
+  for (const day of days){
+    const from = day === today ? Math.max(BASE_START, Math.ceil((now.getHours()*60+now.getMinutes()+1)/60)*60) : 18*60;
+    for (let s = from; s + 120 <= 1440; s += 30){
+      const b = { id:'__new', day, start:s, end:s+120, owner:state.user, type:'open', members:[state.user], note:'', links:[] };
+      if (!validate(b, null, null)){ openEditor(b, true); return; }
+    }
+  }
+  flash('Tento týden už nic volného', 'Zkus další týden', 'err');
+}
+
+/* ================== WIRING ================== */
+function goWeek(n){
+  const i = state.mday ? dayIdx(state.mday) : 0;
+  state.week = addDays(state.week, 7*n); state.mday = ymd(addDays(state.week, i));
+  renderAll(); flash(`Týden ${isoWeek(state.week)}`, $('#lcdRange').textContent);
+}
+function goNow(){
+  const now = new Date();
+  state.week = startOfWeek(now); state.mday = ymd(now); state.mScrolled = null;
+  if (isMobile() && state.mixer){ state.mixer = false; }
+  renderAll();
+  if (state.view === 'week' && !isMobile()){
+    const sc = $('#plScroll');
+    const x = ((now.getHours()*60 + now.getMinutes()) - state.range.s)/60*state.pxh;
+    sc.scrollLeft = Math.max(0, x - sc.clientWidth/2);
+  }
+  flash('Teď ▶', `${DAY_NAMES[(now.getDay()+6)%7]} ${fmtT(now.getHours()*60+now.getMinutes())}`);
+}
+$('#btnPrev').onclick = () => goWeek(-1);
+$('#btnNext').onclick = () => goWeek(1);
+$('#btnNow').onclick = goNow;
+$('#btnRec').onclick = quickRec;
+$('#fab').onclick = quickRec;
+$('#vWeek').onclick = () => setView('week');
+$('#vDay').onclick = () => { if (!state.mday || !weekDays().includes(state.mday)) state.mday = null; setView('day'); };
+$('#tMixer').onclick = () => { state.mixer = !state.mixer; renderTop(); renderMixer(); renderPlaylist(); };
+$('#mixerClose').onclick = () => { state.mixer = false; renderTop(); renderPlaylist(); };
+$('#tRack').onclick = () => $('#rackBack').hidden ? openRack() : closeRack();
+$('#userChip').onclick = openRack;
+
+document.querySelectorAll('.backdrop').forEach(bd => bd.addEventListener('click', e => {
+  if (e.target === bd || e.target.closest('[data-close]')){ bd.id === 'inspBack' ? closeInspector() : closeRack(); }
+}));
+
+document.addEventListener('keydown', e => {
+  const typing = e.target.matches && e.target.matches('input, select');
+  if (e.key === 'Escape'){
+    if (state.drag){ state.drag = null; renderPlaylist(); return; }
+    if (!$('#inspBack').hidden) closeInspector(); else if (!$('#rackBack').hidden && state.user) closeRack();
+    return;
+  }
+  if (e.key === 'F9'){ e.preventDefault(); $('#tMixer').click(); return; }
+  if (e.key === 'F6'){ e.preventDefault(); $('#tRack').click(); return; }
+  if (typing || !$('#inspBack').hidden || !$('#rackBack').hidden) return;
+  if (e.key === 'ArrowLeft') goWeek(-1);
+  else if (e.key === 'ArrowRight') goWeek(1);
+  else if (e.key === ' ' && !(e.target.closest && e.target.closest('.clip, button'))){ e.preventDefault(); goNow(); }
+  else if (e.key === 'r' || e.key === 'R') quickRec();
+  else if (e.key === 't' || e.key === 'T') setView('week');
+  else if (e.key === 'd' || e.key === 'D') setView('day');
+  else if (e.key === 'Delete'){
+    const el = document.activeElement && document.activeElement.closest && document.activeElement.closest('.clip');
+    const b = el && find(el.dataset.id);
+    if (b && b.owner === state.user && !isPast(b)){ openEditor(b, false); const d = $('#bDel'); if (d) d.click(); }
+  }
+});
+
+let wasMobile = isMobile();
+window.addEventListener('resize', () => {
+  const m = isMobile();
+  if (m !== wasMobile){ wasMobile = m; state.mixer = !m; state.mScrolled = null; renderAll(); }
+  else if (!state.drag) renderPlaylist();
+});
+setInterval(tickClock, 1000);
+setInterval(() => { if (!state.drag) renderPlaylist(); }, 30000);
+
+/* ================== INIT ================== */
+const savedUser = store.getUser();
+state.user = savedUser && P[savedUser] ? savedUser : null;
+tickClock();
+renderAll();
+if (!state.user) openRack();
+initBackend(onData).then(a => { api = a; });
+</script>
+</body>
+</html>

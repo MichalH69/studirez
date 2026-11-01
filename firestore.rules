@@ -1,0 +1,39 @@
+rules_version = '2';
+
+// Pravidla pro rezervace studia.
+// Appka je bez hesla: číst a zapisovat může kdokoli s odkazem,
+// ale do databáze projdou jen správně tvarované rezervace naší party.
+// Když přidáte člověka, doplňte ho sem i do PEOPLE v index.html.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function names() {
+      return ['Herb', 'Olb', 'Žaludos', 'Beky'];
+    }
+
+    function validBooking(d) {
+      return d.keys().hasOnly(['day', 'start', 'end', 'owner', 'type', 'members', 'note', 'links'])
+        && d.keys().hasAll(['day', 'start', 'end', 'owner', 'type', 'members'])
+        && d.day is string && d.day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && d.start is int && d.end is int
+        && d.start >= 480 && d.end <= 1800 && d.end - d.start >= 30
+        && d.owner in names()
+        && d.type in ['open', 'private']
+        && d.members is list && d.members.size() >= 1 && d.members.size() <= 4
+        && d.members.hasOnly(names()) && d.owner in d.members
+        && (!('note' in d) || (d.note is string && d.note.size() <= 60))
+        && (!('links' in d) || (d.links is list && d.links.size() <= 30));
+    }
+
+    match /bookings/{id} {
+      allow read: if true;
+      allow create, update: if validBooking(request.resource.data);
+      allow delete: if true;
+    }
+
+    // všechno ostatní zavřené
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
