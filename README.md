@@ -16,6 +16,7 @@ Data jsou ve Firebase Firestore, stránku hostuje GitHub Pages.
 - První ikona v nástrojích (nebo F5) otevře playlist se všemi odkazy na Google Disk ze všech session, nejnovější nahoře.
 - Audio soubory se samy stáhnou a spočítá se jejich waveform, peak a RMS. Výsledek se uloží do Firestore (kolekce `waves`), takže se každý soubor analyzuje jen jednou pro všechny. Na mobilu se analyzuje jen při otevřeném playlistu.
 - ▶ nebo klik do waveformu = přehrávání přímo na stránce, mezerník = play/pauza, po konci tracku hraje další. Složka se rozbalí na jednotlivé audio soubory.
+- 🔗 v rohu klipu ukáže odkaz na Disk (kopírovat, otevřít) a ve kterých session byl track přidaný. Tlačítko **Otevřít** skočí rovnou na session.
 - Soubory musí být sdílené „Kdokoli s odkazem“. Co prohlížeč neumí (třeba AIFF v Chrome) nebo co není sdílené veřejně, pustí přehrávač Google Disku.
 - Okno jde na počítači přesouvat za titulek a zvětšovat za pravý dolní roh. Hudba hraje dál i po zavření okna (zelená tečka na ikoně).
 

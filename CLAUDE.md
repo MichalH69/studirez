@@ -78,7 +78,9 @@ Ostatní `localStorage`: `studio-daw-user` (kdo jsem), `studio-daw-waves` (cache
    Jeden soubor naráz; na počítači běží na pozadí, na mobilu jen při otevřeném okně; limity 200 MB / 80 MB.
 4. Přehrávání: jeden `Audio` element se `src` přímo na Drive API (Range = funguje přetáčení),
    playhead přes `requestAnimationFrame`, Media Session (ovládání z lockscreenu), auto-přechod na další track.
-5. Záloha: bez klíče, u neveřejných souborů nebo formátů, které prohlížeč neumí (AIFF v Chrome),
+5. Ikonka 🔗 v rohu klipu (`trLinks`) otevře popover s odkazem (kopírovat/otevřít) a seznamem session, kde byl přidaný
+   (`refs` z `trCollect`); „Otevřít“ skočí na týden session a otevře její detail.
+6. Záloha: bez klíče, u neveřejných souborů nebo formátů, které prohlížeč neumí (AIFF v Chrome),
    hraje vložený přehrávač Google Disku (`/file/d/ID/preview`) v doku nad seznamem.
 
 **Proč v prohlížeči:** stránka je statická (GitHub Pages), žádný server. Drive API podporuje CORS a Range,
@@ -124,6 +126,9 @@ takže se nic nepřepočítává při změně velikosti okna. Zobrazení wavefor
   Lokální režim vynutíš zablokováním `https://www.gstatic.com/firebasejs/**`; testový režim přes tlačítko TEST.
 - Drive API mockuj routou na `https://www.googleapis.com/drive/v3/files**` (metadata JSON, `alt=media` s podporou Range).
   Mockovaná velká média se v headless Chrome rozjíždějí pomalu; to je artefakt mocku, ne chyba.
+- **Skutečné soubory přes Drive API opakovaně nestahuj.** Po pár desítkách stažení z jedné IP vrací Google na `alt=media`
+  stránku „Sorry… automated queries“ (403 bez CORS) na minuty až hodiny. Stránka to ukáže jako „DISK TEĎ NEDÁ STÁHNOUT“
+  a hraje přes přehrávač Disku. Pravidla ověřuj nanečisto přes Firebase Rules API `projects/studio-rezervace:test`.
 - Testovací audio generuj ffmpegem s neutrálními názvy. Výstup Pythonu pouštěj s `PYTHONIOENCODING=utf-8`.
 - Po testu smaž dočasné složky (hlavně stažené kopie songů).
 
