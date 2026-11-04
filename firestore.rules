@@ -25,10 +25,34 @@ service cloud.firestore {
         && (!('links' in d) || (d.links is list && d.links.size() <= 30));
     }
 
+    // Spočítaný waveform souboru z Google Disku (id dokumentu = id souboru na Disku).
+    // Počítá ho prohlížeč, který soubor uvidí první, ostatní si ho jen přečtou.
+    function validWave(d) {
+      return d.keys().hasOnly(['name', 'mime', 'size', 'sum', 'dur', 'ch', 'peak', 'rms', 'w', 'v', 'at'])
+        && d.keys().hasAll(['name', 'dur', 'w', 'v'])
+        && d.name is string && d.name.size() <= 200
+        && d.dur is number && d.dur > 0 && d.dur <= 14400
+        && d.w is string && d.w.size() <= 4000
+        && d.v is int
+        && (!('mime' in d) || (d.mime is string && d.mime.size() <= 100))
+        && (!('sum' in d) || (d.sum is string && d.sum.size() <= 64))
+        && (!('size' in d) || d.size is number)
+        && (!('ch' in d) || (d.ch is int && d.ch >= 1 && d.ch <= 32))
+        && (!('peak' in d) || d.peak is number)
+        && (!('rms' in d) || d.rms is number)
+        && (!('at' in d) || d.at is int);
+    }
+
     match /bookings/{id} {
       allow read: if true;
       allow create, update: if validBooking(request.resource.data);
       allow delete: if true;
+    }
+
+    match /waves/{id} {
+      allow read: if true;
+      allow create, update: if id.matches('^[A-Za-z0-9_-]{10,100}$') && validWave(request.resource.data);
+      allow delete: if false;
     }
 
     // všechno ostatní zavřené

@@ -421,6 +421,118 @@ select:focus,input:focus{outline:1px solid var(--orange)}
 .toast b{display:block; font-size:14px}
 .toast span{color:var(--dim); font-size:12px}
 
+/* ---------- TESTOVÝ REŽIM (tlačítko v titulku mixeru) ---------- */
+.mx-btn{
+  height:19px; display:inline-flex; align-items:center; gap:6px; padding:0 8px; cursor:pointer;
+  border:1px solid var(--line); border-radius:2px; background:linear-gradient(#3a444a,#2c3439); color:#9fb0b8;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.12em;
+}
+.mx-btn{white-space:nowrap; flex:none}
+.mx-btn:hover{color:#e3eaed}
+.mx-btn .led{width:7px; height:7px}
+.mx-btn[hidden]{display:none}
+#mxTest[aria-pressed="true"]{
+  color:var(--orange); box-shadow:inset 0 0 0 1px rgba(255,154,60,.4);
+  background:repeating-linear-gradient(135deg,rgba(255,154,60,.18) 0 5px,transparent 5px 10px),linear-gradient(#3a3430,#2c2a28);
+}
+#mxTest[aria-pressed="true"] .led{background:var(--orange); box-shadow:0 0 6px var(--orange)}
+#mxReset.arm{background:#8d2f27; color:#fff}
+.tlab{margin-left:5px; color:var(--orange); letter-spacing:.14em}
+.tlab[hidden]{display:none}
+body.test .topbar{border-bottom-color:var(--orange-dim)}
+
+/* ---------- TRACKY (playlist songů z Disku) ---------- */
+.tool{position:relative}
+.tool.live::after{content:""; position:absolute; top:3px; right:3px; width:5px; height:5px; border-radius:50%; background:var(--green); box-shadow:0 0 5px var(--green)}
+.tracks{
+  position:fixed; z-index:30; left:max(12px,calc(50% - 560px)); top:92px;
+  width:min(1120px,calc(100vw - 24px)); height:min(640px,calc(100vh - 108px)); min-width:440px; min-height:220px;
+  resize:both; overflow:hidden; box-shadow:0 14px 40px rgba(0,0,0,.65);
+}
+.tracks[hidden]{display:none}
+.tracks>.win-title{cursor:move; touch-action:none}
+.tr-bar{gap:8px; padding:4px 6px}
+.tr-tp{display:flex; gap:3px}
+.tr-tp .tbtn{width:30px; height:26px}
+.tr-tp .tbtn svg{width:13px; height:13px}
+.tr-bar .lcd{font-size:15px; padding:1px 6px; white-space:nowrap}
+.tr-bar .lcd small{font-size:11px; color:var(--dim); text-shadow:none}
+.tr-now{flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.2}
+.tr-now b{color:#e3e9ec; font-weight:600; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.tr-now small{font-size:11px; color:var(--dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.chip.ok{color:var(--green)} .chip.err{color:var(--red)} .chip.dim{color:var(--dim)}
+.tr-dock{flex:none; display:flex; align-items:center; gap:8px; padding:6px 8px; background:#1a2024; border-bottom:1px solid var(--line)}
+.tr-dock[hidden]{display:none}
+.tr-dock iframe{flex:1; min-width:0; height:96px; border:1px solid #000; border-radius:2px; background:#000}
+.dock-txt{width:170px; flex:none; display:flex; flex-direction:column; line-height:1.3; min-width:0}
+.dock-txt b{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.dock-txt small{color:var(--dim); font-size:11px}
+.tr-scroll{flex:1; min-height:0; overflow-y:auto; overflow-x:hidden; background:var(--bg1); overscroll-behavior:contain; touch-action:pan-y; --trW:236px; --trRow:66px}
+.tr-row{display:grid; grid-template-columns:var(--trW) minmax(0,1fr)}
+.tr-head{position:sticky; top:0; z-index:4}
+.tr-head .corner{position:static}
+.tr-head .ruler{position:relative; cursor:pointer}
+.tr-empty{padding:30px 18px; color:var(--dim); text-align:center; line-height:1.5}
+.th{
+  position:relative; height:var(--trRow); display:flex; align-items:center; gap:7px; padding:0 8px 0 11px; min-width:0;
+  background:linear-gradient(90deg,#3d474d,#353e44); border-bottom:1px solid var(--line); border-right:1px solid var(--line);
+}
+.th::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--c)}
+.th.on{background:linear-gradient(90deg,#4a4036,#3a332c)}
+.th.on .trk-txt b{color:var(--orange)}
+.th.kid{padding-left:24px; background:linear-gradient(90deg,#363f45,#30383d)}
+.th.kid::before{left:13px; width:2px; opacity:.7}
+.th-n{width:16px; flex:none; text-align:right; font-family:var(--mono); font-size:11px; color:var(--faint)}
+.th .trk-txt b{font-size:12.5px}
+.th .trk-txt small{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.th-play{
+  width:28px; height:28px; flex:none; border-radius:50%; border:1px solid var(--line); padding:0; cursor:pointer;
+  background:linear-gradient(#4a565d,#353f45); color:#cfd8dc; display:grid; place-items:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+}
+.th-play svg{width:11px; height:11px; fill:currentColor}
+.th-play:hover{color:#fff; background:linear-gradient(#56636b,#3d484e)}
+.th-play:disabled{opacity:.35; cursor:default}
+.th.on .th-play{color:var(--green); box-shadow:0 0 8px rgba(154,209,79,.4)}
+.th.grp .th-play{border-radius:3px; color:#f5c542}
+.th.grp .th-play svg{transition:transform .15s}
+.th.grp.open .th-play svg{transform:rotate(90deg)}
+.th-a{flex:none; width:24px; height:24px; display:grid; place-items:center; border-radius:2px; color:var(--faint)}
+.th-a svg{width:13px; height:13px}
+.th-a:hover,.th-a:focus-visible{color:var(--orange); background:#232b30; outline:none}
+.th-a[hidden]{display:none}
+.tr-bar>.th-a{color:var(--dim)}
+.tr-bar .lcd.buf{animation:lcdblink .9s ease-in-out infinite}
+@keyframes lcdblink{50%{opacity:.35}}
+.th .led{background:#2f3a2a}
+.th.au .led{background:#4f7a2c}
+.th.on .led{background:var(--green); box-shadow:0 0 7px var(--green)}
+.tl{
+  position:relative; height:var(--trRow); border-bottom:1px solid var(--line); min-width:0;
+  background-image:
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-half) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-a) 50%,var(--grid-b) 50%);
+  background-size:var(--st) 100%, calc(var(--st) / 2) 100%, calc(var(--st) * 2) 100%;
+}
+.tl.on{box-shadow:inset 0 0 0 9999px rgba(255,154,60,.035)}
+.tl .clip{left:1px; top:4px; bottom:4px; min-width:96px; max-width:calc(100% - 2px); touch-action:manipulation; container-type:inline-size}
+.tl .clip-row{background:color-mix(in srgb,var(--c) 30%,#161c1f)}
+.tl .clip-row svg{top:2px; height:calc(100% - 4px)}
+.tl .clip-row path{fill:color-mix(in srgb,var(--c) 78%,#fff)}
+.tl .clip-head .tm{font-size:10px}
+.clip.pend .clip-row svg{opacity:.3}
+.clip.pend .clip-body::after{content:""; position:absolute; inset:0; background:repeating-linear-gradient(135deg,rgba(0,0,0,.35) 0 4px,transparent 4px 9px)}
+.clip.pat .clip-body,.clip.fold .clip-body{background:color-mix(in srgb,var(--c) 16%,#161c1f)}
+.clip.pat{filter:saturate(.55)}
+.clip.fold{--c:#f5c542}
+.tst{position:absolute; inset:0; z-index:2; display:flex; align-items:center; justify-content:center; gap:6px; padding:0 6px; pointer-events:none; font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:#e9eef0; text-shadow:0 1px 2px #000; white-space:nowrap; overflow:hidden}
+.tst svg{width:14px; height:14px; flex:none}
+.tst i{position:absolute; left:0; bottom:0; height:2px; background:var(--orange); box-shadow:0 0 6px var(--orange)}
+.tinfo{position:absolute; right:4px; bottom:3px; z-index:2; pointer-events:none; font-family:var(--mono); font-size:10px; color:rgba(255,255,255,.85); text-shadow:0 1px 2px #000; white-space:nowrap; background:rgba(8,11,13,.55); padding:0 4px; border-radius:2px}
+@container (max-width:300px){ .tinfo{display:none} }
+.tph{position:absolute; top:0; bottom:0; left:0; width:0; z-index:3; pointer-events:none; border-left:1px solid #ffd7ad; box-shadow:0 0 7px rgba(255,154,60,.95)}
+.tpl{position:absolute; top:0; bottom:0; left:0; width:0; z-index:1; pointer-events:none; background:rgba(255,255,255,.08)}
+
 /* =================== MOBILE =================== */
 @media (max-width:760px){
   body{height:100dvh}
@@ -445,6 +557,9 @@ select:focus,input:focus{outline:1px solid var(--orange)}
   .tick.major span{font-size:10.5px; left:2px}
   .lane{cursor:pointer}
   #tRack{display:none}
+  .mixer>.win-title{height:40px; font-size:14px}
+  .mixer>.win-title .crumb,#mxCrumb{display:none}
+  .mx-btn{height:30px; font-size:12px; padding:0 10px}
   .vbtn{height:38px; padding:0 9px}
   .m-days{gap:3px}
   .m-day{min-height:56px}
@@ -476,7 +591,24 @@ select:focus,input:focus{outline:1px solid var(--orange)}
   .step{width:auto; flex:1; height:40px; min-width:0}
   .steps{flex:1}
 }
-@media (prefers-reduced-motion:reduce){ .meter i{animation:none} .toast{transition:none} }
+@media (max-width:760px){
+  .tracks{left:0 !important; top:0 !important; width:100% !important; height:100dvh !important; min-width:0; min-height:0; resize:none; z-index:45; padding-top:env(safe-area-inset-top)}
+  .tracks>.win-title{height:40px; font-size:14px; cursor:default}
+  .tr-bar{gap:6px}
+  .tr-tp .tbtn{width:40px; height:36px}
+  .tr-now{order:5; flex-basis:100%}
+  .tr-scroll{--trW:132px; --trRow:62px; padding-bottom:env(safe-area-inset-bottom)}
+  .th{gap:6px; padding:0 4px 0 9px}
+  .th.kid{padding-left:16px}
+  .th.kid::before{left:8px}
+  .th-n,.th .led,.th .th-a{display:none}
+  .th-play{width:32px; height:32px}
+  .tr-dock{flex-wrap:wrap}
+  .tr-dock iframe{height:80px; flex-basis:100%; order:3}
+  .dock-txt{width:auto; flex:1}
+  body.trk-open .fab{display:none}
+}
+@media (prefers-reduced-motion:reduce){ .meter i{animation:none} .toast{transition:none} .th.grp .th-play svg{transition:none} .tr-bar .lcd.buf{animation:none} }
 </style>
 </head>
 <body>
@@ -505,7 +637,7 @@ select:focus,input:focus{outline:1px solid var(--orange)}
     <button class="vbtn" id="vDay" aria-pressed="false" data-hint="Denní pohled|Jeden den na výšku · klávesa D"><i class="led"></i>DEN</button>
   </div>
   <div class="module lcdbox" data-hint="Číslo týdne|ISO týden a jeho rozsah">
-    <small>TÝDEN <i class="net" id="net"></i></small>
+    <small>TÝDEN <i class="net" id="net"></i><b class="tlab" id="testLab" hidden>TEST</b></small>
     <div class="lcd-row"><div class="lcd" id="lcdWeek">--</div><div class="lcd-sub" id="lcdRange"></div></div>
   </div>
   <div class="module lcdbox" id="timeBox" data-hint="Aktuální čas|Oranžová čára v playlistu">
@@ -513,6 +645,8 @@ select:focus,input:focus{outline:1px solid var(--orange)}
     <div class="lcd" id="lcdTime">--:--:--</div>
   </div>
   <div class="module tools">
+    <button class="tool" id="tTracks" aria-pressed="false" aria-label="Playlist – tracky z Google Disku" data-hint="Playlist – tracky|Všechny odkazy z Google Disku jako songy · F5">
+      <svg viewBox="0 0 18 18" fill="currentColor"><rect x="1.5" y="2.5" width="15" height="13" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 6.5h15M1.5 10.5h15" stroke="currentColor" stroke-width=".7" opacity=".55"/><rect x="3.3" y="4" width="6.2" height="2" rx=".4"/><rect x="7.6" y="7.9" width="7.1" height="2" rx=".4"/><rect x="4.6" y="11.9" width="4.8" height="2" rx=".4"/></svg></button>
     <button class="tool" id="tMixer" aria-pressed="true" aria-label="Mixer – statistiky" data-hint="Mixer – statistiky týdne|F9">
       <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 2v14M9 2v14M14 2v14"/><rect x="2" y="10" width="4" height="3" fill="currentColor"/><rect x="7" y="5" width="4" height="3" fill="currentColor"/><rect x="12" y="8" width="4" height="3" fill="currentColor"/></svg></button>
     <button class="tool" id="tRack" aria-pressed="false" aria-label="Channel rack – kdo jsi" data-hint="Channel rack – kdo jsi|F6">
@@ -555,11 +689,35 @@ select:focus,input:focus{outline:1px solid var(--orange)}
   <section class="win mixer" id="mixer" aria-label="Mixer">
     <div class="win-title">
       <span>Mixer</span><span class="crumb">›</span><span id="mxCrumb"></span><span class="sp"></span>
+      <button class="mx-btn" id="mxReset" hidden data-hint="Obnovit testová data|Vrátí testové session do původního stavu">↺ OBNOVIT</button>
+      <button class="mx-btn" id="mxTest" aria-pressed="false" data-hint="Testový režim|Ukázková data jen v tomhle prohlížeči, do databáze se nic nezapíše · stránka se přenačte"><i class="led"></i>TEST</button>
       <button class="win-x" id="mixerClose" aria-label="Zavřít mixer">✕</button>
     </div>
     <div class="mixer-body" id="mixerBody"></div>
   </section>
 </main>
+
+<!-- Playlist – tracky: všechny odkazy z Google Disku jako songy -->
+<section class="win tracks" id="tracks" hidden aria-label="Playlist – tracky z Google Disku">
+  <div class="win-title" id="trTitle">
+    <span>Playlist</span><span>–</span><span>Tracky</span><span class="crumb">›</span><span id="trCrumb"></span><span class="sp"></span>
+    <button class="win-x" id="trClose" aria-label="Zavřít playlist">✕</button>
+  </div>
+  <div class="win-toolbar tr-bar">
+    <div class="tr-tp">
+      <button class="tbtn" id="trPrev" aria-label="Předchozí track" data-hint="Předchozí track|"><svg viewBox="0 0 16 16"><path d="M2.5 3h2v10h-2zM14 3v10L5.5 8z"/></svg></button>
+      <button class="tbtn play" id="trPlay" aria-label="Přehrát" data-hint="Přehrát / pauza|Mezerník, když je playlist otevřený"></button>
+      <button class="tbtn" id="trStop" aria-label="Stop" data-hint="Stop|Zastaví a vrátí na začátek"><svg viewBox="0 0 16 16"><rect x="3" y="3" width="10" height="10" rx="1"/></svg></button>
+      <button class="tbtn" id="trNext" aria-label="Další track" data-hint="Další track|"><svg viewBox="0 0 16 16"><path d="M2 3v10l8.5-5zM11.5 3h2v10h-2z"/></svg></button>
+    </div>
+    <div class="lcd" id="trLcd" data-hint="Čas tracku|Uběhlo / celkem · bliká = načítá se"><span id="trT">0:00</span><small> / <span id="trD">0:00</span></small></div>
+    <div class="tr-now"><b id="trNowName">Nic nehraje</b><small id="trNowMeta"></small></div>
+    <a class="th-a" id="trOpen" target="_blank" rel="noopener noreferrer" hidden aria-label="Otevřít hrající track na Google Disku" data-hint="Otevřít na Google Disku|Hrající track"></a>
+    <span class="chip" id="trStat"></span>
+  </div>
+  <div class="tr-dock" id="trDock" hidden></div>
+  <div class="tr-scroll" id="trScroll"><div id="trGrid"></div></div>
+</section>
 
 <button class="fab" id="fab" aria-label="Nová session"><i></i>REC</button>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -611,12 +769,53 @@ const FIREBASE_CONFIG = {
 };
 const FB_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
 
+/* Google Drive API klíč pro playlist tracků (stažení, waveform, přehrávání tady na stránce).
+   Firebase klíč nahoře na Disk nesmí, proto vlastní. Postup je v README.
+   Dokud je tu null, tracky se jen vypíšou a hrají přes přehrávač Google Disku. */
+const DRIVE_API_KEY = null;
+
 /* Kdo jsem – pamatuje si jen tohle zařízení */
 const store = {
   userKey:'studio-daw-user',
   getUser(){ try { return localStorage.getItem(this.userKey); } catch(e){ return null; } },
   setUser(u){ try { localStorage.setItem(this.userKey, u); } catch(e){} },
 };
+
+/* ================== TESTOVÝ REŽIM ==================
+   Zapíná se tlačítkem TEST v titulku mixeru (F9). Data jsou jen v tomhle prohlížeči, do Firestore se nic nezapíše.
+   Proběhlé session s opravdovými bouncy z Disku. Kdo je kdo podle vlastníka souboru:
+   pepppler = Olb, martin.zaloudek = Žaludos, Herb byl u všech. */
+const TEST_FLAG = 'studio-daw-test';          // '1' = testový režim zapnutý
+const TEST_DATA = 'studio-daw-test-v1';       // data testového režimu
+const TEST_JUMP = 'studio-daw-test-jump';     // po zapnutí skočit na testová data
+const isTest = () => { try { return localStorage.getItem(TEST_FLAG) === '1'; } catch(e){ return false; } };
+function testSeed(){
+  const L = (id, label, by, iso) => ({ id:uid(), url:`https://drive.google.com/file/d/${id}/view?usp=drivesdk`, label, by, at:Date.parse(iso) });
+  const S = (day, start, end, owner, members, note, links) => ({ id:uid(), day, start:start*60, end:end*60, owner, type:'open', members, note, links });
+  return [
+    S('2025-06-25', 11, 15, 'Olb', ['Olb','Herb'], 'matches · 153 BPM',
+      [L('1toRG5eo7uQ3ipZwHbn2Ga_CYRDc0xB40', 'matches', 'Olb', '2025-06-25T12:48:54Z')]),
+    S('2025-11-17', 12, 16, 'Olb', ['Olb','Herb'], 'frankenstein · 149 BPM',
+      [L('11Fqf4CKka5SOUoCWNA7DDYWVa-xcoMRq', 'frankenstein', 'Olb', '2025-11-17T14:04:08Z')]),
+    S('2026-10-07', 16, 20.5, 'Žaludos', ['Žaludos','Herb'], 'aspartam (karcino) · 154 BPM',
+      [L('1fVgSkpwCej3syakhczgQIUHQ0y6XU1XL', 'aspartam (karcino) – demo', 'Žaludos', '2026-10-07T17:58:45Z')]),
+    S('2026-10-19', 17, 23.5, 'Žaludos', ['Žaludos','Herb','Olb'], 'BaliPregan master + KORBUT RECORD', [
+      L('1dnMW0JKklDWMcLDvxIsT0iwc4-Bu8DDB', 'BaliPregan (Lyrica) – master', 'Žaludos', '2026-10-19T16:46:06Z'),
+      L('1mALJff0pnPMIlB3QGNfq9YqVW_-XJRdL', 'KORBUT RECORD', 'Olb', '2026-10-19T20:53:36Z')]),
+    S('2026-10-31', 13, 17, 'Žaludos', ['Žaludos','Herb'], 'zlutas · 146 BPM',
+      [L('1WmL34GDih_bNpaIcGxl88Ow3pFVOAcqD', 'zlutas', 'Žaludos', '2026-10-31T15:18:19Z')]),
+  ];
+}
+function setTestMode(on, reset){
+  try {
+    localStorage.setItem(TEST_FLAG, on ? '1' : '0');
+    if (reset) localStorage.removeItem(TEST_DATA);
+    if (on) sessionStorage.setItem(TEST_JUMP, '1');
+  } catch(e){ flash('Nejde uložit nastavení', 'Prohlížeč nepovolil localStorage', 'err'); return; }
+  location.reload();
+}
+let testJump = false;
+try { testJump = isTest() && sessionStorage.getItem(TEST_JUMP) === '1'; sessionStorage.removeItem(TEST_JUMP); } catch(e){}
 
 /* ================== HELPERS ================== */
 const $ = s => document.querySelector(s);
@@ -682,16 +881,17 @@ const find = id => state.bookings.find(b => b.id === id);
 /* ================== BACKEND (Firestore / lokální) ==================
    Všechny zápisy jdou přes `api`. Data se vrací přes onData() – u Firestore živě od všech. */
 const notReady = async () => flash('Ještě se připojuju…', 'Zkus to za vteřinu', 'err');
-let api = { mode:'init', create:notReady, update:notReady, remove:notReady, join:notReady, leave:notReady, addLink:notReady, removeLink:notReady };
+let api = { mode:'init', create:notReady, update:notReady, remove:notReady, join:notReady, leave:notReady, addLink:notReady, removeLink:notReady, saveWave:async () => {} };
 
 function setNet(mode){
   const el = $('#net'); if (!el) return;
-  el.className = 'net ' + mode;
-  el.title = { on:'Online – synchronizováno se všemi', local:'Lokální režim – data jen v tomhle prohlížeči', err:'Spojení s databází selhalo' }[mode] || '';
+  el.className = 'net ' + (mode === 'test' ? 'local' : mode);
+  el.title = { on:'Online – synchronizováno se všemi', local:'Lokální režim – data jen v tomhle prohlížeči', test:'Testový režim – ukázková data jen v tomhle prohlížeči', err:'Spojení s databází selhalo' }[mode] || '';
   el.parentElement.parentElement.dataset.hint = `Týden · ${el.title}|ISO týden a jeho rozsah`;
 }
 
 async function initBackend(onData){
+  if (isTest()) return localBackend(onData, TEST_DATA, testSeed);
   if (!FIREBASE_CONFIG) return localBackend(onData);
   try {
     const [{ initializeApp }, fs] = await Promise.all([ import(FB_SDK + 'firebase-app.js'), import(FB_SDK + 'firebase-firestore.js') ]);
@@ -704,6 +904,10 @@ async function initBackend(onData){
     fs.onSnapshot(col,
       snap => { setNet('on'); onData(snap.docs.map(d => ({ id:d.id, ...d.data() }))); },
       err => { setNet('err'); flash('Spojení s databází selhalo', err.code || err.message, 'err'); });
+    // spočítané waveformy tracků – sdílené, ať se každý soubor stahuje a analyzuje jen jednou
+    fs.onSnapshot(fs.collection(db, 'waves'),
+      snap => onWaves(snap.docs.map(d => ({ id:d.id, ...d.data() }))),
+      () => {});   // dokud nejsou v konzoli nová pravidla, drží se waveformy jen v prohlížeči
     const w = p => p.catch(err => { flash('Nepodařilo se uložit', err.code || err.message, 'err'); });
     const clean = b => ({ day:b.day, start:b.start, end:b.end, owner:b.owner, type:b.type, members:b.members, note:b.note || '', links:b.links || [] });
     return {
@@ -715,6 +919,7 @@ async function initBackend(onData){
       leave:      (id, u) => w(fs.updateDoc(ref(id), { members: fs.arrayRemove(u) })),
       addLink:    (id, l) => w(fs.updateDoc(ref(id), { links: fs.arrayUnion(l) })),
       removeLink: (id, l) => w(fs.updateDoc(ref(id), { links: fs.arrayRemove(l) })),
+      saveWave:   (id, d) => fs.setDoc(fs.doc(db, 'waves', id), d).catch(() => {}),
     };
   } catch(e){
     console.error(e);
@@ -723,19 +928,19 @@ async function initBackend(onData){
   }
 }
 
-function localBackend(onData){
-  const key = 'studio-daw-v2';
-  let list = [];
-  try { list = (JSON.parse(localStorage.getItem(key) || '{}').bookings) || []; } catch(e){}
+function localBackend(onData, key = 'studio-daw-v2', seed = null){
+  let list = null;
+  try { const raw = localStorage.getItem(key); if (raw) list = JSON.parse(raw).bookings; } catch(e){}
+  if (!Array.isArray(list)) list = seed ? seed() : [];
   const commit = () => {
     try { localStorage.setItem(key, JSON.stringify({ bookings:list })); } catch(e){}
     onData(list.map(b => ({ ...b, members:[...b.members], links:[...(b.links || [])] })));
   };
   const get = id => list.find(b => b.id === id);
-  setNet('local');
+  setNet(seed ? 'test' : 'local');
   setTimeout(commit, 0);
   return {
-    mode:'local',
+    mode:       seed ? 'test' : 'local',
     create:     async b       => { list.push({ ...b, id:uid(), links:b.links || [] }); commit(); },
     update:     async (id, p) => { const b = get(id); if (b){ Object.assign(b, p); commit(); } },
     remove:     async id      => { list = list.filter(b => b.id !== id); commit(); },
@@ -743,11 +948,20 @@ function localBackend(onData){
     leave:      async (id, u) => { const b = get(id); if (b){ b.members = b.members.filter(m => m !== u); commit(); } },
     addLink:    async (id, l) => { const b = get(id); if (b){ b.links = [...(b.links || []), l]; commit(); } },
     removeLink: async (id, l) => { const b = get(id); if (b){ b.links = (b.links || []).filter(x => x.id !== l.id); commit(); } },
+    saveWave:   async () => {},   // waveformy se v lokálním režimu drží v cache prohlížeče
   };
 }
 
 function onData(list){
   state.bookings = list.map(b => ({ ...b, members:b.members || [], links:b.links || [] }));
+  if (testJump){
+    testJump = false;
+    const last = state.bookings.map(b => b.day).filter(d => d <= ymd(new Date())).sort().pop();
+    if (last){ state.week = startOfWeek(parseYmd(last)); state.mday = last; }
+    flash('Testový režim ●', `${state.bookings.length} proběhlých session · data jen v tomhle prohlížeči`);
+    setTimeout(openTracks, 0);
+  }
+  trSync();
   if (state.drag) return;              // po puštění se překreslí samo
   renderTop(); renderPlaylist(); renderMixer();
   if (!$('#rackBack').hidden) renderRack();
@@ -1430,6 +1644,531 @@ function quickRec(){
   flash('Tento týden už nic volného', 'Zkus další týden', 'err');
 }
 
+/* ================== TRACKY – playlist songů z Google Disku ==================
+   Všechny odkazy na Disk ze všech session jako jeden seznam (nejnovější nahoře).
+   Audio se samo stáhne přes Drive API, spočítá se z něj waveform a uloží se do Firestore
+   (kolekce `waves`), takže se každý soubor analyzuje jen jednou pro všechny.
+   Přehrává se přímo tady; co prohlížeč neumí, pustí přehrávač Google Disku. */
+const DRIVE_API = 'https://www.googleapis.com/drive/v3/files';
+const FOLDER_MIME = 'application/vnd.google-apps.folder';
+const AUDIO_RE = /\.(wav|wave|mp3|m4a|aac|flac|ogg|oga|opus|aif|aiff|webm)$/i;
+const WAVE_N = 600;                                    // sloupců ve waveformu
+const maxBytes = () => (isMobile() ? 80 : 200) * 1e6;  // větší soubory se jen přehrávají, neanalyzují
+const FATAL = ['accessNotConfigured','SERVICE_DISABLED','API_KEY_SERVICE_BLOCKED','API_KEY_INVALID','API_KEY_HTTP_REFERRER_BLOCKED','keyInvalid'];
+const ICON_PLAY  = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg>';
+const ICON_PAUSE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>';
+const ICON_CHEV  = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5l6 5.5-6 5.5z"/></svg>';
+const ICON_EXT   = '<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5h4v4M13.5 2.5l-6 6"/><path d="M12 9.5v3.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-8a.5.5 0 0 1 .5-.5H7"/></svg>';
+
+const tr = {
+  open:false, list:[], rows:[], known:{}, span:180, exp:new Set(),
+  drv:{},          // id → { st:'load'|'ok'|'err', meta, kids, err } z Drive API
+  waves:{},        // id → { dur, w, peak, rms, ch, sum, name, … } spočítané waveformy
+  bad:{},          // id → proč analýza selhala
+  job:null,        // právě analyzovaný soubor { id, pct, phase }
+  busy:false, apiErr:null,
+  cur:null, playing:false, seek:0, blob:null, prev:null,
+};
+const apiOn = () => !!DRIVE_API_KEY && !tr.apiErr;
+const plural = (n, a, b, c) => n === 1 ? a : n >= 2 && n <= 4 ? b : c;
+const fmtS = s => { s = Math.max(0, Math.floor(s || 0)); return `${Math.floor(s/60)}:${pad(s%60)}`; };
+const fmtDb = v => `${v < 0 ? '−' : v > 0 ? '+' : ''}${Math.abs(v).toFixed(1).replace('.',',')} dB`;
+const rkH = (id, rk) => rk ? `${id}/${rk}` : '';
+const metaOf = id => tr.drv[id] && tr.drv[id].meta;
+const rkOf = r => { const m = metaOf(r.id); return (m && m.resourceKey) || r.rk || ''; };
+const trFind = id => tr.known[id];
+
+/* --- cache waveformů v prohlížeči (funguje i bez Firestore pravidel) --- */
+const WAVE_KEY = 'studio-daw-waves';
+try { Object.assign(tr.waves, JSON.parse(localStorage.getItem(WAVE_KEY) || '{}')); } catch(e){}
+let waveSaveT = null;
+function cacheWaves(){
+  clearTimeout(waveSaveT);
+  waveSaveT = setTimeout(() => {
+    const keep = Object.entries(tr.waves).sort((a,b) => (b[1].at || 0) - (a[1].at || 0)).slice(0, 150);
+    try { localStorage.setItem(WAVE_KEY, JSON.stringify(Object.fromEntries(keep))); } catch(e){}
+  }, 400);
+}
+// soubory, které tenhle prohlížeč neumí dekódovat (třeba AIFF v Chrome) – ať se nestahují pořád dokola
+const BAD_KEY = 'studio-daw-wavebad';
+try { Object.assign(tr.bad, JSON.parse(localStorage.getItem(BAD_KEY) || '{}')); } catch(e){}
+const sumOf = m => String((m && (m.md5Checksum || m.size)) || '').slice(0,64);
+function onWaves(list){
+  let changed = false;
+  for (const w of list){
+    if (!w || typeof w.w !== 'string' || !(w.dur > 0)) continue;
+    const o = tr.waves[w.id];
+    if (!o || o.sum !== w.sum || o.w !== w.w){ tr.waves[w.id] = w; changed = true; }
+  }
+  if (changed){ cacheWaves(); trRefresh(); }
+}
+
+/* --- odkazy → tracky --- */
+function driveRef(url){
+  let u; try { u = new URL(url); } catch(e){ return null; }
+  const host = u.hostname.replace(/^www\./,'');
+  if (!/^https?:$/.test(u.protocol) || (host !== 'drive.google.com' && host !== 'docs.google.com')) return null;
+  const m = u.pathname.match(/\/(?:d|folders)\/([\w-]{10,})/);
+  const id = m ? m[1] : u.searchParams.get('id');
+  if (!id || !/^[\w-]{10,}$/.test(id)) return null;
+  return { id, rk:u.searchParams.get('resourcekey') || '', folder:u.pathname.includes('/folders/'), doc:host === 'docs.google.com' };
+}
+function trCollect(){
+  const map = new Map();
+  for (const b of state.bookings) for (const l of (b.links || [])){
+    const r = driveRef(l.url); if (!r) continue;
+    const at = l.at || 0;
+    let t = map.get(r.id);
+    if (!t) map.set(r.id, t = { ...r, url:l.url, label:'', by:l.by, at, day:b.day });
+    else if (at < t.at) Object.assign(t, { url:l.url, by:l.by, at, day:b.day, rk:r.rk || t.rk });
+    if (l.label && !t.label) t.label = l.label;
+  }
+  return [...map.values()].sort((a,b) => b.at - a.at);
+}
+function trRows(){
+  const rows = [];
+  for (const t of tr.list){
+    const d = tr.drv[t.id];
+    if (t.folder || (d && d.meta && d.meta.mimeType === FOLDER_MIME)){
+      rows.push({ ...t, kind:'folder' });
+      if (tr.exp.has(t.id) && d && d.kids) for (const k of d.kids)
+        rows.push({ id:k.id, rk:k.resourceKey || '', kind:'kid', parent:t.id, by:t.by, at:t.at, day:t.day, label:'', url:`https://drive.google.com/file/d/${k.id}/view` });
+    } else rows.push({ ...t, kind:'file' });
+  }
+  for (const r of rows) tr.known[r.id] = r;
+  return rows;
+}
+function trName(r){
+  if (r.label) return r.label;
+  const m = metaOf(r.id), w = tr.waves[r.id], n = (m && m.name) || (w && w.name);
+  if (n) return r.kind === 'folder' ? n : n.replace(/\.[^.]{1,5}$/, '');
+  return r.kind === 'folder' ? 'Složka na Disku' : r.doc ? linkInfo(r.url).kind : 'Soubor na Disku';
+}
+function extOf(r){
+  const m = metaOf(r.id), w = tr.waves[r.id], x = ((m && m.name) || (w && w.name) || '').match(/\.(\w{1,5})$/);
+  return x ? x[1].toUpperCase() : '';
+}
+const isAudio = m => !!m && (/^audio\//.test(m.mimeType || '') || (AUDIO_RE.test(m.name || '') && !/^application\/vnd\.google-apps/.test(m.mimeType || '')));
+function kindOf(m, r){
+  if (!m) return linkInfo(r.url).kind;
+  const t = m.mimeType || '';
+  if (/\.flp$/i.test(m.name || '')) return 'FL projekt';
+  if (t.includes('google-apps.document')) return 'Dokument';
+  if (t.includes('google-apps.spreadsheet')) return 'Tabulka';
+  if (t.includes('google-apps.presentation')) return 'Prezentace';
+  if (t === 'application/pdf') return 'PDF';
+  if (/zip|rar|7z|compressed/.test(t)) return 'Archiv';
+  if (t.startsWith('image/')) return 'Obrázek';
+  if (t.startsWith('video/')) return 'Video';
+  return extOf(r) || 'Soubor';
+}
+function trInfo(r){
+  const d = tr.drv[r.id], m = d && d.meta, w = tr.waves[r.id];
+  if (r.kind === 'folder') return { s:'folder' };
+  if (r.doc) return { s:'other', txt:kindOf(m, r) };
+  if (w && (!m || !m.md5Checksum || w.sum === m.md5Checksum)) return { s:'ready', w };
+  if (!apiOn()) return { s:'noapi', txt:'▶ PŘES PŘEHRÁVAČ DISKU' };
+  if (!d || d.st === 'load') return { s:'meta', txt:'NAČÍTÁM…' };
+  if (d.st === 'err') return { s:'err', txt:d.err === 'notFound' ? 'NENÍ SDÍLENÝ ODKAZEM' : 'NEDOSTUPNÝ' };
+  if (!isAudio(m)) return { s:'other', txt:kindOf(m, r) };
+  if (tr.job && tr.job.id === r.id) return { s:'job' };
+  const bad = tr.bad[r.id];
+  if (bad && bad.sum === sumOf(m)) return { s:'bad', txt:bad.txt };
+  if (+m.size > maxBytes()) return { s:'big', txt:'MOC VELKÝ NA ANALÝZU' };
+  return { s:'wait', txt:'ČEKÁ NA ANALÝZU' };
+}
+// 'api' = hraje náš přehrávač, 'prev' = přehrávač Google Disku, null = není co hrát
+function trHow(r){
+  if (!r || r.kind === 'folder') return null;
+  const s = trInfo(r).s;
+  if (s === 'other') return null;
+  return apiOn() && s !== 'err' ? 'api' : 'prev';
+}
+
+/* --- Google Drive API --- */
+async function gd(id, params, rkHeader){
+  const q = new URLSearchParams({ ...params, supportsAllDrives:'true', key:DRIVE_API_KEY });
+  const res = await fetch(`${DRIVE_API}${id ? '/' + id : ''}?${q}`, rkHeader ? { headers:{ 'X-Goog-Drive-Resource-Keys':rkHeader } } : {});
+  if (res.ok) return res;
+  let reason = 'HTTP ' + res.status;
+  try { const er = (await res.json()).error || {}; reason = ((er.details || []).find(x => x.reason) || {}).reason || ((er.errors || [])[0] || {}).reason || er.status || reason; } catch(e){}
+  if (FATAL.includes(reason)){ tr.apiErr = reason; console.warn('Drive API odmítlo klíč:', reason); }
+  throw Object.assign(new Error(reason), { reason });
+}
+async function trMeta(t){
+  if (tr.drv[t.id]) return;
+  const d = tr.drv[t.id] = { st:'load' };
+  try {
+    d.meta = await (await gd(t.id, { fields:'id,name,mimeType,size,md5Checksum,resourceKey' }, rkH(t.id, t.rk))).json();
+    if (d.meta.mimeType === FOLDER_MIME){
+      const j = await (await gd('', { q:`'${t.id}' in parents and trashed=false`, orderBy:'name', pageSize:'200', includeItemsFromAllDrives:'true',
+        fields:'files(id,name,mimeType,size,md5Checksum,resourceKey)' }, rkH(t.id, t.rk || d.meta.resourceKey))).json();
+      d.kids = (j.files || []).filter(isAudio);
+      for (const k of d.kids) if (!tr.drv[k.id]) tr.drv[k.id] = { st:'ok', meta:k };
+    }
+    d.st = 'ok';
+  } catch(e){ d.st = 'err'; d.err = e.reason || e.message; }
+  trRefresh(); trPump();
+}
+function trSync(){
+  tr.list = trCollect();
+  if (apiOn() && (tr.open || !isMobile())) for (const t of tr.list) if (!t.doc) trMeta(t);
+  trRefresh(); trPump();
+}
+
+/* --- automatická analýza: stáhnout → dekódovat → waveform + peak/RMS --- */
+async function trPump(){
+  if (tr.busy || !apiOn() || (!tr.open && isMobile())) return;   // na mobilu jen při otevřeném playlistu
+  const r = trRows().find(x => trInfo(x).s === 'wait'); if (!r) return;
+  tr.busy = true;
+  try { await trAnalyze(r); }
+  catch(e){
+    console.warn('Analýza tracku selhala', r.id, e);
+    const txt = e.decode ? 'FORMÁT NEJDE ANALYZOVAT' : e.reason === 'notFound' ? 'NENÍ SDÍLENÝ ODKAZEM' : /quota/i.test(e.reason || '') ? 'DISK TEĎ NEDÁ STÁHNOUT' : 'ANALÝZA SELHALA';
+    tr.bad[r.id] = { txt, sum:sumOf(metaOf(r.id)), perm:!!e.decode };
+    const perm = Object.entries(tr.bad).filter(([, v]) => v.perm);
+    try { localStorage.setItem(BAD_KEY, JSON.stringify(Object.fromEntries(perm))); } catch(_){}
+  }
+  tr.busy = false; tr.job = null;
+  trRefresh();
+  setTimeout(trPump, 250);
+}
+async function trAnalyze(r){
+  const m = metaOf(r.id);
+  tr.job = { id:r.id, pct:0, phase:'dl', t:0 }; trRefresh();
+  const res = await gd(r.id, { alt:'media' }, rkH(r.id, rkOf(r)));
+  const total = +res.headers.get('content-length') || +m.size || 0;
+  const parts = []; let got = 0;
+  if (res.body && res.body.getReader){
+    const rd = res.body.getReader();
+    for (;;){
+      const { done, value } = await rd.read(); if (done) break;
+      parts.push(value); got += value.length;
+      if (total){ tr.job.pct = Math.min(1, got/total); trJobPaint(); }
+    }
+  } else parts.push(await res.arrayBuffer());
+  const buf = await new Blob(parts).arrayBuffer();
+  parts.length = 0;
+  tr.job.phase = 'an'; trJobPaint(true);
+  await new Promise(ok => setTimeout(ok, 30));
+  const w = { ...waveOf(await decodeAudio(buf)),
+    name:String(m.name || '').slice(0,200), mime:String(m.mimeType || '').slice(0,100),
+    size:+m.size || 0, sum:sumOf(m), v:1, at:Date.now() };
+  tr.waves[r.id] = { id:r.id, ...w }; cacheWaves();
+  api.saveWave(r.id, w);
+}
+function decodeAudio(buf){
+  const C = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  return new Promise((ok, ko) => {
+    const fail = e => ko({ decode:true, e });
+    try { const p = new C(1, 1, 44100).decodeAudioData(buf, ok, fail); if (p && p.catch) p.catch(fail); } catch(e){ fail(e); }
+  });
+}
+function waveOf(ab){
+  const N = WAVE_N, len = ab.length, chs = [];
+  for (let c = 0; c < ab.numberOfChannels; c++) chs.push(ab.getChannelData(c));
+  const out = new Uint8Array(N*2); let pk = 0, sq = 0;
+  for (let i = 0; i < N; i++){
+    const a = Math.floor(i*len/N), z = Math.min(len, Math.max(a+1, Math.floor((i+1)*len/N)));
+    let hi = 0, lo = 0;
+    for (const ch of chs) for (let j = a; j < z; j++){ const v = ch[j]; if (v > hi) hi = v; else if (v < lo) lo = v; sq += v*v; }
+    out[i] = Math.round(Math.min(1, hi)*255); out[N+i] = Math.round(Math.min(1, -lo)*255);
+    if (hi > pk) pk = hi; if (-lo > pk) pk = -lo;
+  }
+  const db = x => Math.round(Math.max(-99, 20*Math.log10(x || 1e-9))*10)/10;
+  return { dur:Math.round(ab.duration*100)/100, ch:ab.numberOfChannels, peak:db(pk), rms:db(Math.sqrt(sq/Math.max(1, len*chs.length))), w:btoa(String.fromCharCode(...out)) };
+}
+const wavePaths = {};
+function realPath(w){
+  const k = `${w.id}:${w.sum}:${w.w.length}`;
+  if (wavePaths[k]) return wavePaths[k];
+  try {
+    const s = atob(w.w), N = s.length >> 1, T = [], B = [];
+    if (!N) return null;
+    // zobrazení je normalizované (tichý stem je taky vidět), max +16 dB, ať se nezesiluje šum
+    let mx = 1; for (let i = 0; i < s.length; i++) mx = Math.max(mx, s.charCodeAt(i));
+    const g = Math.min(6, 255 / mx) / 255 * 47;
+    for (let i = 0; i < N; i++){
+      T.push(`${i+.5} ${(50 - Math.max(.6, s.charCodeAt(i)*g)).toFixed(1)}`);
+      B.push(`${i+.5} ${(50 + Math.max(.6, s.charCodeAt(N+i)*g)).toFixed(1)}`);
+    }
+    return wavePaths[k] = { n:N, d:`M0 50L${T.join('L')}L${N} 50L${B.reverse().join('L')}Z` };
+  } catch(e){ return null; }
+}
+
+/* --- vykreslení okna --- */
+let trRaf = 0;
+function trRefresh(){ if (!trRaf) trRaf = requestAnimationFrame(() => { trRaf = 0; renderTracks(); }); }
+
+function renderTracks(){
+  $('#tTracks').classList.toggle('live', tr.playing || !!tr.prev);
+  if (!tr.open) return;
+  const rows = tr.rows = trRows(), n = tr.list.length;
+  $('#trCrumb').textContent = n ? `${n} ${plural(n, 'track', 'tracky', 'tracků')}` : 'prázdno';
+  let mx = 0;
+  for (const r of rows){ const w = tr.waves[r.id]; if (w && w.dur > mx) mx = w.dur; }
+  const span = tr.span = Math.max(60, Math.ceil((mx || 180) * 1.04 / 30) * 30);
+  const step = [10, 15, 30, 60, 120, 300, 600].find(s => span / s <= 10) || 600;
+  let rul = '';
+  for (let s = 0; s < span; s += step/2){
+    const L = (s/span*100).toFixed(3);
+    rul += s % step === 0 ? `<div class="tick major" style="left:${L}%"><span>${fmtS(s)}</span></div>` : `<div class="tick minor" style="left:${L}%"></div>`;
+  }
+  rul += '<div class="ph-mark" id="trMark" hidden></div>';
+  let html = `<div class="tr-row tr-head"><div class="corner">TRACK</div><div class="ruler" id="trRuler" data-hint="Časová osa|Klikni a přetoč hrající track">${rul}</div></div>`;
+  let num = 0;
+  for (const r of rows) html += trRowHTML(r, r.kind === 'kid' ? '' : ++num, span);
+  if (!rows.length) html += `<div class="tr-empty">Zatím tu nejsou žádné odkazy na Google Disk.<br>Otevři session v arrangementu a přidej odkaz na bounce, demo nebo složku se stemy.</div>`;
+  const g = $('#trGrid');
+  g.style.setProperty('--st', (step/span*100) + '%');
+  g.innerHTML = html;
+  trStatPaint(); trNowPaint(); trHeadPaint();
+}
+
+function trRowHTML(r, num, span){
+  const inf = trInfo(r), name = trName(r), m = metaOf(r.id);
+  const c = (P[r.by] && P[r.by].color) || '#9fb0b8';
+  const on = tr.cur === r.id || tr.prev === r.id, playing = tr.cur === r.id && tr.playing;
+  const fold = r.kind === 'folder', open = fold && tr.exp.has(r.id);
+  const sub = r.kind === 'kid'
+    ? [extOf(r), m && m.size ? (m.size/1e6).toFixed(1).replace('.',',') + ' MB' : ''].filter(Boolean).join(' · ')
+    : [r.by, r.day ? `${DAY_SHORT[dayIdx(r.day)]} ${fmtDate(r.day)}` : ''].filter(Boolean).join(' · ');
+  const btn = fold
+    ? `<button class="th-play" data-fold="${r.id}" aria-expanded="${open}" aria-label="${open ? 'Sbalit' : 'Rozbalit'} složku ${esc(name)}">${ICON_CHEV}</button>`
+    : `<button class="th-play" data-play="${r.id}"${trHow(r) ? '' : ' disabled'} aria-label="${playing ? 'Pauza' : 'Přehrát'} ${esc(name)}">${playing ? ICON_PAUSE : ICON_PLAY}</button>`;
+  const cls = ['th', on ? 'on' : '', r.kind === 'kid' ? 'kid' : '', fold ? 'grp' : '', open ? 'open' : '', inf.w ? 'au' : ''].join(' ');
+  return `<div class="tr-row"><div class="${cls}" style="--c:${c}" data-hint="${esc(name)}|${esc(sub)}">
+      <span class="th-n">${num}</span>${btn}
+      <div class="trk-txt"><b>${esc(name)}</b><small>${esc(sub)}</small></div>
+      <a class="th-a" href="${esc(r.url)}" target="_blank" rel="noopener noreferrer" aria-label="Otevřít ${esc(name)} na Google Disku" data-hint="Otevřít na Google Disku|${esc(name)}">${ICON_EXT}</a><i class="led"></i>
+    </div><div class="tl${on ? ' on' : ''}" data-t="${r.id}">${trClipHTML(r, inf, name, c, span)}</div></div>`;
+}
+
+function trClipHTML(r, inf, name, c, span){
+  const id = r.id;
+  if (r.kind === 'folder'){
+    const d = tr.drv[id], k = d && d.kids;
+    const txt = k ? (k.length ? `${k.length} ${plural(k.length, 'audio soubor', 'audio soubory', 'audio souborů')} · ${tr.exp.has(id) ? 'sbalit' : 'rozbalit'}` : 'žádné audio')
+      : !apiOn() ? 'složka · otevřít na Disku ↗' : d && d.st === 'err' ? 'nedostupná' : 'načítám…';
+    return `<div class="clip fold" data-t="${id}" tabindex="0" role="button" aria-label="Složka ${esc(name)}" style="width:300px"><div class="clip-head">${ICON_FOLDER}<span class="nm">${esc(name)}</span></div><div class="clip-body"><span class="tst">${esc(txt.toUpperCase())}</span></div></div>`;
+  }
+  if (inf.s === 'other')
+    return `<div class="clip pat" data-t="${id}" tabindex="0" role="button" aria-label="Otevřít ${esc(name)} na Google Disku" style="width:250px;--c:${c}"><div class="clip-head"><span class="nm">${esc(name)}</span></div><div class="clip-body"><span class="tst">${ICON_DOC}${esc(inf.txt.toUpperCase())} · OTEVŘÍT ↗</span></div></div>`;
+  const w = inf.w, p = w && realPath(w);
+  const W = w ? w.dur / span * 100 : Math.min(100, 150 / span * 100);
+  const wave = p
+    ? `<svg viewBox="0 0 ${p.n} 100" preserveAspectRatio="none" aria-hidden="true"><path d="${p.d}"/></svg>`
+    : `<svg viewBox="0 0 128 20" preserveAspectRatio="none" aria-hidden="true"><path d="${wavePath(id)}"/></svg>`;
+  const tm = [w ? fmtS(w.dur) : '', extOf(r)].filter(Boolean).join(' · ');
+  const info = w ? `${w.ch === 1 ? 'mono' : w.ch === 2 ? 'stereo' : (w.ch || '?') + ' ch'} · peak ${fmtDb(w.peak)} · RMS ${fmtDb(w.rms)}` : '';
+  const st = inf.s === 'ready' ? '' : inf.s === 'job' ? trJobText() : esc(inf.txt || '');
+  const hint = w ? `${name}|${fmtS(w.dur)} · ${info} · klik do waveformu = přehrát odtud` : `${name}|${inf.txt || ''}`;
+  return `<div class="clip${p ? '' : ' pend'}" data-t="${id}" tabindex="0" role="button" aria-label="Přehrát ${esc(name)}" data-hint="${esc(hint)}" style="width:${W.toFixed(3)}%;--c:${c}">
+    <div class="clip-head"><span class="nm">${esc(name)}</span>${tm ? `<span class="tm">${esc(tm)}</span>` : ''}</div>
+    <div class="clip-body"><div class="clip-row">${wave}</div>${info ? `<span class="tinfo">${info}</span>` : ''}${st ? `<span class="tst" data-st="${id}">${st}</span>` : ''}${tr.cur === id ? '<i class="tpl"></i><i class="tph"></i>' : ''}</div>
+  </div>`;
+}
+
+function trJobText(){
+  const j = tr.job; if (!j) return '';
+  return j.phase === 'dl' ? `STAHUJU ${Math.round(j.pct*100)} %<i style="width:${(j.pct*100).toFixed(1)}%"></i>` : 'ANALYZUJU WAVEFORM…';
+}
+function trJobPaint(force){
+  const j = tr.job; if (!j || !tr.open) return;
+  const now = performance.now(); if (!force && now - j.t < 120) return; j.t = now;
+  const el = document.querySelector(`[data-st="${j.id}"]`); if (el) el.innerHTML = trJobText();
+  trStatPaint();
+}
+function trStatPaint(){
+  const el = $('#trStat'); let cls = '', txt, hint;
+  if (!DRIVE_API_KEY){ cls = 'err'; txt = 'DRIVE API ✕'; hint = 'Waveformy jsou vypnuté|Chybí DRIVE_API_KEY (viz README), zatím hraje přehrávač Google Disku'; }
+  else if (tr.apiErr){ cls = 'err'; txt = 'DRIVE API ✕'; hint = `Google odmítl Drive API klíč|${tr.apiErr}, zkontroluj nastavení klíče`; }
+  else if (tr.job){ txt = `⟳ ANALÝZA ${tr.job.phase === 'dl' ? Math.round(tr.job.pct*100) + ' %' : '…'}`; hint = 'Stahuju a počítám waveform|Výsledek se uloží pro všechny'; }
+  else {
+    const wait = tr.rows.filter(r => trInfo(r).s === 'wait').length;
+    if (wait){ cls = 'dim'; txt = `ČEKÁ ${wait}`; hint = 'Analýza čeká|Spustí se sama'; }
+    else { cls = 'ok'; txt = '✓ WAVEFORMY'; hint = 'Všechno analyzované|Nové odkazy se analyzují samy'; }
+  }
+  el.className = 'chip ' + cls; el.textContent = txt; el.dataset.hint = hint;
+}
+function trNowPaint(){
+  const id = tr.cur || tr.prev, r = id && trFind(id);
+  $('#trNowName').textContent = r ? trName(r) : 'Nic nehraje';
+  $('#trNowMeta').textContent = r
+    ? [r.by, r.day ? `${DAY_NAMES[dayIdx(r.day)]} ${fmtDate(r.day)}` : '', tr.prev === id ? 'přehrávač Google Disku' : ''].filter(Boolean).join(' · ')
+    : tr.list.length ? 'Klikni na track nebo kamkoli do waveformu' : '';
+  const o = $('#trOpen');
+  o.hidden = !r; if (r){ o.href = r.url; if (!o.firstChild) o.innerHTML = ICON_EXT; }
+  const b = $('#trPlay');
+  b.innerHTML = tr.playing ? ICON_PAUSE : ICON_PLAY;
+  b.setAttribute('aria-label', tr.playing ? 'Pauza' : 'Přehrát');
+}
+function trHeadPaint(){
+  const id = tr.cur, w = id && tr.waves[id], t = id ? player.currentTime || 0 : 0;
+  const d = id ? (isFinite(player.duration) && player.duration > 0 ? player.duration : w ? w.dur : 0) : 0;
+  $('#trT').textContent = fmtS(t); $('#trD').textContent = fmtS(d);
+  if (!tr.open) return;
+  const f = (d ? clamp(t / d, 0, 1) * 100 : 0) + '%';
+  const lane = id && document.querySelector(`.tl[data-t="${id}"]`);
+  if (lane){ const ph = lane.querySelector('.tph'), pl = lane.querySelector('.tpl'); if (ph) ph.style.left = f; if (pl) pl.style.width = f; }
+  const mk = $('#trMark'); if (mk){ mk.hidden = !id; mk.style.left = clamp(t / tr.span, 0, 1) * 100 + '%'; }
+}
+function trTick(){ trHeadPaint(); if (tr.playing) requestAnimationFrame(trTick); }
+
+/* --- přehrávání --- */
+const player = new Audio();
+player.preload = 'metadata';
+player.addEventListener('play', () => { tr.playing = true; trRefresh(); requestAnimationFrame(trTick); });
+player.addEventListener('pause', () => { tr.playing = false; trBuf(false); trRefresh(); });
+player.addEventListener('waiting', () => trBuf(true));
+player.addEventListener('playing', () => trBuf(false));
+function trBuf(on){ $('#trLcd').classList.toggle('buf', on); }
+player.addEventListener('ended', () => { tr.playing = false; trNext(1, true); });
+player.addEventListener('loadedmetadata', () => {
+  if (tr.seek && isFinite(player.duration)){ player.currentTime = tr.seek * player.duration; tr.seek = 0; }
+  trHeadPaint();
+});
+player.addEventListener('error', () => {
+  if (!tr.cur) return;
+  const r = trFind(tr.cur);
+  trResetPlayer();
+  if (r){ flash('Tohle prohlížeč nepřehraje', 'Pouštím to přes přehrávač Google Disku', 'err'); trPreview(r); }
+});
+function trResetPlayer(){
+  tr.cur = null; tr.playing = false; tr.seek = 0; trBuf(false);
+  player.pause(); player.removeAttribute('src'); player.load();
+  if (tr.blob){ URL.revokeObjectURL(tr.blob); tr.blob = null; }
+}
+async function trPlay(id, frac){
+  const r = trFind(id), how = trHow(r);
+  if (!how) return;
+  if (how === 'prev') return trPreview(r);
+  trPreviewClose();
+  if (tr.cur !== id){
+    trResetPlayer();
+    tr.cur = id; tr.seek = frac || 0;
+    trMediaMeta(r);
+    const rk = rkOf(r);
+    if (rk){
+      // starší typ sdílení potřebuje hlavičku s resource key → stáhnout celé a hrát z paměti
+      flash('Načítám track…', trName(r));
+      let url;
+      try { url = URL.createObjectURL(await (await gd(id, { alt:'media' }, rkH(id, rk))).blob()); }
+      catch(e){ if (tr.cur === id){ tr.cur = null; trPreview(r); } return; }
+      if (tr.cur !== id){ URL.revokeObjectURL(url); return; }
+      tr.blob = url; player.src = url;
+    } else player.src = `${DRIVE_API}/${id}?` + new URLSearchParams({ alt:'media', supportsAllDrives:'true', key:DRIVE_API_KEY });
+  } else if (frac != null){
+    if (isFinite(player.duration) && player.duration > 0) player.currentTime = frac * player.duration; else tr.seek = frac;
+  }
+  trRefresh();
+  try { await player.play(); }
+  catch(e){ if (e.name === 'NotAllowedError') flash('Prohlížeč zablokoval přehrávání', 'Klikni na ▶ ještě jednou', 'err'); }
+}
+function trToggle(id){
+  if (id && id === tr.prev) return trPreviewClose();
+  if (id && id !== tr.cur) return trPlay(id, 0);
+  if (!tr.cur){ const r = trRows().find(x => trHow(x)); if (r) trPlay(r.id, 0); return; }
+  if (player.paused) player.play().catch(() => {}); else player.pause();
+}
+function trStop(){
+  trPreviewClose();
+  if (!tr.cur) return;
+  player.pause(); player.currentTime = 0; trHeadPaint();
+}
+function trNext(dir, auto){
+  const list = trRows().filter(r => trHow(r) === 'api' && (r.id === tr.cur || trInfo(r).s !== 'bad'));
+  if (!list.length) return;
+  if (!auto && dir < 0 && tr.cur && player.currentTime > 3){ player.currentTime = 0; return; }
+  const i = list.findIndex(r => r.id === tr.cur), j = i < 0 ? 0 : i + dir;
+  if (j < 0 || j >= list.length){ if (auto){ player.currentTime = 0; trHeadPaint(); } return; }   // konec playlistu
+  trPlay(list[j].id, 0);
+}
+function trMediaMeta(r){
+  if (!('mediaSession' in navigator) || typeof MediaMetadata === 'undefined') return;
+  try { navigator.mediaSession.metadata = new MediaMetadata({ title:trName(r), artist:r.by || '', album:'STUDIO.flp' }); } catch(e){}
+}
+if ('mediaSession' in navigator){
+  const h = { play:() => player.play().catch(() => {}), pause:() => player.pause(), previoustrack:() => trNext(-1), nexttrack:() => trNext(1) };
+  for (const k in h){ try { navigator.mediaSession.setActionHandler(k, h[k]); } catch(e){} }
+}
+// záložní přehrávač Google Disku (bez API klíče, neveřejné soubory, formáty, co prohlížeč neumí)
+function trPreview(r){
+  if (tr.cur) trResetPlayer();
+  tr.prev = r.id;
+  const rk = rkOf(r), name = esc(trName(r));
+  const dock = $('#trDock');
+  dock.innerHTML = `<div class="dock-txt"><b>${name}</b><small>přehrávač Google Disku</small></div>
+    <iframe src="https://drive.google.com/file/d/${encodeURIComponent(r.id)}/preview${rk ? '?resourcekey=' + encodeURIComponent(rk) : ''}" allow="autoplay; encrypted-media" title="Přehrávač Google Disku – ${name}"></iframe>
+    <button class="win-x" id="trDockX" aria-label="Zavřít přehrávač Google Disku">✕</button>`;
+  dock.hidden = false;
+  $('#trDockX').onclick = trPreviewClose;
+  if (!tr.open) openTracks();
+  trRefresh();
+}
+function trPreviewClose(){
+  if (!tr.prev) return;
+  tr.prev = null;
+  const d = $('#trDock'); d.hidden = true; d.innerHTML = '';
+  trRefresh();
+}
+function trFold(id){
+  const r = trFind(id);
+  if (!apiOn()){ if (r) window.open(r.url, '_blank', 'noopener'); return; }
+  if (tr.exp.has(id)) tr.exp.delete(id); else tr.exp.add(id);
+  trRefresh(); setTimeout(trPump, 0);
+}
+
+/* --- okno --- */
+function openTracks(){
+  tr.open = true; $('#tracks').hidden = false;
+  $('#tTracks').setAttribute('aria-pressed', 'true'); document.body.classList.add('trk-open');
+  trSync(); renderTracks();
+}
+function closeTracks(){
+  tr.open = false; $('#tracks').hidden = true;
+  $('#tTracks').setAttribute('aria-pressed', 'false'); document.body.classList.remove('trk-open');
+  trPreviewClose(); renderTracks();
+}
+function trClipAct(clip, x, y){
+  const r = trFind(clip.dataset.t); if (!r) return;
+  if (r.kind === 'folder') return trFold(r.id);
+  if (!trHow(r)) return void window.open(r.url, '_blank', 'noopener');
+  const body = clip.querySelector('.clip-body').getBoundingClientRect();
+  if (x != null && y >= body.top && tr.waves[r.id] && trHow(r) === 'api') return trPlay(r.id, clamp((x - body.left) / body.width, 0, .999));
+  trToggle(r.id);
+}
+$('#tTracks').onclick = () => tr.open ? closeTracks() : openTracks();
+$('#trClose').onclick = closeTracks;
+$('#trPlay').onclick = () => trToggle();
+$('#trStop').onclick = trStop;
+$('#trPrev').onclick = () => trNext(-1);
+$('#trNext').onclick = () => trNext(1);
+$('#trGrid').addEventListener('click', e => {
+  const fb = e.target.closest('[data-fold]'); if (fb) return trFold(fb.dataset.fold);
+  const pb = e.target.closest('[data-play]'); if (pb) return trToggle(pb.dataset.play);
+  const ru = e.target.closest('#trRuler');
+  if (ru){
+    const w = tr.cur && tr.waves[tr.cur], d = isFinite(player.duration) && player.duration > 0 ? player.duration : w && w.dur;
+    if (d){ const rc = ru.getBoundingClientRect(); trPlay(tr.cur, clamp((e.clientX - rc.left) / rc.width * tr.span / d, 0, .999)); }
+    return;
+  }
+  const clip = e.target.closest('.clip[data-t]'); if (clip) trClipAct(clip, e.clientX, e.clientY);
+});
+$('#trGrid').addEventListener('keydown', e => {
+  const clip = e.target.closest && e.target.closest('.clip[data-t]');
+  if (clip && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); e.stopPropagation(); trClipAct(clip); }
+});
+// okno jde na počítači přesouvat za titulek (a zvětšovat za pravý dolní roh)
+$('#trTitle').addEventListener('pointerdown', e => {
+  if (isMobile() || e.button !== 0 || e.target.closest('button')) return;
+  const win = $('#tracks'), r0 = win.getBoundingClientRect(), dx = e.clientX - r0.left, dy = e.clientY - r0.top;
+  const mv = ev => { win.style.left = clamp(ev.clientX - dx, 0, innerWidth - 160) + 'px'; win.style.top = clamp(ev.clientY - dy, 0, innerHeight - 40) + 'px'; };
+  const up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); };
+  addEventListener('pointermove', mv); addEventListener('pointerup', up);
+  e.preventDefault();
+});
+
 /* ================== WIRING ================== */
 function goWeek(n){
   const i = state.mday ? dayIdx(state.mday) : 0;
@@ -1459,6 +2198,12 @@ $('#tMixer').onclick = () => { state.mixer = !state.mixer; renderTop(); renderMi
 $('#mixerClose').onclick = () => { state.mixer = false; renderTop(); renderPlaylist(); };
 $('#tRack').onclick = () => $('#rackBack').hidden ? openRack() : closeRack();
 $('#userChip').onclick = openRack;
+$('#mxTest').onclick = () => setTestMode(!isTest());
+$('#mxReset').onclick = () => {
+  const r = $('#mxReset');
+  if (!r.classList.contains('arm')){ r.classList.add('arm'); r.textContent = 'OPRAVDU?'; setTimeout(() => { r.classList.remove('arm'); r.textContent = '↺ OBNOVIT'; }, 3000); return; }
+  setTestMode(true, true);
+};
 
 document.querySelectorAll('.backdrop').forEach(bd => bd.addEventListener('click', e => {
   if (e.target === bd || e.target.closest('[data-close]')){ bd.id === 'inspBack' ? closeInspector() : closeRack(); }
@@ -1468,15 +2213,16 @@ document.addEventListener('keydown', e => {
   const typing = e.target.matches && e.target.matches('input, select');
   if (e.key === 'Escape'){
     if (state.drag){ state.drag = null; renderPlaylist(); return; }
-    if (!$('#inspBack').hidden) closeInspector(); else if (!$('#rackBack').hidden && state.user) closeRack();
+    if (!$('#inspBack').hidden) closeInspector(); else if (!$('#rackBack').hidden && state.user) closeRack(); else if (tr.open) closeTracks();
     return;
   }
+  if (e.key === 'F5' && !e.ctrlKey && !e.shiftKey && !e.metaKey){ e.preventDefault(); $('#tTracks').click(); return; }
   if (e.key === 'F9'){ e.preventDefault(); $('#tMixer').click(); return; }
   if (e.key === 'F6'){ e.preventDefault(); $('#tRack').click(); return; }
   if (typing || !$('#inspBack').hidden || !$('#rackBack').hidden) return;
   if (e.key === 'ArrowLeft') goWeek(-1);
   else if (e.key === 'ArrowRight') goWeek(1);
-  else if (e.key === ' ' && !(e.target.closest && e.target.closest('.clip, button'))){ e.preventDefault(); goNow(); }
+  else if (e.key === ' ' && !(e.target.closest && e.target.closest('.clip, button, a'))){ e.preventDefault(); tr.open ? trToggle() : goNow(); }
   else if (e.key === 'r' || e.key === 'R') quickRec();
   else if (e.key === 't' || e.key === 'T') setView('week');
   else if (e.key === 'd' || e.key === 'D') setView('day');
@@ -1501,6 +2247,11 @@ const savedUser = store.getUser();
 state.user = savedUser && P[savedUser] ? savedUser : null;
 tickClock();
 renderAll();
+trNowPaint(); trStatPaint();
+if (isTest()){
+  $('#mxTest').setAttribute('aria-pressed', 'true'); $('#mxReset').hidden = false; $('#testLab').hidden = false;
+  document.body.classList.add('test'); document.title = 'TEST · ' + document.title;
+}
 if (!state.user) openRack();
 initBackend(onData).then(a => { api = a; });
 </script>
