@@ -7,7 +7,7 @@ Data jsou ve Firebase Firestore, stránku hostuje GitHub Pages.
 - **Týden / Den:** přepínač pohledu v horní liště (klávesy T / D).
 - **Nová session:** táhni v prázdné stopě nebo klikni na ● REC (klávesa R).
 - **Otevřená session:** ostatní se můžou přidat. **Soukromá:** studio je jen pro tebe.
-- **Detail session:** klikni na klip. Najdeš tam členy a odkazy na Google Disk.
+- **Detail session:** klikni na klip. Najdeš tam členy a odkazy na Google Disk. Proběhlou session může smazat kdokoli, kdo na ní byl (zmizí s ní i její odkazy z playlistu tracků).
 - **Mixer (F9):** statistiky týdne. Tlačítko **TEST** v jeho titulku zapne testový režim: proběhlé session s tracky z Disku, data jen v tomhle prohlížeči, do databáze se nic nezapíše. **↺ OBNOVIT** vrátí testová data do původního stavu.
 - **Channel rack (F6):** výběr, kdo jsi.
 - LED u „TÝDEN“: zelená = online, oranžová = lokální režim, červená = chyba spojení.

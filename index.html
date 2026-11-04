@@ -1456,6 +1456,7 @@ function renderDetail(){
   if (!past && b.type === 'open' && me && !isMember) actions += '<button class="btn primary" id="bJoin">+ Přidat se</button>';
   if (!past && isMember && !isOwner) actions += '<button class="btn danger" id="bLeave">Odejít ze session</button>';
   if (!past && isOwner) actions += '<button class="btn" id="bEdit">Upravit</button>';
+  if (past && isMember) actions += '<button class="btn danger" id="bDelPast">Smazat session</button>';   // proběhlou může smazat kdokoli, kdo na ní byl
 
   const linkRows = links.map(l => {
     const li = linkInfo(l.url);
@@ -1506,6 +1507,14 @@ function renderDetail(){
     flash('Odešel jsi ze session', `${b.owner} · ${DAY_NAMES[di]}`);
   };
   const ed = $('#bEdit'); if (ed) ed.onclick = () => openEditor(b, false);
+  const dp = $('#bDelPast'); if (dp) dp.onclick = () => {
+    if (!dp.classList.contains('arm')){
+      dp.classList.add('arm');
+      dp.textContent = links.length ? `Opravdu? Zmizí i ${links.length} ${plural(links.length, 'odkaz', 'odkazy', 'odkazů')}` : 'Opravdu smazat?';
+      return;
+    }
+    deleteBooking(b.id);
+  };
 
   const form = $('#linkForm');
   if (form) form.onsubmit = e => {
@@ -2230,6 +2239,7 @@ document.addEventListener('keydown', e => {
     const el = document.activeElement && document.activeElement.closest && document.activeElement.closest('.clip');
     const b = el && find(el.dataset.id);
     if (b && b.owner === state.user && !isPast(b)){ openEditor(b, false); const d = $('#bDel'); if (d) d.click(); }
+    else if (b && isPast(b) && b.members.includes(state.user)){ openDetail(b); const d = $('#bDelPast'); if (d) d.click(); }
   }
 });
 

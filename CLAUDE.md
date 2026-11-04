@@ -41,6 +41,8 @@ note: ≤ 60 znaků       links: [{ id, url, label, by, at }] (≤ 30)
 ```
 Časová osa: 08:00 až 06:00 dalšího dne (`MIN_START`, `MAX_END`), výchozí zobrazení 10–24, snap 30 min, týdny podle ISO.
 Otevřená session = ostatní se můžou přidat; soukromá = studio jen pro majitele. Překryvy hlídá `validate()`.
+Budoucí session upravuje/maže jen majitel (editor); proběhlou může smazat kdokoli z `members` (tlačítko v detailu),
+s ní zmizí i její odkazy z Tracky.
 
 ### Firestore `waves/{driveFileId}` – spočítané waveformy
 `name, mime, size, sum (md5 nebo size), dur (s), ch, peak, rms (dBFS), w, v:1, at`.
