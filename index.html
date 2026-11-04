@@ -770,9 +770,10 @@ const FIREBASE_CONFIG = {
 const FB_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
 
 /* Google Drive API klíč pro playlist tracků (stažení, waveform, přehrávání tady na stránce).
-   Firebase klíč nahoře na Disk nesmí, proto vlastní. Postup je v README.
-   Dokud je tu null, tracky se jen vypíšou a hrají přes přehrávač Google Disku. */
-const DRIVE_API_KEY = null;
+   Firebase klíč nahoře na Disk nesmí, proto vlastní: Google Cloud → studio-rezervace → Credentials →
+   „Drive API - playlist tracku (studirez)“. Smí jen Google Drive API a jen z https://michalh69.github.io/*,
+   takže není tajný. Kdyby tu bylo null, tracky hrají přes přehrávač Google Disku. */
+const DRIVE_API_KEY = 'AIzaSyC-c6VhkO87MDIfL4t4gTT18a4c_yF9bZ4';
 
 /* Kdo jsem – pamatuje si jen tohle zařízení */
 const store = {
@@ -1994,8 +1995,9 @@ function trStatPaint(){
   else if (tr.apiErr){ cls = 'err'; txt = 'DRIVE API ✕'; hint = `Google odmítl Drive API klíč|${tr.apiErr}, zkontroluj nastavení klíče`; }
   else if (tr.job){ txt = `⟳ ANALÝZA ${tr.job.phase === 'dl' ? Math.round(tr.job.pct*100) + ' %' : '…'}`; hint = 'Stahuju a počítám waveform|Výsledek se uloží pro všechny'; }
   else {
-    const wait = tr.rows.filter(r => trInfo(r).s === 'wait').length;
-    if (wait){ cls = 'dim'; txt = `ČEKÁ ${wait}`; hint = 'Analýza čeká|Spustí se sama'; }
+    const st = tr.rows.map(r => trInfo(r).s), wait = st.filter(s => s === 'wait').length;
+    if (st.includes('meta')){ cls = 'dim'; txt = 'NAČÍTÁM…'; hint = 'Načítám info o souborech z Disku|Pak se spustí analýza'; }
+    else if (wait){ cls = 'dim'; txt = `ČEKÁ ${wait}`; hint = 'Analýza čeká|Spustí se sama'; }
     else { cls = 'ok'; txt = '✓ WAVEFORMY'; hint = 'Všechno analyzované|Nové odkazy se analyzují samy'; }
   }
   el.className = 'chip ' + cls; el.textContent = txt; el.dataset.hint = hint;

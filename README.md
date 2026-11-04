@@ -19,13 +19,13 @@ Data jsou ve Firebase Firestore, stránku hostuje GitHub Pages.
 - Soubory musí být sdílené „Kdokoli s odkazem“. Co prohlížeč neumí (třeba AIFF v Chrome) nebo co není sdílené veřejně, pustí přehrávač Google Disku.
 - Okno jde na počítači přesouvat za titulek a zvětšovat za pravý dolní roh. Hudba hraje dál i po zavření okna (zelená tečka na ikoně).
 
-### Zapnutí Drive API (jednou)
-Bez toho se tracky jen vypíšou a hrají přes přehrávač Google Disku, bez waveformů.
-1. [Google Drive API](https://console.cloud.google.com/apis/library/drive.googleapis.com?project=studio-rezervace) → **Enable**.
-2. [Credentials](https://console.cloud.google.com/apis/credentials?project=studio-rezervace) → **Create credentials → API key**.
-3. U nového klíče: *Application restrictions* → **Websites** → `https://michalh69.github.io/*`. *API restrictions* → **Restrict key** → jen **Google Drive API**. Uložit.
-4. Klíč vlož do `DRIVE_API_KEY` v `index.html`.
-5. Nová pravidla z `firestore.rules` vlož do Firebase konzole (Firestore → Rules → Publish). Bez nich se waveformy nesdílí a každý prohlížeč si je počítá sám.
+### Drive API
+Je zapnuté a klíč je v `DRIVE_API_KEY` v `index.html` (v Google Cloud pod názvem „Drive API - playlist tracku (studirez)“).
+Klíč smí jen Google Drive API a jen ze stránky `https://michalh69.github.io/*`, takže nevadí, že je veřejně v kódu.
+Kdyby bylo potřeba ho vyměnit:
+1. [Credentials](https://console.cloud.google.com/apis/credentials?project=studio-rezervace) → **Create credentials → API key**.
+2. U klíče: *Application restrictions* → **Websites** → `https://michalh69.github.io/*`. *API restrictions* → **Restrict key** → jen **Google Drive API**.
+3. Nový klíč vlož do `DRIVE_API_KEY` a starý smaž.
 
 ## Nasazení
 - Každý push do větve `main` se sám nasadí přes GitHub Pages.

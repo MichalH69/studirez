@@ -85,8 +85,8 @@ Ostatní `localStorage`: `studio-daw-user` (kdo jsem), `studio-daw-waves` (cache
 takže stažení i streamování jde přímo z prohlížeče; cache ve Firestore zajistí, že se každý soubor analyzuje jednou.
 
 **Drive API klíč:** Firebase klíč má Drive API zablokované (`API_KEY_SERVICE_BLOCKED`), proto vlastní `DRIVE_API_KEY`
-(omezený na Google Drive API + referrer `https://michalh69.github.io/*`). Postup je v README. Dokud je `null`,
-běží jen záloha přes přehrávač Disku. Fatální chyby klíče (`FATAL`) přepnou celé okno do zálohy.
+(GCP Credentials: „Drive API - playlist tracku (studirez)“, omezený na Google Drive API + referrer `https://michalh69.github.io/*`).
+Kdyby byl `null`, běží jen záloha přes přehrávač Disku. Fatální chyby klíče (`FATAL`) přepnou celé okno do zálohy.
 Soubory musí být sdílené „Kdokoli s odkazem“.
 
 Rozložení: klipy mají šířku v % podle délky songu vůči nejdelšímu (`tr.span`), mřížka přes `--st` v %,
@@ -127,6 +127,12 @@ takže se nic nepřepočítává při změně velikosti okna. Zobrazení wavefor
 - Testovací audio generuj ffmpegem s neutrálními názvy. Výstup Pythonu pouštěj s `PYTHONIOENCODING=utf-8`.
 - Po testu smaž dočasné složky (hlavně stažené kopie songů).
 
-## Otevřené věci
-- `DRIVE_API_KEY` je zatím `null`: uživatel musí v Google Cloud zapnout Drive API a vytvořit klíč (README).
-- Pravidla pro kolekci `waves` musí být publikovaná, jinak se waveformy nesdílí a každý prohlížeč počítá sám.
+## Google Cloud / Firebase z příkazové řádky
+- Na stroji uživatele je `gcloud` v `%LOCALAPPDATA%\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd`, přihlášený účtem,
+  který projekt vlastní (výchozí projekt `studio-rezervace`). V Git Bash se cesta s mezerou rozbije, když přesměruješ
+  stdout/stderr do souboru; spolehlivější je PowerShell (`& $g ...`).
+- Pravidla jde publikovat bez konzole přes Firebase Rules API s tokenem z `gcloud auth print-access-token`
+  (hlavička `x-goog-user-project: studio-rezervace`): `POST /v1/projects/studio-rezervace/rulesets` se zdrojem
+  a pak `PATCH /v1/projects/studio-rezervace/releases/cloud.firestore` s novým `rulesetName`.
+  Před publikací vždy stáhni nasazený ruleset a porovnej ho s gitem, ať nepřepíšeš ruční úpravu z konzole.
+- Klíč je omezený na referrer stránky, takže v Playwright testech přes `page.route` na skutečnou URL funguje i opravdové Drive API.
