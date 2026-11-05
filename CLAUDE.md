@@ -37,12 +37,17 @@ F5 záměrně přebíjí reload (jako v FL); Ctrl/Shift+F5 reload nechává.
 ```
 day: 'YYYY-MM-DD'      start, end: int minuty od půlnoci dne `day` (480–1800; >1440 = po půlnoci, „+1“)
 owner: jméno z PEOPLE  type: 'open' | 'private'    members: [1–4 jmen, vždy včetně owner]
-note: ≤ 60 znaků       links: [{ id, url, label, by, at }] (≤ 30)
+note: ≤ 60 znaků       links: [{ id, url, label, cat, by, at }] (≤ 30; cat = id kategorie, chybí u starých = „jiné“)
 ```
 Časová osa: 08:00 až 06:00 dalšího dne (`MIN_START`, `MAX_END`), výchozí zobrazení 10–24, snap 30 min, týdny podle ISO.
 Otevřená session = ostatní se můžou přidat; soukromá = studio jen pro majitele. Překryvy hlídá `validate()`.
 Budoucí session upravuje/maže jen majitel (editor); proběhlou může smazat kdokoli z `members` (tlačítko v detailu),
 s ní zmizí i její odkazy z Tracky.
+
+### Firestore `cats/{id}` – vlastní kategorie odkazů
+`name ≤ 20, color '#rrggbb' (z `CAT_PALETTE`), by, at`; id `k` + uid. Pevné kategorie `CATS` (beat, track, jiné) jsou jen v kódu.
+Pravidla povolí jen vytvoření (ne přepis/smazání). Data přijdou přes `onCats()` do `state.cats`, `allCats()` / `catOf(id)`.
+Nový odkaz musí mít kategorii (`#lCat` v detailu); autor odkazu nebo majitel session ji může změnit (`api.update` celého `links`).
 
 ### Firestore `waves/{driveFileId}` – spočítané waveformy
 `name, mime, size, sum (md5 nebo size), dur (s), ch, peak, rms (dBFS), w, v:1, at`.
@@ -56,7 +61,7 @@ s jmény z `names()`. Bezpečnost tedy stojí na `firestore.rules`, ne na UI. Kd
 **Změna tvaru bookingu:** `clean()` v Firebase backendu, `validBooking()` v pravidlech, lokální backend.
 
 ### Backend abstrakce
-Všechny zápisy jdou přes objekt `api` (`create, update, remove, join, leave, addLink, removeLink, saveWave`)
+Všechny zápisy jdou přes objekt `api` (`create, update, remove, join, leave, addLink, removeLink, addCat, saveWave`)
 a všechna data se vrací jedinou cestou přes `onData(list)` (Firestore živě přes `onSnapshot`).
 `initBackend()` vybere jeden ze tří režimů (`api.mode`):
 - `firebase` – ostrý provoz, LED u „TÝDEN“ zelená.
@@ -67,7 +72,8 @@ a všechna data se vrací jedinou cestou přes `onData(list)` (Firestore živě 
   martin.zaloudek@ = Žaludos, Herb u všech). Do seedu nedávej nic z osobních souborů, které uživatel výslovně neposlal.
 
 Ostatní `localStorage`: `studio-daw-user` (kdo jsem), `studio-daw-waves` (cache waveformů, max 150),
-`studio-daw-wavebad` (soubory, které tenhle prohlížeč neumí dekódovat), `studio-daw-test` (příznak testu).
+`studio-daw-wavebad` (soubory, které tenhle prohlížeč neumí dekódovat), `studio-daw-test` (příznak testu),
+`studio-daw-trfilt` (filtr v Tracky). Lokální/testový backend drží v localStorage i `cats`.
 
 ## Playlist – Tracky (Google Disk)
 1. `trCollect()` posbírá odkazy na `drive.google.com` / `docs.google.com` ze všech session (jen http/https),
@@ -80,7 +86,11 @@ Ostatní `localStorage`: `studio-daw-user` (kdo jsem), `studio-daw-waves` (cache
    playhead přes `requestAnimationFrame`, Media Session (ovládání z lockscreenu), auto-přechod na další track.
 5. Ikonka 🔗 v rohu klipu (`trLinks`) otevře popover s odkazem (kopírovat/otevřít) a seznamem session, kde byl přidaný
    (`refs` z `trCollect`); „Otevřít“ skočí na týden session a otevře její detail.
-6. Záloha: bez klíče, u neveřejných souborů nebo formátů, které prohlížeč neumí (AIFF v Chrome),
+6. Filtr (`#trFilt`, `trSetFilt`, `trPass`): kategorie tracku = kategorie nejstaršího odkazu s kategorií, „kdo“ = kdo odkaz nahrál (`by`).
+   `trRows(true)` = jen vyfiltrované (zobrazení, přehrávání, další/předchozí), `trRows()` = všechny (analýza na pozadí).
+   Řádek má jemný nádech barvy kategorie (`--k`) a štítek `.ktag`. Proužek vlevo (`--sb`): horní půlka = `by`,
+   spodní půlka rovným dílem ostatní členové session (`t.mem` = sjednocení `members` session, kde byl odkaz).
+7. Záloha: bez klíče, u neveřejných souborů nebo formátů, které prohlížeč neumí (AIFF v Chrome),
    hraje vložený přehrávač Google Disku (`/file/d/ID/preview`) v doku nad seznamem.
 
 **Proč v prohlížeči:** stránka je statická (GitHub Pages), žádný server. Drive API podporuje CORS a Range,
@@ -101,7 +111,10 @@ takže se nic nepřepočítává při změně velikosti okna. Zobrazení wavefor
 - Stavební kostky: `.module` (blok v horní liště), `.win` + `.win-title` + `.win-toolbar` (FL okno),
   `.lcd`, `.tbtn`/`.tool` (tlačítka, `aria-pressed` = rozsvícené), `.led`, `.chip`, `.seg`, `.btn`,
   `.clip` (barevná hlavička podle člověka + tělo s waveformem), dialogy `.backdrop > .dialog`.
-- Každý člověk má barvu v `PEOPLE`; klipy, LED a stopy ji přebírají přes `--c` / `--m`.
+- Každý člověk má barvu v `PEOPLE`; klipy, LED a stopy ji přebírají přes `--c` / `--m`, vždy přes `pcv(jméno, 'c'|'m')`,
+  který přidá i `--ci` (text na barvě), `--ce` (obrys) a `--cw` (waveform). Kvůli tomu může být barva i černá (Olb).
+- Rozbalovací menu: `ddBtn()` (hranaté tlačítko „TEXT ▾“) + `ddOpen(btn, key, items, onPick, { add })`, jedno sdílené
+  `#ddMenu` s `position:fixed`; `add` = poslední položka „+ Nová kategorie“ s paletou.
 - Waveformy v klipech kalendáře jsou jen dekorace (`wavePath()` ze seedu); skutečné jsou jen v Tracky.
 - Mobil (`max-width: 760px`, `isMobile()`): denní pohled, FAB „REC“, dialogy jako spodní sheet, okna přes celou obrazovku,
   dotykové cíle ≥ 40 px, `env(safe-area-inset-*)`. Každou změnu UI kontroluj i na mobilu.

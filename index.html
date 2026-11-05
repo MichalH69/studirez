@@ -89,7 +89,7 @@ input,select{font:inherit}
 .user{cursor:pointer; gap:8px; padding:4px 10px; margin-left:auto}
 .user:hover{border-color:#000; background:linear-gradient(#2c353a,#22292d)}
 .led{width:9px;height:9px;border-radius:50%; background:#3a2b22; box-shadow:inset 0 1px 1px rgba(0,0,0,.6); flex:none; display:inline-block}
-.user .led{background:var(--uc,#555); box-shadow:0 0 8px var(--uc,transparent)}
+.user .led{background:var(--uc,#555); box-shadow:0 0 8px var(--uc,transparent), 0 0 0 1px var(--ue,transparent)}
 #userName{font-weight:700; font-size:14px}
 .user small{font-family:var(--mono); font-size:10px; color:var(--red); letter-spacing:.1em}
 .user.none small{color:var(--dim)}
@@ -186,7 +186,7 @@ input,select{font:inherit}
 .clip.mine{cursor:grab}
 .clip.mine:active{cursor:grabbing}
 .clip-head{
-  height:16px; flex:none; background:var(--c); color:#0e1214;
+  height:16px; flex:none; background:var(--c); color:var(--ci,#0e1214);
   font-size:11px; font-weight:700; padding:0 4px; display:flex; align-items:center; gap:4px;
   white-space:nowrap; overflow:hidden;
   background-image:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,0));
@@ -197,12 +197,12 @@ input,select{font:inherit}
 .clip-head svg{width:10px; height:10px; flex:none}
 .clip-head .lk{display:inline-flex; align-items:center; gap:2px; flex:none; font-family:var(--mono); font-weight:400; font-size:10px; background:rgba(0,0,0,.18); border-radius:2px; padding:0 3px}
 .clip-head .dots{display:flex; gap:2px; flex:none}
-.clip-head .dot{width:8px; height:8px; border-radius:50%; background:var(--m); box-shadow:0 0 0 1px rgba(0,0,0,.65)}
+.clip-head .dot{width:8px; height:8px; border-radius:50%; background:var(--m); box-shadow:0 0 0 1px var(--me,rgba(0,0,0,.65))}
 .clip-body{flex:1; display:flex; flex-direction:column; min-height:0; position:relative}
 .clip-row{flex:1; position:relative; min-height:0; min-width:0; background:color-mix(in srgb,var(--m) 34%,#161c1f); border-top:1px solid rgba(0,0,0,.35)}
 .clip-row:first-child{border-top:0}
 .clip-row svg{position:absolute; left:0; top:1px; width:100%; height:calc(100% - 2px)}
-.clip-row path{fill:color-mix(in srgb,var(--m) 80%,#fff)}
+.clip-row path{fill:var(--mw,color-mix(in srgb,var(--m) 80%,#fff))}
 .clip-row .rn{position:absolute; left:4px; top:50%; transform:translateY(-50%); font-size:9.5px; font-weight:700; color:#fff; text-shadow:0 1px 2px #000; letter-spacing:.03em; z-index:1; white-space:nowrap}
 .clip.private .clip-body::after{content:""; position:absolute; inset:0; background:repeating-linear-gradient(135deg,rgba(0,0,0,.42) 0 4px,transparent 4px 9px)}
 .clip.past-c{filter:saturate(.4) brightness(.75)}
@@ -293,7 +293,7 @@ body.v-day .pl-scroll, body.v-day .playlist .win-toolbar{display:none}
 .strip.master{width:120px; background:linear-gradient(#3a3631,#2b2a28)}
 .strip-name{
   width:100%; text-align:center; font-weight:700; font-size:12px; padding:2px 0; border-radius:2px;
-  background:var(--c); color:#0e1214; background-image:linear-gradient(rgba(255,255,255,.25),rgba(255,255,255,0));
+  background:var(--c); color:var(--ci,#0e1214); background-image:linear-gradient(rgba(255,255,255,.25),rgba(255,255,255,0));
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .strip.me .strip-name{box-shadow:0 0 0 1px #fff}
@@ -340,11 +340,11 @@ select:focus,input:focus{outline:1px solid var(--orange)}
 .seg button.on .led{background:var(--orange); box-shadow:0 0 7px var(--orange)}
 .members{display:flex; flex-wrap:wrap; gap:5px; align-items:center}
 .mchip{display:inline-flex; align-items:center; gap:5px; padding:3px 8px 3px 6px; border-radius:2px; background:color-mix(in srgb,var(--m) 25%,#1b2124); border:1px solid color-mix(in srgb,var(--m) 50%,#000); font-weight:600; font-size:12px}
-.mchip .led{background:var(--m); box-shadow:0 0 5px var(--m)}
+.mchip .led{background:var(--m); box-shadow:0 0 5px var(--m), 0 0 0 1px var(--me,transparent)}
 .mchip small{color:var(--dim); font-weight:400}
 .det-head{
   display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:3px;
-  background:var(--c); color:#0e1214; background-image:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,0));
+  background:var(--c); color:var(--ci,#0e1214); background-image:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,0));
   border:1px solid color-mix(in srgb,var(--c) 55%,#000);
 }
 .det-head b{font-size:15px}
@@ -383,8 +383,58 @@ select:focus,input:focus{outline:1px solid var(--orange)}
 .l-del{flex:none; width:36px; height:36px; margin-right:4px; border:0; background:none; color:var(--faint); cursor:pointer; border-radius:2px}
 .l-del:hover{color:#fff; background:#8d2f27}
 .links-empty{color:var(--faint); font-size:12px; padding:2px 0 4px; line-height:1.4}
-.link-add{display:grid; grid-template-columns:1fr auto; gap:6px}
+.link-add{display:grid; grid-template-columns:auto 1fr auto; gap:6px}
 .link-add #lUrl{grid-column:1 / -1}
+.link-add .dd{height:auto; min-height:32px; max-width:150px}
+.l-cat{
+  flex:none; height:24px; display:inline-flex; align-items:center; gap:4px; padding:0 6px; border:1px solid #000; border-radius:0;
+  background:color-mix(in srgb,var(--k) 20%,#161c1f); color:color-mix(in srgb,var(--k) 80%,#fff);
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; max-width:110px; overflow:hidden; text-overflow:ellipsis;
+}
+button.l-cat{cursor:pointer}
+button.l-cat:hover,button.l-cat:focus-visible{background:color-mix(in srgb,var(--k) 34%,#161c1f); outline:none}
+.l-cat .dd-ar{width:7px; height:7px; fill:currentColor; flex:none}
+span.l-cat{margin-right:6px}
+
+/* rozbalovací menu: hranaté tlačítko „TEXT ▾“ */
+.dd{
+  display:inline-flex; align-items:center; gap:6px; height:30px; padding:0 8px; min-width:0; cursor:pointer;
+  border:1px solid #000; border-radius:0; background:var(--lcd); box-shadow:inset 0 0 6px #000; color:var(--orange);
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap;
+}
+.dd:hover{color:#ffc58a}
+.dd:focus-visible,.dd[aria-expanded="true"]{outline:1px solid var(--orange)}
+.dd.empty .dd-tx{color:var(--dim)}
+.dd.err{outline:1px solid var(--red)}
+.dd-tx{overflow:hidden; text-overflow:ellipsis; min-width:0}
+.dd .dd-ar{width:9px; height:9px; flex:none; fill:currentColor; margin-left:auto}
+.dd-sw{width:9px; height:9px; flex:none; border-radius:1px; background:var(--k); box-shadow:0 0 0 1px rgba(0,0,0,.7)}
+.dd-menu{
+  position:fixed; z-index:80; max-width:min(300px,calc(100vw - 16px)); max-height:min(60vh,380px); overflow:auto; overscroll-behavior:contain;
+  background:var(--win); border:1px solid #000; box-shadow:0 10px 28px rgba(0,0,0,.7); padding:3px;
+}
+.dd-menu[hidden]{display:none}
+.dd-it{
+  width:100%; display:flex; align-items:center; gap:8px; min-height:30px; padding:0 8px; border:0; background:none; cursor:pointer; text-align:left;
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--text);
+}
+.dd-it span{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.dd-it small{color:var(--faint); font-size:11px}
+.dd-ck{width:10px; color:var(--orange); font-weight:400}
+.dd-it:hover,.dd-it:focus-visible{background:#3a444a; color:#fff; outline:none}
+.dd-it.on{color:var(--orange)}
+.dd-sep{height:1px; background:#000; margin:3px 0}
+.dd-plus{color:var(--green)}
+.dd-plus b{width:9px; text-align:center; font-size:16px; font-weight:400; line-height:1}
+.dd-new{display:flex; flex-direction:column; gap:7px; padding:6px}
+.dd-pal{display:flex; flex-wrap:wrap; gap:5px}
+.dd-col{width:24px; height:24px; padding:0; border:1px solid #000; border-radius:0; background:var(--k); cursor:pointer}
+.dd-col.on{box-shadow:0 0 0 2px #fff}
+.dd-col:focus-visible{outline:1px solid var(--orange); outline-offset:2px}
+.dd-err{color:var(--red); font-size:12px; min-height:0}
+.dd-err:empty{display:none}
+.dd-row{display:flex; gap:6px; justify-content:flex-end}
+.dd-row .btn{padding:5px 11px}
 
 /* channel rack */
 .rack-rows{display:flex; flex-direction:column; gap:4px; padding:10px; background:#262e33}
@@ -400,7 +450,7 @@ select:focus,input:focus{outline:1px solid var(--orange)}
 .steps{display:flex; gap:3px; min-width:0}
 .step{width:22px; height:30px; border-radius:2px; border:1px solid #000; background:linear-gradient(#4a555b,#3a4449); display:grid; place-items:end center; font-size:8.5px; color:#8c9aa1; padding-bottom:2px; font-weight:600}
 .step.we{background:linear-gradient(#5a4a4c,#463a3c)}
-.step.on{background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),var(--c)); color:#111; box-shadow:0 0 6px color-mix(in srgb,var(--c) 60%,transparent)}
+.step.on{background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),var(--c)); color:var(--ci,#111); box-shadow:0 0 6px color-mix(in srgb,var(--c) 60%,transparent), inset 0 0 0 1px var(--ce,transparent)}
 .rack-foot{padding:8px 12px 12px; color:var(--dim); font-size:12px; line-height:1.4}
 
 /* FAB + toast (jen mobil) */
@@ -477,8 +527,20 @@ body.test .topbar{border-bottom-color:var(--orange-dim)}
   position:relative; height:var(--trRow); display:flex; align-items:center; gap:7px; padding:0 8px 0 11px; min-width:0;
   background:linear-gradient(90deg,#3d474d,#353e44); border-bottom:1px solid var(--line); border-right:1px solid var(--line);
 }
-.th::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--c)}
+.th::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--sb,var(--c)); box-shadow:1px 0 0 rgba(255,255,255,.07)}
+/* kategorie: jemný nádech celé řádky + štítek */
+.th{background:linear-gradient(90deg,color-mix(in srgb,var(--k,#3d474d) 13%,#3d474d),color-mix(in srgb,var(--k,#353e44) 6%,#353e44))}
+.tl::after{content:""; position:absolute; inset:0; pointer-events:none; background:color-mix(in srgb,var(--k,transparent) 5%,transparent)}
+.tl .clip{box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--k,transparent) 75%,transparent)}
+.ktag{font-style:normal; display:inline-block; padding:0 4px; margin-right:5px; border-radius:1px; background:color-mix(in srgb,var(--k) 24%,#1b2124); color:color-mix(in srgb,var(--k) 85%,#fff); font-size:10px; letter-spacing:.08em; text-transform:uppercase; vertical-align:1px}
+.tr-filt{gap:6px; padding:4px 6px}
+.tr-filt .dd{height:24px; font-size:11px; max-width:190px}
+.tr-filt.on .f-lbl{color:var(--orange)}
+.f-lbl{font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--faint)}
+.f-x{width:24px; height:24px; padding:0; border:1px solid var(--line); border-radius:0; background:linear-gradient(#3a444a,#2c3439); color:#cfd8dc; cursor:pointer; font-size:11px}
+.f-x:hover{background:#b8473d; color:#fff}
 .th.on{background:linear-gradient(90deg,#4a4036,#3a332c)}
+.tr-empty .btn{margin-top:10px}
 .th.on .trk-txt b{color:var(--orange)}
 .th.kid{padding-left:24px; background:linear-gradient(90deg,#363f45,#30383d)}
 .th.kid::before{left:13px; width:2px; opacity:.7}
@@ -518,7 +580,7 @@ body.test .topbar{border-bottom-color:var(--orange-dim)}
 .tl .clip{left:1px; top:4px; bottom:4px; min-width:96px; max-width:calc(100% - 2px); touch-action:manipulation; container-type:inline-size}
 .tl .clip-row{background:color-mix(in srgb,var(--c) 30%,#161c1f)}
 .tl .clip-row svg{top:2px; height:calc(100% - 4px)}
-.tl .clip-row path{fill:color-mix(in srgb,var(--c) 78%,#fff)}
+.tl .clip-row path{fill:var(--cw,color-mix(in srgb,var(--c) 78%,#fff))}
 .tl .clip-head .tm{font-size:10px}
 .clip.pend .clip-row svg{opacity:.3}
 .clip.pend .clip-body::after{content:""; position:absolute; inset:0; background:repeating-linear-gradient(135deg,rgba(0,0,0,.35) 0 4px,transparent 4px 9px)}
@@ -532,10 +594,10 @@ body.test .topbar{border-bottom-color:var(--orange-dim)}
 @container (max-width:300px){ .tinfo{display:none} }
 .tlk{
   flex:none; height:13px; display:inline-flex; align-items:center; gap:2px; margin-left:4px; padding:0 3px; cursor:pointer;
-  border:0; border-radius:2px; background:rgba(0,0,0,.2); color:#0e1214; font-family:var(--mono); font-size:10px; font-weight:400;
+  border:0; border-radius:2px; background:rgba(0,0,0,.2); color:var(--ci,#0e1214); font-family:var(--mono); font-size:10px; font-weight:400;
 }
 .clip-head .nm + .tlk{margin-left:auto}
-.tlk:hover,.tlk:focus-visible,.tlk.on{background:#0e1214; color:var(--c); outline:none}
+.tlk:hover,.tlk:focus-visible,.tlk.on{background:rgba(0,0,0,.6); color:#fff; outline:none}
 .tr-pop{position:absolute; z-index:6; width:370px; max-width:calc(100% - 16px); box-shadow:0 10px 28px rgba(0,0,0,.7)}
 .tr-pop[hidden]{display:none}
 .tr-pop .win-title span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0}
@@ -543,7 +605,7 @@ body.test .topbar{border-bottom-color:var(--orange-dim)}
 .pop-lbl{font-size:10px; letter-spacing:.12em; color:var(--dim); font-weight:600; text-transform:uppercase; margin-top:4px}
 .pop-lbl:first-child{margin-top:0}
 .pop-ref{display:flex; align-items:center; gap:8px; padding:6px 6px 6px 9px; background:#232b30; border:1px solid var(--line); border-radius:2px}
-.pop-ref .led{background:var(--m); box-shadow:0 0 5px var(--m)}
+.pop-ref .led{background:var(--m); box-shadow:0 0 5px var(--m), 0 0 0 1px var(--me,transparent)}
 .pop-ref div{flex:1; min-width:0; line-height:1.3}
 .pop-ref b{display:block; font-family:var(--mono); color:var(--orange); font-weight:400; font-size:12px}
 .pop-ref small{color:var(--dim); font-size:11.5px}
@@ -609,6 +671,11 @@ body.test .topbar{border-bottom-color:var(--orange-dim)}
   .btn.danger{margin-right:0}
   .info{font-size:14px}
   .rack-name{width:96px; height:40px}
+  .dd{height:44px; font-size:14px}
+  .link-add{grid-template-columns:auto 1fr}
+  .link-add .btn{grid-column:1 / -1}
+  .link-add .dd{max-width:140px}
+  .l-cat{height:30px; font-size:12px}
   .step{width:auto; flex:1; height:40px; min-width:0}
   .steps{flex:1}
 }
@@ -627,6 +694,12 @@ body.test .topbar{border-bottom-color:var(--orange-dim)}
   .tl .clip-head{height:22px}
   .tlk{height:18px; padding:0 7px}
   .tlk svg{width:12px; height:12px}
+  .tr-filt .dd{height:38px; font-size:12.5px; flex:1; max-width:none}
+  .f-x{width:40px; height:38px}
+  .f-lbl{display:none}
+  .dd-it{min-height:44px; font-size:14px}
+  .dd-col{width:30px; height:30px}
+  .dd-row .btn{flex:1}
   .tr-pop{left:0 !important; right:0; top:auto !important; bottom:0; width:auto; max-width:none; border-radius:10px 10px 0 0; padding-bottom:env(safe-area-inset-bottom)}
   .tr-pop>.win-title{height:40px; font-size:14px; border-radius:10px 10px 0 0}
   .pop-ref .btn{min-height:38px; flex:none}
@@ -742,6 +815,7 @@ body.test .topbar{border-bottom-color:var(--orange-dim)}
     <a class="th-a" id="trOpen" target="_blank" rel="noopener noreferrer" hidden aria-label="Otevřít hrající track na Google Disku" data-hint="Otevřít na Google Disku|Hrající track"></a>
     <span class="chip" id="trStat"></span>
   </div>
+  <div class="win-toolbar tr-filt" id="trFilt"></div>
   <div class="tr-dock" id="trDock" hidden></div>
   <div class="tr-scroll" id="trScroll"><div id="trGrid"></div></div>
   <div class="win tr-pop" id="trPop" hidden role="dialog" aria-label="Odkazy tracku"></div>
@@ -769,13 +843,24 @@ body.test .topbar{border-bottom-color:var(--orange-dim)}
 
 <script>
 /* ================== DATA ================== */
+// ink = barva textu na barvě člověka, edge = obrys LED/teček, wave = barva waveformu (černá by na tmavém UI zmizela)
 const PEOPLE = [
-  { name:'Herb',    color:'#8fd14f' },
-  { name:'Olb',     color:'#ff9f40' },
+  { name:'Herb',    color:'#ff5fa2' },
+  { name:'Olb',     color:'#0b0b0b', ink:'#e9eef0', edge:'#7f8d94', wave:'#9aa6ac' },
   { name:'Žaludos', color:'#4fb3ff' },
-  { name:'Beky',    color:'#ff5fa2' },
+  { name:'Beky',    color:'#8fd14f' },
 ];
 const P = Object.fromEntries(PEOPLE.map(p => [p.name, p]));
+// CSS proměnné barvy člověka: --c (barva), --ci (text na ní), --ce (obrys); v = 'c' | 'm' | 'u'
+const pcv = (name, v = 'c') => { const p = P[name] || {}; return `--${v}:${p.color || '#9fb0b8'};--${v}i:${p.ink || '#0e1214'};--${v}e:${p.edge || 'rgba(0,0,0,.65)'}${p.wave ? `;--${v}w:${p.wave}` : ''}`; };
+
+/* Kategorie odkazů. Tři pevné, další si lidi přidávají (Firestore `cats`). Starý odkaz bez kategorie = „jiné“. */
+const CATS = [
+  { id:'beat',  name:'beat',  color:'#4fd1c5' },
+  { id:'track', name:'track', color:'#ffc94d' },
+  { id:'jine',  name:'jiné',  color:'#a3aeb4' },
+];
+const CAT_PALETTE = ['#ff6b6b','#ff9f43','#f6e05e','#9ae66e','#38d9a9','#4dabf7','#9775fa','#f783ac'];
 const DAY_NAMES = ['Pondělí','Úterý','Středa','Čtvrtek','Pátek','Sobota','Neděle'];
 const DAY_SHORT = ['Po','Út','St','Čt','Pá','So','Ne'];
 const MIN_START = 8*60, MAX_END = 30*60;     // 08:00 … 06:00 (+1)
@@ -819,20 +904,20 @@ const TEST_DATA = 'studio-daw-test-v1';       // data testového režimu
 const TEST_JUMP = 'studio-daw-test-jump';     // po zapnutí skočit na testová data
 const isTest = () => { try { return localStorage.getItem(TEST_FLAG) === '1'; } catch(e){ return false; } };
 function testSeed(){
-  const L = (id, label, by, iso) => ({ id:uid(), url:`https://drive.google.com/file/d/${id}/view?usp=drivesdk`, label, by, at:Date.parse(iso) });
+  const L = (id, label, by, iso, cat) => ({ id:uid(), url:`https://drive.google.com/file/d/${id}/view?usp=drivesdk`, label, cat, by, at:Date.parse(iso) });
   const S = (day, start, end, owner, members, note, links) => ({ id:uid(), day, start:start*60, end:end*60, owner, type:'open', members, note, links });
   return [
     S('2025-06-25', 11, 15, 'Olb', ['Olb','Herb'], 'matches · 153 BPM',
-      [L('1toRG5eo7uQ3ipZwHbn2Ga_CYRDc0xB40', 'matches', 'Olb', '2025-06-25T12:48:54Z')]),
+      [L('1toRG5eo7uQ3ipZwHbn2Ga_CYRDc0xB40', 'matches', 'Olb', '2025-06-25T12:48:54Z', 'beat')]),
     S('2025-11-17', 12, 16, 'Olb', ['Olb','Herb'], 'frankenstein · 149 BPM',
-      [L('11Fqf4CKka5SOUoCWNA7DDYWVa-xcoMRq', 'frankenstein', 'Olb', '2025-11-17T14:04:08Z')]),
+      [L('11Fqf4CKka5SOUoCWNA7DDYWVa-xcoMRq', 'frankenstein', 'Olb', '2025-11-17T14:04:08Z', 'beat')]),
     S('2026-10-07', 16, 20.5, 'Žaludos', ['Žaludos','Herb'], 'aspartam (karcino) · 154 BPM',
-      [L('1fVgSkpwCej3syakhczgQIUHQ0y6XU1XL', 'aspartam (karcino) – demo', 'Žaludos', '2026-10-07T17:58:45Z')]),
+      [L('1fVgSkpwCej3syakhczgQIUHQ0y6XU1XL', 'aspartam (karcino) – demo', 'Žaludos', '2026-10-07T17:58:45Z', 'track')]),
     S('2026-10-19', 17, 23.5, 'Žaludos', ['Žaludos','Herb','Olb'], 'BaliPregan master + KORBUT RECORD', [
-      L('1dnMW0JKklDWMcLDvxIsT0iwc4-Bu8DDB', 'BaliPregan (Lyrica) – master', 'Žaludos', '2026-10-19T16:46:06Z'),
-      L('1mALJff0pnPMIlB3QGNfq9YqVW_-XJRdL', 'KORBUT RECORD', 'Olb', '2026-10-19T20:53:36Z')]),
+      L('1dnMW0JKklDWMcLDvxIsT0iwc4-Bu8DDB', 'BaliPregan (Lyrica) – master', 'Žaludos', '2026-10-19T16:46:06Z', 'track'),
+      L('1mALJff0pnPMIlB3QGNfq9YqVW_-XJRdL', 'KORBUT RECORD', 'Olb', '2026-10-19T20:53:36Z', 'jine')]),
     S('2026-10-31', 13, 17, 'Žaludos', ['Žaludos','Herb'], 'zlutas · 146 BPM',
-      [L('1WmL34GDih_bNpaIcGxl88Ow3pFVOAcqD', 'zlutas', 'Žaludos', '2026-10-31T15:18:19Z')]),
+      [L('1WmL34GDih_bNpaIcGxl88Ow3pFVOAcqD', 'zlutas', 'Žaludos', '2026-10-31T15:18:19Z', 'beat')]),
   ];
 }
 function setTestMode(on, reset){
@@ -882,7 +967,7 @@ function wavePath(seed){
   return waveCache[seed] = d;
 }
 
-const ICON_LOCK = '<svg viewBox="0 0 10 10" aria-hidden="true"><rect x="1.5" y="4.5" width="7" height="5" rx="1" fill="#0e1214"/><path d="M3 4.5V3a2 2 0 0 1 4 0v1.5" fill="none" stroke="#0e1214" stroke-width="1.3"/></svg>';
+const ICON_LOCK = '<svg viewBox="0 0 10 10" aria-hidden="true"><rect x="1.5" y="4.5" width="7" height="5" rx="1" fill="currentColor"/><path d="M3 4.5V3a2 2 0 0 1 4 0v1.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>';
 const ICON_LINK = '<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6.5 9.5l3-3"/><path d="M7.5 4.5l1-1a2.8 2.8 0 0 1 4 4l-1 1"/><path d="M8.5 11.5l-1 1a2.8 2.8 0 0 1-4-4l1-1"/></svg>';
 const ICON_FOLDER = '<svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M1.5 3.5A1 1 0 0 1 2.5 2.5h3.6l1.4 1.5h6a1 1 0 0 1 1 1v7.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"/></svg>';
 const ICON_DOC = '<svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M3.5 1.5h6l3 3v10h-9z" opacity=".9"/><path d="M5.5 8h5M5.5 10.5h5" stroke="#2a2a1c" stroke-width="1.2"/></svg>';
@@ -895,6 +980,7 @@ const state = {
   mday: null,          // vybraný den v denním pohledu
   mScrolled: null,
   bookings: [],
+  cats: [],            // vlastní kategorie odkazů (k pevným CATS)
   drag: null,
   draft: null,
   selected: null,
@@ -906,11 +992,13 @@ const state = {
 const weekDays = () => Array.from({length:7}, (_,i) => ymd(addDays(state.week, i)));
 const weekBookings = () => { const d = new Set(weekDays()); return state.bookings.filter(b => d.has(b.day)); };
 const find = id => state.bookings.find(b => b.id === id);
+const allCats = () => [...CATS, ...state.cats];
+const catOf = id => allCats().find(c => c.id === id) || CATS[2];
 
 /* ================== BACKEND (Firestore / lokální) ==================
    Všechny zápisy jdou přes `api`. Data se vrací přes onData() – u Firestore živě od všech. */
 const notReady = async () => flash('Ještě se připojuju…', 'Zkus to za vteřinu', 'err');
-let api = { mode:'init', create:notReady, update:notReady, remove:notReady, join:notReady, leave:notReady, addLink:notReady, removeLink:notReady, saveWave:async () => {} };
+let api = { mode:'init', create:notReady, update:notReady, remove:notReady, join:notReady, leave:notReady, addLink:notReady, removeLink:notReady, addCat:notReady, saveWave:async () => {} };
 
 function setNet(mode){
   const el = $('#net'); if (!el) return;
@@ -937,6 +1025,10 @@ async function initBackend(onData){
     fs.onSnapshot(fs.collection(db, 'waves'),
       snap => onWaves(snap.docs.map(d => ({ id:d.id, ...d.data() }))),
       () => {});   // dokud nejsou v konzoli nová pravidla, drží se waveformy jen v prohlížeči
+    // vlastní kategorie odkazů (beat / track / jiné jsou pevné v kódu)
+    fs.onSnapshot(fs.collection(db, 'cats'),
+      snap => onCats(snap.docs.map(d => ({ id:d.id, ...d.data() }))),
+      () => {});
     const w = p => p.catch(err => { flash('Nepodařilo se uložit', err.code || err.message, 'err'); });
     const clean = b => ({ day:b.day, start:b.start, end:b.end, owner:b.owner, type:b.type, members:b.members, note:b.note || '', links:b.links || [] });
     return {
@@ -948,6 +1040,7 @@ async function initBackend(onData){
       leave:      (id, u) => w(fs.updateDoc(ref(id), { members: fs.arrayRemove(u) })),
       addLink:    (id, l) => w(fs.updateDoc(ref(id), { links: fs.arrayUnion(l) })),
       removeLink: (id, l) => w(fs.updateDoc(ref(id), { links: fs.arrayRemove(l) })),
+      addCat:     c       => w(fs.setDoc(fs.doc(db, 'cats', c.id), { name:c.name, color:c.color, by:c.by, at:c.at })),
       saveWave:   (id, d) => fs.setDoc(fs.doc(db, 'waves', id), d).catch(() => {}),
     };
   } catch(e){
@@ -958,11 +1051,12 @@ async function initBackend(onData){
 }
 
 function localBackend(onData, key = 'studio-daw-v2', seed = null){
-  let list = null;
-  try { const raw = localStorage.getItem(key); if (raw) list = JSON.parse(raw).bookings; } catch(e){}
+  let list = null, cats = [];
+  try { const raw = localStorage.getItem(key); if (raw){ const j = JSON.parse(raw); list = j.bookings; if (Array.isArray(j.cats)) cats = j.cats; } } catch(e){}
   if (!Array.isArray(list)) list = seed ? seed() : [];
   const commit = () => {
-    try { localStorage.setItem(key, JSON.stringify({ bookings:list })); } catch(e){}
+    try { localStorage.setItem(key, JSON.stringify({ bookings:list, cats })); } catch(e){}
+    onCats(cats.map(c => ({ ...c })));
     onData(list.map(b => ({ ...b, members:[...b.members], links:[...(b.links || [])] })));
   };
   const get = id => list.find(b => b.id === id);
@@ -977,8 +1071,19 @@ function localBackend(onData, key = 'studio-daw-v2', seed = null){
     leave:      async (id, u) => { const b = get(id); if (b){ b.members = b.members.filter(m => m !== u); commit(); } },
     addLink:    async (id, l) => { const b = get(id); if (b){ b.links = [...(b.links || []), l]; commit(); } },
     removeLink: async (id, l) => { const b = get(id); if (b){ b.links = (b.links || []).filter(x => x.id !== l.id); commit(); } },
+    addCat:     async c       => { cats.push({ ...c }); commit(); },
     saveWave:   async () => {},   // waveformy se v lokálním režimu drží v cache prohlížeče
   };
+}
+
+// vlastní kategorie: jen dobře tvarované, seřazené podle vzniku
+function onCats(list){
+  state.cats = list
+    .filter(c => c && typeof c.name === 'string' && c.name.trim() && /^#[0-9a-f]{6}$/i.test(c.color || '') && !CATS.some(k => k.id === c.id))
+    .map(c => ({ id:c.id, name:c.name.trim().slice(0, 20), color:c.color.toLowerCase(), by:c.by, at:c.at || 0 }))
+    .sort((a, b) => a.at - b.at);
+  trRefresh();
+  if (ins && ins.mode === 'detail' && !$('#inspBack').hidden) renderDetailKeep();
 }
 
 function onData(list){
@@ -994,14 +1099,16 @@ function onData(list){
   if (state.drag) return;              // po puštění se překreslí samo
   renderTop(); renderPlaylist(); renderMixer();
   if (!$('#rackBack').hidden) renderRack();
-  if (ins && ins.mode === 'detail' && !$('#inspBack').hidden){
-    // zachovej rozepsaný odkaz, když někdo jiný mezitím něco změní
-    const uv = $('#lUrl') ? $('#lUrl').value : '', nv = $('#lName') ? $('#lName').value : '';
-    const focusId = document.activeElement && document.activeElement.id;
-    renderDetail();
-    if ($('#lUrl')){ $('#lUrl').value = uv; $('#lName').value = nv; }
-    if (focusId && document.getElementById(focusId)) document.getElementById(focusId).focus();
-  }
+  if (ins && ins.mode === 'detail' && !$('#inspBack').hidden) renderDetailKeep();
+}
+// překreslí detail a zachová rozepsaný odkaz, když někdo jiný mezitím něco změní
+function renderDetailKeep(){
+  if (ddOpenFor('lCat') || ddOpenFor('lkCat')) return;   // neshazuj otevřené menu kategorií
+  const uv = $('#lUrl') ? $('#lUrl').value : '', nv = $('#lName') ? $('#lName').value : '';
+  const focusId = document.activeElement && document.activeElement.id;
+  renderDetail();
+  if ($('#lUrl')){ $('#lUrl').value = uv; $('#lName').value = nv; }
+  if (focusId && document.getElementById(focusId)) document.getElementById(focusId).focus();
 }
 
 /* ================== VALIDATION ================== */
@@ -1046,6 +1153,103 @@ function linkInfo(url){
   return { host, kind:host, drive:false, folder:false };
 }
 
+/* ================== ROZBALOVACÍ MENU (kategorie, filtry) ==================
+   Hranaté tlačítko „TEXT ▾“ (ddBtn) a jedno sdílené menu #ddMenu s pozicí fixed (neořízne ho dialog ani okno).
+   opts.add = poslední položka „+ Nová kategorie“ s názvem a paletou barev. */
+const ICON_DD = '<svg class="dd-ar" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3h7L5 7.5z"/></svg>';
+let dd = null;   // { key, btn, items, onPick, add }
+const ddOpenFor = key => !!dd && dd.key === key;
+const ddBtn = (key, label, color, attrs = '') =>
+  `<button type="button" class="dd${color ? '' : ' empty'}" data-dd="${key}" aria-haspopup="listbox" aria-expanded="${ddOpenFor(key)}" ${attrs}>${color ? `<i class="dd-sw" style="--k:${color}"></i>` : ''}<span class="dd-tx">${esc(label)}</span>${ICON_DD}</button>`;
+// položky menu kategorií; counts = { id: počet }
+const catItems = (sel, counts) => allCats().map(c => ({ v:c.id, label:c.name, color:c.color, sel:c.id === sel, count:counts ? counts[c.id] || 0 : null }));
+
+function ddOpen(btn, key, items, onPick, opts = {}){
+  if (ddOpenFor(key) && dd.btn === btn) return ddClose();
+  ddClose();
+  dd = { key, btn, items, onPick, add:opts.add || null };
+  btn.setAttribute('aria-expanded', 'true');
+  let m = $('#ddMenu');
+  if (!m){ m = document.createElement('div'); m.id = 'ddMenu'; m.className = 'dd-menu'; document.body.appendChild(m); ddWire(m); }
+  ddPaint(false);
+  ddPlace();
+  const f = m.querySelector('.dd-it.on') || m.querySelector('.dd-it');
+  if (f) f.focus({ preventScroll:true });
+}
+function ddPaint(form){
+  const m = $('#ddMenu'); if (!m || !dd) return;
+  let h = `<div role="listbox">${dd.items.map(i => `<button type="button" class="dd-it${i.sel ? ' on' : ''}" role="option" aria-selected="${!!i.sel}" data-v="${esc(i.v)}">
+      <i class="dd-sw" style="--k:${i.color || 'transparent'}"></i><span>${esc(i.label)}</span>${i.count != null ? `<small>${i.count}</small>` : ''}<b class="dd-ck">${i.sel ? '✓' : ''}</b></button>`).join('')}</div>`;
+  if (dd.add){
+    h += '<div class="dd-sep"></div>';
+    if (!form) h += `<button type="button" class="dd-it dd-plus" data-add aria-label="Přidat novou kategorii"><b>+</b><span>Nová kategorie</span></button>`;
+    else {
+      const used = new Set(allCats().map(c => c.color));
+      const col = CAT_PALETTE.find(c => !used.has(c)) || CAT_PALETTE[0];
+      h += `<form class="dd-new" autocomplete="off">
+        <input type="text" maxlength="20" placeholder="Název kategorie" aria-label="Název nové kategorie">
+        <div class="dd-pal" role="radiogroup" aria-label="Barva kategorie">${CAT_PALETTE.map(c => `<button type="button" class="dd-col${c === col ? ' on' : ''}" style="--k:${c}" data-col="${c}" role="radio" aria-checked="${c === col}" aria-label="Barva ${c}"></button>`).join('')}</div>
+        <div class="dd-err"></div>
+        <div class="dd-row"><button type="button" class="btn" data-addx>Zpět</button><button type="submit" class="btn primary">+ Přidat</button></div>
+      </form>`;
+    }
+  }
+  m.innerHTML = h; m.hidden = false;
+  if (form){ ddPlace(); m.querySelector('.dd-new input').focus(); }
+}
+function ddPlace(){
+  const m = $('#ddMenu'); if (!m || !dd) return;
+  const r = dd.btn.getBoundingClientRect(), vw = innerWidth, vh = innerHeight;
+  m.style.minWidth = Math.max(180, r.width) + 'px';
+  const mh = m.offsetHeight, mw = m.offsetWidth;
+  const below = vh - r.bottom - 8, above = r.top - 8;
+  m.style.left = clamp(r.left, 8, vw - mw - 8) + 'px';
+  m.style.top = (below >= mh || below >= above ? r.bottom + 3 : Math.max(8, r.top - mh - 3)) + 'px';
+}
+function ddClose(focus){
+  if (!dd) return;
+  const b = dd.btn; dd = null;
+  b.setAttribute('aria-expanded', 'false');
+  const m = $('#ddMenu'); if (m){ m.hidden = true; m.innerHTML = ''; }
+  if (focus && b.isConnected) b.focus();
+}
+function ddWire(m){
+  m.addEventListener('click', e => {
+    if (!dd) return;
+    const it = e.target.closest('.dd-it[data-v]');
+    if (it){ const d = dd; ddClose(true); d.onPick(it.dataset.v); return; }
+    if (e.target.closest('[data-add]')) return ddPaint(true);
+    if (e.target.closest('[data-addx]')) return ddPaint(false);
+    const col = e.target.closest('[data-col]');
+    if (col){ m.querySelectorAll('.dd-col').forEach(x => { const on = x === col; x.classList.toggle('on', on); x.setAttribute('aria-checked', on); }); }
+  });
+  m.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!dd || !dd.add) return;
+    const name = m.querySelector('.dd-new input').value.trim().replace(/\s+/g, ' ');
+    const color = (m.querySelector('.dd-col.on') || {}).dataset?.col || CAT_PALETTE[0];
+    const err = t => { m.querySelector('.dd-err').textContent = t; };
+    if (!state.user) return err('Nejdřív se armni v channel racku');
+    if (!name) return err('Napiš název');
+    if (allCats().some(c => c.name.toLowerCase() === name.toLowerCase())) return err('Taková kategorie už je');
+    const c = { id:'k' + uid(), name, color, by:state.user, at:Date.now() };
+    const d = dd; ddClose(true);
+    api.addCat(c);
+    flash('Kategorie přidána', name);
+    d.add(c);
+  });
+  m.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    const its = [...m.querySelectorAll('.dd-it')], i = its.indexOf(document.activeElement);
+    if (!its.length) return;
+    e.preventDefault();
+    its[(i + (e.key === 'ArrowDown' ? 1 : -1) + its.length) % its.length].focus();
+  });
+}
+document.addEventListener('pointerdown', e => { if (dd && !e.target.closest('#ddMenu, [data-dd]')) ddClose(); });
+document.addEventListener('scroll', e => { if (dd && !(e.target.closest && e.target.closest('#ddMenu'))) isMobile() ? ddPlace() : ddClose(); }, true);
+window.addEventListener('resize', () => { if (dd && !isMobile()) ddClose(); });
+
 /* ================== HINT BAR / TOAST ================== */
 let hintTimer = null, toastTimer = null, hintLocked = false;
 function setHint(title, text, kind){
@@ -1077,7 +1281,7 @@ function renderTop(){
   $('#plCrumb').textContent = `Týden ${isoWeek(state.week)}`;
   $('#mxCrumb').textContent = `Statistiky týdne ${isoWeek(state.week)}`;
   const chip = $('#userChip');
-  if (state.user){ chip.classList.remove('none'); chip.style.setProperty('--uc', P[state.user].color); $('#userName').textContent = state.user; }
+  if (state.user){ chip.classList.remove('none'); chip.style.setProperty('--uc', P[state.user].color); chip.style.setProperty('--ue', P[state.user].edge || 'transparent'); $('#userName').textContent = state.user; }
   else { chip.classList.add('none'); $('#userName').textContent = 'nikdo'; }
   $('#tMixer').setAttribute('aria-pressed', state.mixer);
   $('#mixer').hidden = !state.mixer;
@@ -1125,12 +1329,12 @@ function clipHTML(b, opts = {}){
   const rows = b.type === 'private' ? [b.owner] : b.members;
   const others = b.members.filter(m => m !== b.owner);
   const nl = (b.links || []).length;
-  const dots = others.length ? `<span class="dots">${others.map(m=>`<i class="dot" style="--m:${P[m].color}"></i>`).join('')}</span>` : '';
+  const dots = others.length ? `<span class="dots">${others.map(m=>`<i class="dot" style="${pcv(m,'m')}"></i>`).join('')}</span>` : '';
   const lk = nl ? `<span class="lk">${ICON_LINK}${nl}</span>` : '';
   const tm = big ? `<span class="tm">${fmtT(b.start)}–${fmtT(b.end)}</span>` : '';
   const hint = `${b.owner}${b.note?' · '+b.note:''}|${DAY_SHORT[dayIdx(b.day)]} ${fmtT(b.start)}–${fmtTL(b.end)} · ${b.type==='private'?'soukromá':'otevřená'}${others.length?' · +'+others.join(', '):''}${nl?` · ${nl} odkaz${nl>1&&nl<5?'y':nl>=5?'ů':''}`:''}`;
-  const body = rows.map(m => `<div class="clip-row" style="--m:${P[m].color}">${rows.length>1?`<span class="rn">${esc(m)}</span>`:''}<svg viewBox="0 0 128 20" preserveAspectRatio="none" aria-hidden="true"><path d="${wavePath(b.id+m)}"/></svg></div>`).join('');
-  return `<div class="${cls}" data-id="${b.id}" tabindex="0" role="button" aria-label="${esc(hint.replace('|',', '))}" data-hint="${esc(hint)}" style="${pos};--c:${P[b.owner].color}">
+  const body = rows.map(m => `<div class="clip-row" style="${pcv(m,'m')}">${rows.length>1?`<span class="rn">${esc(m)}</span>`:''}<svg viewBox="0 0 128 20" preserveAspectRatio="none" aria-hidden="true"><path d="${wavePath(b.id+m)}"/></svg></div>`).join('');
+  return `<div class="${cls}" data-id="${b.id}" tabindex="0" role="button" aria-label="${esc(hint.replace('|',', '))}" data-hint="${esc(hint)}" style="${pos};${pcv(b.owner)}">
     <div class="clip-head">${b.type==='private'?ICON_LOCK:''}<span class="nm">${esc(b.owner)}${b.note?` <i>· ${esc(b.note)}</i>`:''}</span>${tm}${lk}${dots}</div>
     <div class="clip-body">${body}</div>
     ${editable?'<div class="grip l"></div><div class="grip r"></div>':''}
@@ -1272,7 +1476,7 @@ function renderMixer(){
   const scale = `<div class="scale"><span>${Math.round(maxMin/60)}</span><span>${Math.round(maxMin/120)}</span><span>0</span></div>`;
   const strip = (name, color, min, foot, extra='') => {
     const pct = clamp(min / maxMin * 100, 0, 100);
-    return `<div class="strip ${extra}" style="--c:${color}" data-hint="${name}|${fmtH(min)} ve studiu tento týden">
+    return `<div class="strip ${extra}" style="${color}" data-hint="${name}|${fmtH(min)} ve studiu tento týden">
       <div class="strip-name">${esc(name)}</div>
       <div class="lcd">${fmtH(min)}</div>
       <div class="strip-main">
@@ -1284,11 +1488,11 @@ function renderMixer(){
     </div>`;
   };
   const busiest = perDay.indexOf(Math.max(...perDay));
-  let html = strip('MASTER', '#ff9a3c', total, `<b>${wb.length}</b> session<br>${total ? 'nejvíc: '+DAY_SHORT[busiest] : 'ticho…'}`, 'master');
+  let html = strip('MASTER', '--c:#ff9a3c', total, `<b>${wb.length}</b> session<br>${total ? 'nejvíc: '+DAY_SHORT[busiest] : 'ticho…'}`, 'master');
   for (const p of PEOPLE){
     const s = st[p.name];
     const top = Object.entries(s.partners).sort((a,b) => b[1]-a[1])[0];
-    html += strip(p.name, p.color, s.min, `<b>${s.n}</b> session<br>${top ? 'nejvíc s '+esc(top[0]) : 'sólo'}`, p.name===state.user?'me':'');
+    html += strip(p.name, pcv(p.name), s.min, `<b>${s.n}</b> session<br>${top ? 'nejvíc s '+esc(top[0]) : 'sólo'}`, p.name===state.user?'me':'');
   }
   html += `<div class="mixer-note">Fadery ukazují hodiny ve studiu za zobrazený týden. Když se přidáš k cizí session, započítá se ti taky.</div>`;
   $('#mixerBody').innerHTML = html;
@@ -1302,7 +1506,7 @@ function renderRack(){
       const on = wb.some(b => b.day === d && b.members.includes(p.name));
       return `<span class="step${i>=5?' we':''}${on?' on':''}">${DAY_SHORT[i]}</span>`;
     }).join('');
-    return `<div class="rack-row${state.user===p.name?' on':''}" style="--c:${p.color}">
+    return `<div class="rack-row${state.user===p.name?' on':''}" style="${pcv(p.name)}">
       <i class="led"></i>
       <button class="rack-name" data-user="${esc(p.name)}">${esc(p.name)}</button>
       <div class="steps">${steps}</div>
@@ -1461,7 +1665,7 @@ function showDialog(){
   if (!isMobile()){ const f = $('#inspBody').querySelector('select, .btn.primary, .btn'); if (f) f.focus(); }
 }
 function memberChips(b){
-  return b.members.map(m => `<span class="mchip" style="--m:${P[m].color}"><i class="led"></i>${esc(m)}${m===b.owner?' <small>· host</small>':''}</span>`).join('');
+  return b.members.map(m => `<span class="mchip" style="${pcv(m,'m')}"><i class="led"></i>${esc(m)}${m===b.owner?' <small>· host</small>':''}</span>`).join('');
 }
 
 function openDetail(b){
@@ -1491,18 +1695,25 @@ function renderDetail(){
     const li = linkInfo(l.url);
     const name = l.label || li.kind;
     const canDel = me && (l.by === me || isOwner);
+    const k = catOf(l.cat);
+    const cat = canDel
+      ? `<button type="button" class="l-cat" style="--k:${k.color}" data-lcat="${l.id}" aria-label="Kategorie ${esc(k.name)} – změnit" data-hint="Kategorie|Klikni a změň">${esc(k.name)}${ICON_DD}</button>`
+      : `<span class="l-cat" style="--k:${k.color}">${esc(k.name)}</span>`;
     return `<div class="link">
       <a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">
         <span class="l-ico${li.drive?' drive':''}">${li.folder ? ICON_FOLDER : li.drive ? ICON_DOC : ICON_LINK}</span>
         <span class="l-txt"><span class="l-name">${esc(name)}</span><span class="l-meta">${esc(li.drive ? li.kind : li.host)} · ${esc(l.by)}</span></span>
       </a>
+      ${cat}
       ${canDel ? `<button class="l-del" data-del="${l.id}" aria-label="Odebrat odkaz ${esc(name)}">✕</button>` : ''}
     </div>`;
   }).join('');
 
+  const lk = ins.lcat && allCats().find(c => c.id === ins.lcat);
   const addForm = isMember ? `
     <form class="link-add" id="linkForm" autocomplete="off">
       <input type="url" id="lUrl" inputmode="url" placeholder="https://drive.google.com/…" aria-label="Odkaz na Google Disk">
+      ${ddBtn('lCat', lk ? lk.name : 'Kategorie', lk ? lk.color : '', 'id="lCat" aria-label="Kategorie odkazu (povinné)" data-hint="Kategorie|Beat, track, jiné · + dole přidá novou"')}
       <input type="text" id="lName" maxlength="40" placeholder="Název (nepovinné)" aria-label="Název odkazu">
       <button class="btn primary" type="submit">+ Přidat</button>
     </form>
@@ -1510,7 +1721,7 @@ function renderDetail(){
     : `<div class="links-empty">${me ? (b.type==='open' && !past ? 'Odkazy můžou přidávat lidi ze session, přidej se.' : 'Odkazy můžou přidávat jen lidi ze session.') : 'Nejdřív se armni v channel racku.'}</div>`;
 
   $('#inspBody').innerHTML = `
-    <div class="det-head" style="--c:${P[b.owner].color}">
+    <div class="det-head" style="${pcv(b.owner)}">
       ${b.type==='private' ? ICON_LOCK : ''}<b>${esc(b.owner)}</b>${b.note ? `<span class="nt">· ${esc(b.note)}</span>` : ''}
       <span class="tag">${b.type==='private' ? 'SOUKROMÁ' : 'OTEVŘENÁ'}</span>
     </div>
@@ -1551,11 +1762,25 @@ function renderDetail(){
     const url = normalizeUrl($('#lUrl').value);
     if (!url){ $('#lErr').textContent = 'Tohle nevypadá jako odkaz'; $('#lUrl').focus(); return; }
     if ((b.links || []).some(x => x.url === url)){ $('#lErr').textContent = 'Tenhle odkaz už tu je'; return; }
+    if (!lk){ $('#lErr').textContent = 'Vyber kategorii'; $('#lCat').classList.add('err'); $('#lCat').focus(); return; }
     const label = $('#lName').value.trim();
     $('#lUrl').value = ''; $('#lName').value = ''; $('#lErr').textContent = '';
-    api.addLink(b.id, { id:uid(), url, label, by:me, at:Date.now() });
-    flash('Odkaz přidán', label || linkInfo(url).kind);
+    api.addLink(b.id, { id:uid(), url, label, cat:lk.id, by:me, at:Date.now() });
+    flash('Odkaz přidán', `${lk.name} · ${label || linkInfo(url).kind}`);
   };
+  const lc = $('#lCat');
+  if (lc) lc.onclick = () => ddOpen(lc, 'lCat', catItems(ins.lcat),
+    v => { ins.lcat = v; renderDetailKeep(); },
+    { add:c => { ins.lcat = c.id; renderDetailKeep(); } });
+  $('#inspBody').querySelectorAll('[data-lcat]').forEach(btn => btn.onclick = () => {
+    const l = (b.links || []).find(x => x.id === btn.dataset.lcat); if (!l) return;
+    const set = v => {
+      const cur = find(b.id); if (!cur) return;
+      api.update(b.id, { links:(cur.links || []).map(x => x.id === l.id ? { ...x, cat:v } : x) });
+      flash('Kategorie změněna', `${l.label || linkInfo(l.url).kind} → ${catOf(v).name}`);
+    };
+    ddOpen(btn, 'lkCat', catItems(catOf(l.cat).id), set, { add:c => set(c.id) });
+  });
   $('#inspBody').querySelectorAll('[data-del]').forEach(btn => btn.onclick = () => {
     const l = (b.links || []).find(x => x.id === btn.dataset.del);
     if (l) api.removeLink(b.id, l);
@@ -1706,7 +1931,15 @@ const tr = {
   job:null,        // právě analyzovaný soubor { id, pct, phase }
   busy:false, apiErr:null,
   cur:null, playing:false, seek:0, blob:null, prev:null,
+  fCat:'', fBy:'',  // filtr playlistu: kategorie a kdo to nahrál ('' = vše)
 };
+const FILT_KEY = 'studio-daw-trfilt';
+try { const f = JSON.parse(localStorage.getItem(FILT_KEY) || '{}'); tr.fCat = String(f.c || ''); tr.fBy = P[f.b] ? f.b : ''; } catch(e){}
+function trSetFilt(c, b){
+  tr.fCat = c; tr.fBy = b;
+  try { localStorage.setItem(FILT_KEY, JSON.stringify({ c, b })); } catch(e){}
+  trRefresh();
+}
 const apiOn = () => !!DRIVE_API_KEY && !tr.apiErr;
 const plural = (n, a, b, c) => n === 1 ? a : n >= 2 && n <= 4 ? b : c;
 const fmtS = s => { s = Math.max(0, Math.floor(s || 0)); return `${Math.floor(s/60)}:${pad(s%60)}`; };
@@ -1757,22 +1990,32 @@ function trCollect(){
     const r = driveRef(l.url); if (!r) continue;
     const at = l.at || 0;
     let t = map.get(r.id);
-    if (!t) map.set(r.id, t = { ...r, url:l.url, label:'', by:l.by, at, day:b.day, refs:[] });
-    else if (at < t.at) Object.assign(t, { url:l.url, by:l.by, at, day:b.day, rk:r.rk || t.rk });
+    if (!t) map.set(r.id, t = { ...r, url:l.url, label:'', by:l.by, at, day:b.day, cat:l.cat || '', refs:[], mem:new Set() });
+    else if (at < t.at) Object.assign(t, { url:l.url, by:l.by, at, day:b.day, rk:r.rk || t.rk, cat:l.cat || t.cat });
+    else if (!t.cat && l.cat) t.cat = l.cat;
     if (l.label && !t.label) t.label = l.label;
+    for (const m of b.members) t.mem.add(m);
     t.refs.push({ bid:b.id, day:b.day, start:b.start, end:b.end, owner:b.owner, by:l.by });
   }
-  for (const t of map.values()) t.refs.sort((a,b) => b.day.localeCompare(a.day) || b.start - a.start);
+  for (const t of map.values()){
+    t.refs.sort((a,b) => b.day.localeCompare(a.day) || b.start - a.start);
+    t.cat = t.cat || 'jine';                                       // bez kategorie = jiné
+    t.mem = PEOPLE.map(p => p.name).filter(n => t.mem.has(n));    // kdo byl na session, kde se odkaz přidal
+  }
   return [...map.values()].sort((a,b) => b.at - a.at);
 }
-function trRows(){
+const trFCat = () => allCats().some(c => c.id === tr.fCat) ? tr.fCat : '';
+const trPass = t => (!trFCat() || catOf(t.cat).id === trFCat()) && (!tr.fBy || t.by === tr.fBy);
+// vis = jen tracky, které projdou filtrem (zobrazení a přehrávání); bez něj všechny (analýza na pozadí)
+function trRows(vis){
   const rows = [];
   for (const t of tr.list){
+    if (vis && !trPass(t)) continue;
     const d = tr.drv[t.id];
     if (t.folder || (d && d.meta && d.meta.mimeType === FOLDER_MIME)){
       rows.push({ ...t, kind:'folder' });
       if (tr.exp.has(t.id) && d && d.kids) for (const k of d.kids)
-        rows.push({ id:k.id, rk:k.resourceKey || '', kind:'kid', parent:t.id, by:t.by, at:t.at, day:t.day, label:'', refs:t.refs, url:`https://drive.google.com/file/d/${k.id}/view` });
+        rows.push({ id:k.id, rk:k.resourceKey || '', kind:'kid', parent:t.id, by:t.by, at:t.at, day:t.day, cat:t.cat, mem:t.mem, label:'', refs:t.refs, url:`https://drive.google.com/file/d/${k.id}/view` });
     } else rows.push({ ...t, kind:'file' });
   }
   for (const r of rows) tr.known[r.id] = r;
@@ -1945,8 +2188,9 @@ function trRefresh(){ if (!trRaf) trRaf = requestAnimationFrame(() => { trRaf = 
 function renderTracks(){
   $('#tTracks').classList.toggle('live', tr.playing || !!tr.prev);
   if (!tr.open) return;
-  const rows = tr.rows = trRows(), n = tr.list.length;
-  $('#trCrumb').textContent = n ? `${n} ${plural(n, 'track', 'tracky', 'tracků')}` : 'prázdno';
+  const rows = tr.rows = trRows(true), n = tr.list.length, shown = tr.list.filter(trPass).length;
+  $('#trCrumb').textContent = !n ? 'prázdno' : shown < n ? `${shown} z ${n} ${plural(n, 'tracku', 'tracků', 'tracků')}` : `${n} ${plural(n, 'track', 'tracky', 'tracků')}`;
+  trFiltPaint();
   let mx = 0;
   for (const r of rows){ const w = tr.waves[r.id]; if (w && w.dur > mx) mx = w.dur; }
   const span = tr.span = Math.max(60, Math.ceil((mx || 180) * 1.04 / 30) * 30);
@@ -1960,7 +2204,8 @@ function renderTracks(){
   let html = `<div class="tr-row tr-head"><div class="corner">TRACK</div><div class="ruler" id="trRuler" data-hint="Časová osa|Klikni a přetoč hrající track">${rul}</div></div>`;
   let num = 0;
   for (const r of rows) html += trRowHTML(r, r.kind === 'kid' ? '' : ++num, span);
-  if (!rows.length) html += `<div class="tr-empty">Zatím tu nejsou žádné odkazy na Google Disk.<br>Otevři session v arrangementu a přidej odkaz na bounce, demo nebo složku se stemy.</div>`;
+  if (!rows.length && n) html += `<div class="tr-empty">Filtru neodpovídá žádný track.<br><button class="btn" data-fclear>Zrušit filtr</button></div>`;
+  else if (!rows.length) html += `<div class="tr-empty">Zatím tu nejsou žádné odkazy na Google Disk.<br>Otevři session v arrangementu a přidej odkaz na bounce, demo nebo složku se stemy.</div>`;
   const g = $('#trGrid');
   g.style.setProperty('--st', (step/span*100) + '%');
   g.innerHTML = html;
@@ -1969,19 +2214,26 @@ function renderTracks(){
 
 function trRowHTML(r, num, span){
   const inf = trInfo(r), name = trName(r), m = metaOf(r.id);
-  const c = (P[r.by] && P[r.by].color) || '#9fb0b8';
+  const c = (P[r.by] && P[r.by].color) || '#9fb0b8', k = catOf(r.cat);
   const on = tr.cur === r.id || tr.prev === r.id, playing = tr.cur === r.id && tr.playing;
+  // proužek vlevo: horní polovina = kdo to nahrál, spodní polovina rozdělená mezi ostatní ze session
+  const others = (r.mem || []).filter(m => m !== r.by && P[m]);
+  const sb = others.length
+    ? `linear-gradient(${c} 0 50%,${others.map((m, i) => `${P[m].color} ${50 + i*50/others.length}% ${50 + (i+1)*50/others.length}%`).join(',')})`
+    : c;
+  const who = [r.by, ...others].filter(Boolean).join(', ');
   const fold = r.kind === 'folder', open = fold && tr.exp.has(r.id);
   const sub = r.kind === 'kid'
     ? [extOf(r), m && m.size ? (m.size/1e6).toFixed(1).replace('.',',') + ' MB' : ''].filter(Boolean).join(' · ')
-    : [r.by, r.day ? `${DAY_SHORT[dayIdx(r.day)]} ${fmtDate(r.day)}` : ''].filter(Boolean).join(' · ');
+    : [others.length ? `${r.by} +${others.length}` : r.by, r.day ? `${DAY_SHORT[dayIdx(r.day)]} ${fmtDate(r.day)}` : ''].filter(Boolean).join(' · ');
   const btn = fold
     ? `<button class="th-play" data-fold="${r.id}" aria-expanded="${open}" aria-label="${open ? 'Sbalit' : 'Rozbalit'} složku ${esc(name)}">${ICON_CHEV}</button>`
     : `<button class="th-play" data-play="${r.id}"${trHow(r) ? '' : ' disabled'} aria-label="${playing ? 'Pauza' : 'Přehrát'} ${esc(name)}">${playing ? ICON_PAUSE : ICON_PLAY}</button>`;
   const cls = ['th', on ? 'on' : '', r.kind === 'kid' ? 'kid' : '', fold ? 'grp' : '', open ? 'open' : '', inf.w ? 'au' : ''].join(' ');
-  return `<div class="tr-row"><div class="${cls}" style="--c:${c}" data-hint="${esc(name)}|${esc(sub)}">
+  const tag = r.kind === 'kid' ? '' : `<em class="ktag">${esc(k.name)}</em>`;
+  return `<div class="tr-row" style="--k:${k.color}"><div class="${cls}" style="${pcv(r.by)};--sb:${sb}" data-hint="${esc(name)}|${esc(k.name)} · ${esc(sub)}${who ? ' · na session: ' + esc(who) : ''}">
       <span class="th-n">${num}</span>${btn}
-      <div class="trk-txt"><b>${esc(name)}</b><small>${esc(sub)}</small></div>
+      <div class="trk-txt"><b>${esc(name)}</b><small>${tag}${esc(sub)}</small></div>
       <a class="th-a" href="${esc(r.url)}" target="_blank" rel="noopener noreferrer" aria-label="Otevřít ${esc(name)} na Google Disku" data-hint="Otevřít na Google Disku|${esc(name)}">${ICON_EXT}</a><i class="led"></i>
     </div><div class="tl${on ? ' on' : ''}" data-t="${r.id}">${trClipHTML(r, inf, name, c, span)}</div></div>`;
 }
@@ -1996,7 +2248,7 @@ function trClipHTML(r, inf, name, c, span){
     return `<div class="clip fold" data-t="${id}" tabindex="0" role="button" aria-label="Složka ${esc(name)}" style="width:300px"><div class="clip-head">${ICON_FOLDER}<span class="nm">${esc(name)}</span>${trLinkBtn(r, name)}</div><div class="clip-body"><span class="tst">${esc(txt.toUpperCase())}</span></div></div>`;
   }
   if (inf.s === 'other')
-    return `<div class="clip pat" data-t="${id}" tabindex="0" role="button" aria-label="Otevřít ${esc(name)} na Google Disku" style="width:250px;--c:${c}"><div class="clip-head"><span class="nm">${esc(name)}</span>${trLinkBtn(r, name)}</div><div class="clip-body"><span class="tst">${ICON_DOC}${esc(inf.txt.toUpperCase())} · OTEVŘÍT ↗</span></div></div>`;
+    return `<div class="clip pat" data-t="${id}" tabindex="0" role="button" aria-label="Otevřít ${esc(name)} na Google Disku" style="width:250px;${pcv(r.by)}"><div class="clip-head"><span class="nm">${esc(name)}</span>${trLinkBtn(r, name)}</div><div class="clip-body"><span class="tst">${ICON_DOC}${esc(inf.txt.toUpperCase())} · OTEVŘÍT ↗</span></div></div>`;
   const w = inf.w, p = w && realPath(w);
   const W = w ? w.dur / span * 100 : Math.min(100, 150 / span * 100);
   const wave = p
@@ -2006,7 +2258,7 @@ function trClipHTML(r, inf, name, c, span){
   const info = w ? `${w.ch === 1 ? 'mono' : w.ch === 2 ? 'stereo' : (w.ch || '?') + ' ch'} · peak ${fmtDb(w.peak)} · RMS ${fmtDb(w.rms)}` : '';
   const st = inf.s === 'ready' ? '' : inf.s === 'job' ? trJobText() : esc(inf.txt || '');
   const hint = w ? `${name}|${fmtS(w.dur)} · ${info} · klik do waveformu = přehrát odtud` : `${name}|${inf.txt || ''}`;
-  return `<div class="clip${p ? '' : ' pend'}" data-t="${id}" tabindex="0" role="button" aria-label="Přehrát ${esc(name)}" data-hint="${esc(hint)}" style="width:${W.toFixed(3)}%;--c:${c}">
+  return `<div class="clip${p ? '' : ' pend'}" data-t="${id}" tabindex="0" role="button" aria-label="Přehrát ${esc(name)}" data-hint="${esc(hint)}" style="width:${W.toFixed(3)}%;${pcv(r.by)}">
     <div class="clip-head"><span class="nm">${esc(name)}</span>${tm ? `<span class="tm">${esc(tm)}</span>` : ''}${trLinkBtn(r, name)}</div>
     <div class="clip-body"><div class="clip-row">${wave}</div>${info ? `<span class="tinfo">${info}</span>` : ''}${st ? `<span class="tst" data-st="${id}">${st}</span>` : ''}${tr.cur === id ? '<i class="tpl"></i><i class="tph"></i>' : ''}</div>
   </div>`;
@@ -2028,8 +2280,8 @@ function trStatPaint(){
   else if (tr.apiErr){ cls = 'err'; txt = 'DRIVE API ✕'; hint = `Google odmítl Drive API klíč|${tr.apiErr}, zkontroluj nastavení klíče`; }
   else if (tr.job){ txt = `⟳ ANALÝZA ${tr.job.phase === 'dl' ? Math.round(tr.job.pct*100) + ' %' : '…'}`; hint = 'Stahuju a počítám waveform|Výsledek se uloží pro všechny'; }
   else {
-    const st = tr.rows.map(r => trInfo(r).s), wait = st.filter(s => s === 'wait').length;
-    const fail = tr.rows.filter(r => trInfo(r).s === 'bad' && !tr.bad[r.id].perm).length;
+    const all = trRows(), st = all.map(r => trInfo(r).s), wait = st.filter(s => s === 'wait').length;
+    const fail = all.filter(r => trInfo(r).s === 'bad' && !tr.bad[r.id].perm).length;
     if (st.includes('meta')){ cls = 'dim'; txt = 'NAČÍTÁM…'; hint = 'Načítám info o souborech z Disku|Pak se spustí analýza'; }
     else if (wait){ cls = 'dim'; txt = `ČEKÁ ${wait}`; hint = 'Analýza čeká|Spustí se sama'; }
     else if (fail){ cls = 'err'; txt = `⚠ NESTAŽENO ${fail}`; hint = 'Disk teď některé soubory nedal stáhnout|Zkusí se znovu při dalším načtení stránky, hrát jdou přes přehrávač Disku'; }
@@ -2114,7 +2366,7 @@ async function trPlay(id, frac){
 function trToggle(id){
   if (id && id === tr.prev) return trPreviewClose();
   if (id && id !== tr.cur) return trPlay(id, 0);
-  if (!tr.cur){ const r = trRows().find(x => trHow(x)); if (r) trPlay(r.id, 0); return; }
+  if (!tr.cur){ const r = trRows(true).find(x => trHow(x)); if (r) trPlay(r.id, 0); return; }
   if (player.paused) player.play().catch(() => {}); else player.pause();
 }
 function trStop(){
@@ -2123,7 +2375,7 @@ function trStop(){
   player.pause(); player.currentTime = 0; trHeadPaint();
 }
 function trNext(dir, auto){
-  const list = trRows().filter(r => trHow(r) === 'api' && (r.id === tr.cur || trInfo(r).s !== 'bad'));
+  const list = trRows(true).filter(r => trHow(r) === 'api' && (r.id === tr.cur || trInfo(r).s !== 'bad'));
   if (!list.length) return;
   if (!auto && dir < 0 && tr.cur && player.currentTime > 3){ player.currentTime = 0; return; }
   const i = list.findIndex(r => r.id === tr.cur), j = i < 0 ? 0 : i + dir;
@@ -2184,7 +2436,7 @@ function trLinks(id, anchor){
     + row(r.url, (m && m.name) || name, short(r.url), r.kind === 'folder');
   if (parent) html += `<div class="pop-lbl">Ze složky</div>` + row(parent.url, trName(parent), short(parent.url), true);
   if (refs.length) html += `<div class="pop-lbl">${refs.length > 1 ? `Přidaný v ${refs.length} session` : 'Přidaný v session'}</div>`
-    + refs.map(x => `<div class="pop-ref" style="--m:${(P[x.by] || {}).color || '#9fb0b8'}"><i class="led"></i>
+    + refs.map(x => `<div class="pop-ref" style="${pcv(x.by,'m')}"><i class="led"></i>
         <div><b>${when(x)}</b><small>session ${esc(x.owner)} · sdílí ${esc(x.by)}</small></div>
         <button class="btn" data-sess="${x.bid}">Otevřít</button></div>`).join('');
   pop.innerHTML = `<div class="win-title"><span>Odkazy</span><span class="crumb">›</span><span>${esc(name)}</span><span class="sp"></span><button class="win-x" data-popx aria-label="Zavřít odkazy">✕</button></div><div class="pop-body">${html}</div>`;
@@ -2227,6 +2479,34 @@ document.addEventListener('pointerdown', e => {
 });
 $('#trScroll').addEventListener('scroll', () => { if (!isMobile()) trPopClose(); }, { passive:true });
 
+/* --- filtr: kategorie a kdo to nahrál --- */
+function trFiltPaint(){
+  const el = $('#trFilt'); if (!el || ddOpenFor('fCat') || ddOpenFor('fBy')) return;
+  const fc = trFCat(), k = fc && catOf(fc), p = tr.fBy && P[tr.fBy];
+  el.innerHTML = `<span class="f-lbl">FILTR</span>
+    ${ddBtn('fCat', k ? k.name : 'Všechny kategorie', k ? k.color : '', 'aria-label="Filtr podle kategorie" data-hint="Kategorie|Beat, track, jiné nebo vlastní · + dole přidá novou"')}
+    ${ddBtn('fBy', p ? tr.fBy : 'Všichni', p ? p.color : '', 'aria-label="Filtr podle toho, kdo to nahrál" data-hint="Kdo to nahrál|Kdo dal odkaz na Disk do session"')}
+    ${fc || p ? '<button type="button" class="f-x" data-fclear aria-label="Zrušit filtr" data-hint="Zrušit filtr|Zobrazit všechny tracky">✕</button>' : ''}`;
+  el.classList.toggle('on', !!(fc || p));
+}
+$('#trFilt').addEventListener('click', e => {
+  if (e.target.closest('[data-fclear]')) return trSetFilt('', '');
+  const b = e.target.closest('[data-dd]'); if (!b) return;
+  if (b.dataset.dd === 'fCat'){
+    const cnt = {};
+    for (const t of tr.list) if (!tr.fBy || t.by === tr.fBy){ const id = catOf(t.cat).id; cnt[id] = (cnt[id] || 0) + 1; }
+    const all = tr.list.filter(t => !tr.fBy || t.by === tr.fBy).length;
+    ddOpen(b, 'fCat', [{ v:'', label:'Všechny kategorie', sel:!trFCat(), count:all }, ...catItems(trFCat(), cnt)],
+      v => trSetFilt(v, tr.fBy), { add:() => trRefresh() });
+  } else {
+    const fc = trFCat(), cnt = {};
+    for (const t of tr.list) if (!fc || catOf(t.cat).id === fc) cnt[t.by] = (cnt[t.by] || 0) + 1;
+    ddOpen(b, 'fBy', [{ v:'', label:'Všichni', sel:!tr.fBy, count:tr.list.filter(t => !fc || catOf(t.cat).id === fc).length },
+      ...PEOPLE.map(p => ({ v:p.name, label:p.name, color:p.color, sel:tr.fBy === p.name, count:cnt[p.name] || 0 }))],
+      v => trSetFilt(trFCat(), v));
+  }
+});
+
 /* --- okno --- */
 function openTracks(){
   tr.open = true; $('#tracks').hidden = false;
@@ -2253,6 +2533,7 @@ $('#trStop').onclick = trStop;
 $('#trPrev').onclick = () => trNext(-1);
 $('#trNext').onclick = () => trNext(1);
 $('#trGrid').addEventListener('click', e => {
+  if (e.target.closest('[data-fclear]')) return trSetFilt('', '');
   const lk = e.target.closest('[data-links]'); if (lk) return trLinks(lk.dataset.links, lk);
   const fb = e.target.closest('[data-fold]'); if (fb) return trFold(fb.dataset.fold);
   const pb = e.target.closest('[data-play]'); if (pb) return trToggle(pb.dataset.play);
@@ -2321,6 +2602,8 @@ document.querySelectorAll('.backdrop').forEach(bd => bd.addEventListener('click'
 
 document.addEventListener('keydown', e => {
   const typing = e.target.matches && e.target.matches('input, select');
+  if (e.key === 'Escape' && dd){ ddClose(true); return; }
+  if (e.target.closest && e.target.closest('#ddMenu')) return;
   if (e.key === 'Escape'){
     if (state.drag){ state.drag = null; renderPlaylist(); return; }
     if (!$('#inspBack').hidden) closeInspector(); else if (!$('#rackBack').hidden && state.user) closeRack(); else if (!$('#trPop').hidden) trPopClose(); else if (tr.open) closeTracks();

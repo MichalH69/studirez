@@ -43,6 +43,23 @@ service cloud.firestore {
         && (!('at' in d) || d.at is int);
     }
 
+    // Vlastní kategorie odkazů (beat / track / jiné jsou pevně v index.html).
+    // Dají se jen přidat, ne přepsat ani smazat, ať nikomu nezmizí kategorie u jeho odkazů.
+    function validCat(d) {
+      return d.keys().hasOnly(['name', 'color', 'by', 'at'])
+        && d.keys().hasAll(['name', 'color', 'by'])
+        && d.name is string && d.name.size() >= 1 && d.name.size() <= 20
+        && d.color is string && d.color.matches('^#[0-9a-f]{6}$')
+        && d.by in names()
+        && (!('at' in d) || d.at is int);
+    }
+
+    match /cats/{id} {
+      allow read: if true;
+      allow create: if id.matches('^k[a-z0-9]{3,16}$') && validCat(request.resource.data);
+      allow update, delete: if false;
+    }
+
     match /bookings/{id} {
       allow read: if true;
       allow create, update: if validBooking(request.resource.data);
