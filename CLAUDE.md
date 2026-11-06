@@ -112,7 +112,7 @@ takže se nic nepřepočítává při změně velikosti okna. Zobrazení wavefor
   `.lcd`, `.tbtn`/`.tool` (tlačítka, `aria-pressed` = rozsvícené), `.led`, `.chip`, `.seg`, `.btn`,
   `.clip` (barevná hlavička podle člověka + tělo s waveformem), dialogy `.backdrop > .dialog`.
 - Každý člověk má barvu v `PEOPLE`; klipy, LED a stopy ji přebírají přes `--c` / `--m`, vždy přes `pcv(jméno, 'c'|'m')`,
-  který přidá i `--ci` (text na barvě), `--ce` (obrys) a `--cw` (waveform). Kvůli tomu může být barva i černá (Olb).
+  který přidá i `--ci` (text na barvě), `--ce` (obrys) a `--cw` (waveform). Díky tomu jde použít i tmavá barva (ink/edge/wave v `PEOPLE`).
 - Rozbalovací menu: `ddBtn()` (hranaté tlačítko „TEXT ▾“) + `ddOpen(btn, key, items, onPick, { add })`, jedno sdílené
   `#ddMenu` s `position:fixed`; `add` = poslední položka „+ Nová kategorie“ s paletou.
 - Waveformy v klipech kalendáře jsou jen dekorace (`wavePath()` ze seedu); skutečné jsou jen v Tracky.
