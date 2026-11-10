@@ -41,6 +41,8 @@ note: ≤ 60 znaků       links: [{ id, url, label, cat, by, at }] (≤ 30; cat 
 guests: [≤ 8 volných jmen] – hosté bez kanálu (nepovinné, u starých chybí), v UI šedí (fallback `pcv`)
 ```
 Časová osa: 08:00 až 06:00 dalšího dne (`MIN_START`, `MAX_END`), výchozí zobrazení 10–24, snap 30 min, týdny podle ISO.
+Čas v editoru = digitální hodiny (`clkOpen`, `#dcBig`): malé LCD, klik = velké přes celou šířku, krok 1 h / 10 min
+(tah po dvojici: myš hned, dotyk po podržení; kolečko, ↑↓). Kalendář tahem dál snapuje po 30 min.
 Rezervovat jde i zpětně do minulosti. Účastníky (čipy z `PEOPLE` + „Někdo jiný“ = host) vybírá editor (`#fPick`).
 Otevřená session = ostatní se můžou přidat; soukromá = nikdo další se nepřidá (vybraní účastníci zůstávají). Překryvy hlídá `validate()`.
 Budoucí session upravuje/maže jen majitel (editor); proběhlou může upravit kdokoli (`canEditB`, ale ne posunout

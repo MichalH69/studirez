@@ -5,7 +5,7 @@ Data jsou ve Firebase Firestore, stránku hostuje GitHub Pages.
 
 ## Jak to funguje
 - **Týden / Den:** přepínač pohledu v horní liště (klávesy T / D).
-- **Nová session:** táhni v prázdné stopě nebo klikni na ● REC (klávesa R). Jde zapsat i zpětně do minulosti. V editoru vybereš, kdo dál jde. Pod **+ Někdo jiný** napíšeš jméno hosta, který nemá kanál, a ten bude šedý.
+- **Nová session:** táhni v prázdné stopě nebo klikni na ● REC (klávesa R). Jde zapsat i zpětně do minulosti. Čas nastavíš na digitálních hodinách: klikni na čas, pak šipky, nebo podrž prst (na počítači najeď myší) na hodinách či minutách a táhni nahoru / dolů. Krok je 1 h a 10 min. V editoru vybereš, kdo dál jde. Pod **+ Někdo jiný** napíšeš jméno hosta, který nemá kanál, a ten bude šedý.
 - **Otevřená session:** ostatní se můžou přidat. **Soukromá:** nikdo další se nepřidá.
 - **Detail session:** klikni na klip. Najdeš tam členy a odkazy na Google Disk. Odkaz může přidat kdokoli ke kterékoli session. U nového odkazu musíš vybrat kategorii (beat, track, jiné nebo vlastní), u svých odkazů ji jde kliknutím změnit. Budoucí session upravuje jen majitel, proběhlou může upravit kdokoli. Proběhlou session může smazat kdokoli, kdo na ní byl (zmizí s ní i její odkazy z playlistu tracků).
 - **Mixer (F9):** statistiky týdne. Tlačítko **TEST** v jeho titulku zapne testový režim: proběhlé session s tracky z Disku, data jen v tomhle prohlížeči, do databáze se nic nezapíše. **↺ OBNOVIT** vrátí testová data do původního stavu.

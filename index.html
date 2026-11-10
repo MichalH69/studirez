@@ -328,6 +328,35 @@ select,input[type=text],input[type=url]{
   box-shadow:inset 0 0 6px #000; width:100%; min-width:0; -webkit-user-select:text; user-select:text;
 }
 select{font-family:var(--mono); color:var(--orange); cursor:pointer}
+/* digitální hodiny v editoru: malý LCD rámeček, po kliknutí velké přes celou šířku (#dcBig) */
+.dclk{font-family:var(--mono); color:var(--orange); background:var(--lcd); border:1px solid #000; border-radius:2px;
+  box-shadow:inset 0 0 8px #000; text-shadow:0 0 6px rgba(255,154,60,.55); font-size:20px; line-height:1; letter-spacing:.04em;
+  padding:6px 7px; cursor:pointer; text-align:center; display:flex; align-items:baseline; justify-content:center; gap:1px; min-height:34px}
+.dclk:focus-visible{outline:1px solid var(--orange)}
+.dclk i{font-style:normal; opacity:.8}
+.dclk sup,.dcb-clock sup{font-size:.45em; color:var(--dim); text-shadow:none; margin-left:3px; align-self:flex-start}
+.dcb{position:fixed; inset:0; z-index:60; background:rgba(5,8,10,.78); display:flex; align-items:center; justify-content:center;
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none}
+.dcb[hidden]{display:none}
+.dcb-box{width:100%; background:var(--win); border-block:1px solid var(--line); box-shadow:0 10px 40px #000;
+  padding:14px 16px max(14px, env(safe-area-inset-bottom)); display:flex; flex-direction:column; align-items:center; gap:8px}
+.dcb-lbl{font-size:11px; letter-spacing:.16em; color:var(--dim); font-weight:600; text-transform:uppercase}
+.dcb-clock{display:flex; align-items:center; justify-content:center; gap:clamp(4px,2vw,20px); width:100%;
+  font-family:var(--mono); color:var(--orange); background:var(--lcd); border:1px solid #000; border-radius:3px;
+  box-shadow:inset 0 0 18px #000; padding:4px 8px}
+.dcb-pair{display:flex; flex-direction:column; align-items:center; touch-action:none; cursor:ns-resize; outline:none}
+.dcb-num{font-size:clamp(64px,24vw,190px); line-height:1; letter-spacing:.03em; text-shadow:0 0 14px rgba(255,154,60,.6);
+  transition:transform .12s, text-shadow .12s; padding:0 .04em}
+.dcb-pair.act .dcb-num{transform:scale(1.22); text-shadow:0 0 26px rgba(255,154,60,.95)}
+@media (hover:hover){ .dcb-pair:hover .dcb-num{transform:scale(1.22); text-shadow:0 0 26px rgba(255,154,60,.95)} }
+.dcb-pair:focus-visible .dcb-num{text-decoration:underline 2px; text-underline-offset:.12em}
+.dcb-colon{font-size:clamp(48px,18vw,150px); line-height:1; opacity:.8; animation:dcb-blink 1s steps(1) infinite}
+@keyframes dcb-blink{50%{opacity:.3}}
+.dcb-arr{position:relative; z-index:1; width:min(120px,26vw); height:44px; margin:.06em 0; display:grid; place-items:center; background:none; border:0; color:#9fb0b8; cursor:pointer; touch-action:manipulation}
+.dcb-arr svg{width:28px; height:28px; fill:currentColor}
+.dcb-arr:hover,.dcb-arr:active{color:var(--orange)}
+.dcb-hint{font-size:11.5px; color:var(--faint); text-align:center}
+.dcb-ok{min-width:140px}
 select:focus,input:focus{outline:1px solid var(--orange)}
 .seg{display:grid; grid-template-columns:1fr 1fr; gap:6px}
 .seg button{
@@ -1803,17 +1832,119 @@ function renderDetail(){
   });
 }
 
-/* ================== EDITOR (nová / úprava) ================== */
-function timeOptions(from, to, sel){
-  let o = '';
-  for (let m = from; m <= to; m += SNAP) o += `<option value="${m}"${m===sel?' selected':''}>${fmtTL(m)}</option>`;
-  return o;
+/* ================== DIGITÁLNÍ HODINY (čas v editoru) ================== */
+// Malý LCD rámeček v editoru; klik otevře velké hodiny přes celou šířku (#dcBig).
+// Dvojice HH / MM: šipky ▲▼, podržet prst (mobil) nebo najet myší a táhnout nahoru/dolů, kolečko, klávesy ↑↓.
+// Krok: hodiny 1 h, minuty 10 min (s přenosem do hodin), rozsah MIN_START–MAX_END.
+const CLK_STEP = { h:60, m:10 }, CLK_PX = 22, CLK_HOLD = 280;
+const clkParts = v => ({ h:pad(Math.floor(v/60)%24), m:pad(v%60), nx:v >= 1440 });
+const clkSmall = v => { const p = clkParts(v); return `<b>${p.h}</b><i>:</i><b>${p.m}</b>${p.nx?'<sup>+1</sup>':''}`; };
+const ICON_UP = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 11L8 4.5 13.5 11z"/></svg>';
+const ICON_DN = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 5L8 11.5 13.5 5z"/></svg>';
+let clk = null;   // { get, set, label, back } – otevřené velké hodiny
+
+function clkOpen(o){
+  let el = $('#dcBig');
+  if (!el){
+    el = document.createElement('div'); el.id = 'dcBig'; el.className = 'dcb'; el.hidden = true;
+    const pair = u => `<div class="dcb-pair" data-u="${u}" tabindex="0" role="spinbutton" aria-label="${u==='h'?'Hodiny':'Minuty'}">
+        <button type="button" class="dcb-arr" data-d="1" tabindex="-1" aria-label="${u==='h'?'+1 hodina':'+10 minut'}">${ICON_UP}</button>
+        <span class="dcb-num"></span>
+        <button type="button" class="dcb-arr" data-d="-1" tabindex="-1" aria-label="${u==='h'?'−1 hodina':'−10 minut'}">${ICON_DN}</button>
+      </div>`;
+    el.innerHTML = `<div class="dcb-box" role="dialog" aria-modal="true">
+        <div class="dcb-lbl"></div>
+        <div class="dcb-clock">${pair('h')}<span class="dcb-colon">:</span>${pair('m')}<sup class="dcb-nx" hidden>+1</sup></div>
+        <div class="dcb-hint"></div>
+        <button type="button" class="btn primary dcb-ok">OK</button>
+      </div>`;
+    document.body.appendChild(el);
+    clkWire(el);
+  }
+  clk = o;
+  el.querySelector('.dcb-lbl').textContent = o.label;
+  el.querySelector('.dcb-hint').textContent = isMobile() || matchMedia('(pointer:coarse)').matches
+    ? 'Podrž prst na hodinách nebo minutách a táhni nahoru / dolů'
+    : 'Najeď na hodiny nebo minuty a táhni myší nahoru / dolů · kolečko · šipky ↑↓';
+  el.hidden = false;
+  clkPaint();
+  el.querySelector('.dcb-pair').focus({ preventScroll:true });
 }
+function clkClose(){
+  const el = $('#dcBig'); if (!el || el.hidden) return;
+  el.hidden = true; el.querySelectorAll('.act').forEach(x => x.classList.remove('act'));
+  const o = clk; clk = null;
+  if (o && o.back && document.contains(o.back)) o.back.focus({ preventScroll:true });
+}
+function clkPaint(){
+  const el = $('#dcBig'); if (!el || !clk) return;
+  const v = clk.get(), p = clkParts(v);
+  el.querySelectorAll('.dcb-pair').forEach(x => {
+    x.querySelector('.dcb-num').textContent = p[x.dataset.u];
+    x.setAttribute('aria-valuenow', p[x.dataset.u]); x.setAttribute('aria-valuetext', fmtTL(v));
+  });
+  el.querySelector('.dcb-nx').hidden = !p.nx;
+}
+function clkStep(u, d){ if (clk){ clk.set(clk.get() + CLK_STEP[u]*d); clkPaint(); } }
+
+function clkWire(el){
+  el.addEventListener('click', e => { if (e.target === el || e.target.closest('.dcb-ok')) clkClose(); });
+  el.addEventListener('keydown', e => {
+    const pr = e.target.closest('.dcb-pair');
+    if (e.key === 'Escape' || e.key === 'Enter'){ e.preventDefault(); e.stopPropagation(); clkClose(); return; }
+    if (pr && (e.key === 'ArrowUp' || e.key === 'ArrowDown')){ e.preventDefault(); clkStep(pr.dataset.u, e.key === 'ArrowUp' ? 1 : -1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ e.preventDefault(); el.querySelectorAll('.dcb-pair')[e.key === 'ArrowLeft' ? 0 : 1].focus(); }
+    e.stopPropagation();   // ať klávesy nejdou do kalendáře
+  });
+  el.addEventListener('wheel', e => {
+    const pr = e.target.closest('.dcb-pair'); if (!pr) return;
+    e.preventDefault(); clkStep(pr.dataset.u, e.deltaY < 0 ? 1 : -1);
+  }, { passive:false });
+  el.addEventListener('contextmenu', e => e.preventDefault());   // dlouhý stisk na mobilu bez menu
+
+  // šipky: klik = krok, držení = opakuje
+  let rep = null;
+  const stopRep = () => { if (rep){ clearTimeout(rep.t); clearInterval(rep.i); rep = null; } };
+  el.addEventListener('pointerdown', e => {
+    const ar = e.target.closest('.dcb-arr'); if (!ar) return;
+    e.preventDefault(); e.stopPropagation();
+    const u = ar.closest('.dcb-pair').dataset.u, d = +ar.dataset.d;
+    clkStep(u, d); stopRep();
+    rep = { t:setTimeout(() => { rep.i = setInterval(() => clkStep(u, d), 110); }, 420) };
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(t => el.addEventListener(t, stopRep));
+
+  // tah po dvojici: myš hned (dvojice je zvětšená už po najetí), dotyk po podržení
+  let drag = null;
+  el.addEventListener('pointerdown', e => {
+    if (e.target.closest('.dcb-arr') || e.button > 0) return;
+    const pr = e.target.closest('.dcb-pair'); if (!pr) return;
+    e.preventDefault(); pr.focus({ preventScroll:true });
+    try { pr.setPointerCapture(e.pointerId); } catch(_){}
+    drag = { pr, id:e.pointerId, y:e.clientY, on:false, t:null };
+    const go = () => { if (!drag) return; drag.on = true; drag.y0 = drag.y; drag.n = 0; pr.classList.add('act'); if (navigator.vibrate) navigator.vibrate(8); };
+    if (e.pointerType === 'mouse') go(); else drag.t = setTimeout(go, CLK_HOLD);
+  });
+  el.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    drag.y = e.clientY;
+    if (!drag.on) return;
+    const n = Math.round((drag.y0 - e.clientY) / CLK_PX);   // nahoru = víc
+    if (n !== drag.n){ clkStep(drag.pr.dataset.u, n - drag.n); drag.n = n; }
+  });
+  const end = e => {
+    if (!drag || (e && e.pointerId !== drag.id)) return;
+    clearTimeout(drag.t); drag.pr.classList.remove('act'); drag = null;
+  };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+}
+
+/* ================== EDITOR (nová / úprava) ================== */
 
 function openEditor(b, isNew){
   if (!b) return;
   ins = { mode:'edit', isNew, orig:{ ...b, members:[...b.members], guests:[...(b.guests || [])] }, type:b.type, armDelete:false,
-          members:[...b.members], guests:[...(b.guests || [])] };
+          members:[...b.members], guests:[...(b.guests || [])], start:b.start, end:b.end };
   state.selected = isNew ? null : b.id;
   if (isNew){ state.draft = b; state.mday = b.day; }
   const body = $('#inspBody');
@@ -1823,8 +1954,8 @@ function openEditor(b, isNew){
   body.innerHTML = `
     <div class="field-row">
       <label class="field"><span>Den</span><select id="fDay">${days.map(d => `<option value="${d}"${d===b.day?' selected':''}>${DAY_NAMES[dayIdx(d)]} ${fmtDate(d)}</option>`).join('')}</select></label>
-      <label class="field"><span>Od</span><select id="fStart">${timeOptions(MIN_START, MAX_END-30, b.start)}</select></label>
-      <label class="field"><span>Do</span><select id="fEnd">${timeOptions(MIN_START+30, MAX_END, b.end)}</select></label>
+      <div class="field"><span>Od</span><button type="button" class="dclk" id="fStart" data-k="start" data-hint="Začátek|Klikni a nastav čas"></button></div>
+      <div class="field"><span>Do</span><button type="button" class="dclk" id="fEnd" data-k="end" data-hint="Konec|Klikni a nastav čas"></button></div>
     </div>
     <div class="field"><span>Typ session</span>
       <div class="seg" role="radiogroup">
@@ -1885,8 +2016,19 @@ function openEditor(b, isNew){
     if (isNew){ state.draft = c; state.mday = c.day; renderPlaylist(); }
   };
   body.querySelectorAll('.seg button').forEach(x => x.onclick = () => { ins.type = x.dataset.type; sync(); });
-  $('#fStart').onchange = () => { const s = +$('#fStart').value; if (+$('#fEnd').value <= s) $('#fEnd').value = Math.min(MAX_END, s+60); sync(); };
-  $('#fEnd').onchange = () => { const s = +$('#fStart').value; if (+$('#fEnd').value <= s) $('#fStart').value = Math.max(MIN_START, +$('#fEnd').value-60); sync(); };
+  // čas: malé LCD → velké hodiny; konec se posune, když by byl před začátkem (a naopak)
+  const paintT = () => { $('#fStart').innerHTML = clkSmall(ins.start); $('#fEnd').innerHTML = clkSmall(ins.end);
+    $('#fStart').setAttribute('aria-label', `Od ${fmtTL(ins.start)} – změnit`); $('#fEnd').setAttribute('aria-label', `Do ${fmtTL(ins.end)} – změnit`); };
+  const setT = (k, v) => {
+    if (k === 'start'){ ins.start = clamp(v, MIN_START, MAX_END-30); if (ins.end - ins.start < 30) ins.end = Math.min(MAX_END, ins.start+60); }
+    else { ins.end = clamp(v, MIN_START+30, MAX_END); if (ins.end - ins.start < 30) ins.start = Math.max(MIN_START, ins.end-60); }
+    paintT(); sync();
+  };
+  ['fStart','fEnd'].forEach(id => $('#'+id).onclick = e => {
+    const k = e.currentTarget.dataset.k;
+    clkOpen({ label: k === 'start' ? 'Začátek session' : 'Konec session', get:() => ins[k], set:v => setT(k, v), back:e.currentTarget });
+  });
+  paintT();
   $('#fDay').onchange = sync;
   $('#fNote').oninput = () => { if (isNew){ state.draft = readForm(); renderPlaylist(); } };
   $('#fNote').onkeydown = e => { if (e.key === 'Enter') saveEditor(); };
@@ -1904,7 +2046,7 @@ function openEditor(b, isNew){
 function readForm(){
   const cur = find(ins.orig.id);
   return { ...ins.orig, members:[...ins.members], guests:[...ins.guests], links: cur ? (cur.links || []) : [],
-    day:$('#fDay').value, start:+$('#fStart').value, end:+$('#fEnd').value, type:ins.type, note:$('#fNote').value.trim() };
+    day:$('#fDay').value, start:ins.start, end:ins.end, type:ins.type, note:$('#fNote').value.trim() };
 }
 function saveEditor(){
   const wasNew = ins.isNew;
@@ -1933,7 +2075,7 @@ function deleteBooking(id){
   if (b) flash('Smazáno', `${DAY_NAMES[dayIdx(b.day)]} ${fmtT(b.start)}–${fmtTL(b.end)}`);
 }
 function closeInspector(){
-  $('#inspBack').hidden = true; state.draft = null; state.selected = null; ins = null; renderPlaylist();
+  clkClose(); $('#inspBack').hidden = true; state.draft = null; state.selected = null; ins = null; renderPlaylist();
 }
 
 /* ================== CHANNEL RACK ================== */
