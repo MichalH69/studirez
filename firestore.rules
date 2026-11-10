@@ -12,7 +12,7 @@ service cloud.firestore {
     }
 
     function validBooking(d) {
-      return d.keys().hasOnly(['day', 'start', 'end', 'owner', 'type', 'members', 'note', 'links'])
+      return d.keys().hasOnly(['day', 'start', 'end', 'owner', 'type', 'members', 'guests', 'note', 'links'])
         && d.keys().hasAll(['day', 'start', 'end', 'owner', 'type', 'members'])
         && d.day is string && d.day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
         && d.start is int && d.end is int
@@ -21,6 +21,8 @@ service cloud.firestore {
         && d.type in ['open', 'private']
         && d.members is list && d.members.size() >= 1 && d.members.size() <= 4
         && d.members.hasOnly(names()) && d.owner in d.members
+        // hosté = lidi bez kanálu, jen jména (v appce šedí)
+        && (!('guests' in d) || (d.guests is list && d.guests.size() <= 8))
         && (!('note' in d) || (d.note is string && d.note.size() <= 60))
         && (!('links' in d) || (d.links is list && d.links.size() <= 30));
     }

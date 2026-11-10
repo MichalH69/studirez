@@ -342,6 +342,16 @@ select:focus,input:focus{outline:1px solid var(--orange)}
 .mchip{display:inline-flex; align-items:center; gap:5px; padding:3px 8px 3px 6px; border-radius:2px; background:color-mix(in srgb,var(--m) 25%,#1b2124); border:1px solid color-mix(in srgb,var(--m) 50%,#000); font-weight:600; font-size:12px}
 .mchip .led{background:var(--m); box-shadow:0 0 5px var(--m), 0 0 0 1px var(--me,transparent)}
 .mchip small{color:var(--dim); font-weight:400}
+/* výběr účastníků v editoru: vypnutý čip je tlumený, zapnutý v barvě člověka; hosté šedí */
+.pick{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+.pick .mchip{cursor:pointer; color:var(--text); font-family:inherit; min-height:30px}
+.pick .mchip[aria-pressed="false"]{background:#1b2124; border-color:#000; opacity:.6}
+.pick .mchip[aria-pressed="false"] .led{background:#3a4448; box-shadow:none}
+.pick .mchip .x{margin-left:2px; color:var(--dim); font-weight:400}
+.pick .mchip.add{--m:#5a666b; border-style:dashed; opacity:1}
+.pick input{flex:1 1 140px; min-width:120px}
+.pick [hidden]{display:none}
+@media (max-width:760px){ .pick .mchip{min-height:40px; padding:4px 12px 4px 8px} }
 .det-head{
   display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:3px;
   background:var(--c); color:var(--ci,#0e1214); background-image:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,0));
@@ -765,7 +775,7 @@ body.test .topbar{border-bottom-color:var(--orange-dim)}
     <div class="win-toolbar">
       <span class="chip" data-hint="Snap|Vše se přichytává na půl hodiny">⌖ SNAP ½ h</span>
       <span class="legend" data-hint="Otevřená session|Ostatní se můžou přidat"><i class="sw"></i>otevřená</span>
-      <span class="legend" data-hint="Soukromá session|Studio je jen pro majitele"><i class="sw priv"></i>soukromá</span>
+      <span class="legend" data-hint="Soukromá session|Nikdo další se nemůže přidat"><i class="sw priv"></i>soukromá</span>
       <span class="legend" data-hint="Tvoje session|Můžeš ji táhnout a měnit délku za okraje"><i class="sw mine"></i>tvoje</span>
       <span class="toolbar-sp"></span>
       <span>táhni = nová · klik = detail · táhni klip = přesun · okraj = délka</span>
@@ -948,6 +958,8 @@ const atMin = (day, m) => { const d = parseYmd(day); return new Date(d.getFullYe
 const startAt = b => atMin(b.day, b.start);
 const endAt   = b => atMin(b.day, b.end);
 const isPast = b => endAt(b) < new Date();
+// budoucí session upravuje jen majitel, proběhlou kdokoli (doplnění zpětně)
+const canEditB = b => !!state.user && (b.owner === state.user || isPast(b));
 const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
 const snap = m => Math.round(m/SNAP)*SNAP;
 const uid = () => Math.random().toString(36).slice(2,10);
@@ -1030,7 +1042,7 @@ async function initBackend(onData){
       snap => onCats(snap.docs.map(d => ({ id:d.id, ...d.data() }))),
       () => {});
     const w = p => p.catch(err => { flash('Nepodařilo se uložit', err.code || err.message, 'err'); });
-    const clean = b => ({ day:b.day, start:b.start, end:b.end, owner:b.owner, type:b.type, members:b.members, note:b.note || '', links:b.links || [] });
+    const clean = b => ({ day:b.day, start:b.start, end:b.end, owner:b.owner, type:b.type, members:b.members, guests:b.guests || [], note:b.note || '', links:b.links || [] });
     return {
       mode:'firebase',
       create:     b       => w(fs.setDoc(fs.doc(col), clean(b))),
@@ -1087,7 +1099,7 @@ function onCats(list){
 }
 
 function onData(list){
-  state.bookings = list.map(b => ({ ...b, members:b.members || [], links:b.links || [] }));
+  state.bookings = list.map(b => ({ ...b, members:b.members || [], guests:b.guests || [], links:b.links || [] }));
   if (testJump){
     testJump = false;
     const last = state.bookings.map(b => b.day).filter(d => d <= ymd(new Date())).sort().pop();
@@ -1115,8 +1127,8 @@ function renderDetailKeep(){
 function validate(b, ignoreId, orig){
   if (b.end - b.start < 30) return 'Minimální délka je 30 minut';
   if (b.start < MIN_START || b.end > MAX_END) return 'Session musí být mezi 08:00 a 06:00 (+1)';
-  const startChanged = !orig || orig.day !== b.day || orig.start !== b.start;
-  if (startChanged && startAt(b) < new Date()) return 'Do minulosti rezervovat nejde';
+  // do minulosti rezervovat jde (zpětné doplnění); cizí proběhlou session ale do budoucna posunout nejde
+  if (orig && orig.owner !== state.user && endAt(b) > new Date()) return 'Do budoucna ji může posunout jen majitel';
   for (const o of state.bookings){
     if (o.id === ignoreId || o.day !== b.day) continue;
     if (b.start < o.end && o.start < b.end){
@@ -1324,10 +1336,10 @@ function clipHTML(b, opts = {}){
   }
   const mine = b.owner === state.user;
   const past = isPast(b);
-  const editable = mine && !past && !opts.ghost && !v;
+  const editable = canEditB(b) && !opts.ghost && !v;
   const cls = ['clip', b.type, mine?'mine':'', past?'past-c':'', state.selected===b.id?'sel':'', opts.ghost?'ghost':'', opts.drag?'drag':'', opts.bad?'bad':''].join(' ');
-  const rows = b.type === 'private' ? [b.owner] : b.members;
-  const others = b.members.filter(m => m !== b.owner);
+  const rows = b.members;
+  const others = [...b.members.filter(m => m !== b.owner), ...(b.guests || [])];   // hosté = šedí (pcv pro neznámé jméno)
   const nl = (b.links || []).length;
   const dots = others.length ? `<span class="dots">${others.map(m=>`<i class="dot" style="${pcv(m,'m')}"></i>`).join('')}</span>` : '';
   const lk = nl ? `<span class="lk">${ICON_LINK}${nl}</span>` : '';
@@ -1360,8 +1372,10 @@ function renderPlaylist(){
 
   const now = new Date();
   let nm = now.getHours()*60 + now.getMinutes();
-  if (nm < r.s && nm + 1440 <= r.e) nm += 1440;
-  const showPh = nm >= r.s && nm <= r.e;
+  const phDay = new Date(now);                            // den, ke kterému "teď" na ose patří
+  if (nm < r.s && nm + 1440 <= r.e){ nm += 1440; phDay.setDate(phDay.getDate() - 1); }
+  // playhead (čára + šipka v pravítku) jen v aktuálním týdnu
+  const showPh = nm >= r.s && nm <= r.e && weekDays().includes(ymd(phDay));
 
   let rul = '';
   for (let m = r.s; m <= r.e; m += 30){
@@ -1544,7 +1558,7 @@ $('#plScroll').addEventListener('pointerdown', e => {
   if (clip){
     const b = find(clip.dataset.id); if (!b) return;
     const grip = e.target.closest('.grip');
-    const canEdit = state.user && b.owner === state.user && !isPast(b) && !isMobile();
+    const canEdit = canEditB(b) && !isMobile();
     const mode = !canEdit ? 'click' : grip ? (grip.classList.contains('l') ? 'resize-l' : 'resize-r') : 'move';
     state.drag = { mode, id:b.id, x0:e.clientX, y0:e.clientY, moved:false, offset:minuteAt(e.clientX, lane) - b.start, preview:null, error:null, touch:e.pointerType==='touch' };
     e.preventDefault();
@@ -1665,7 +1679,8 @@ function showDialog(){
   if (!isMobile()){ const f = $('#inspBody').querySelector('select, .btn.primary, .btn'); if (f) f.focus(); }
 }
 function memberChips(b){
-  return b.members.map(m => `<span class="mchip" style="${pcv(m,'m')}"><i class="led"></i>${esc(m)}${m===b.owner?' <small>· host</small>':''}</span>`).join('');
+  return b.members.map(m => `<span class="mchip" style="${pcv(m,'m')}"><i class="led"></i>${esc(m)}${m===b.owner?' <small>· majitel</small>':''}</span>`).join('')
+    + (b.guests || []).map(g => `<span class="mchip guest" style="${pcv(g,'m')}"><i class="led"></i>${esc(g)} <small>· host</small></span>`).join('');
 }
 
 function openDetail(b){
@@ -1688,7 +1703,7 @@ function renderDetail(){
   else if (b.type === 'private' && !isOwner) note = 'Soukromá session, v tomhle čase je studio zabrané.';
   if (!past && b.type === 'open' && me && !isMember) actions += '<button class="btn primary" id="bJoin">+ Přidat se</button>';
   if (!past && isMember && !isOwner) actions += '<button class="btn danger" id="bLeave">Odejít ze session</button>';
-  if (!past && isOwner) actions += '<button class="btn" id="bEdit">Upravit</button>';
+  if (canEditB(b)) actions += '<button class="btn" id="bEdit">Upravit</button>';
   if (past && isMember) actions += '<button class="btn danger" id="bDelPast">Smazat session</button>';   // proběhlou může smazat kdokoli, kdo na ní byl
 
   const linkRows = links.map(l => {
@@ -1710,7 +1725,7 @@ function renderDetail(){
   }).join('');
 
   const lk = ins.lcat && allCats().find(c => c.id === ins.lcat);
-  const addForm = isMember ? `
+  const addForm = me ? `
     <form class="link-add" id="linkForm" autocomplete="off">
       <input type="url" id="lUrl" inputmode="url" placeholder="https://drive.google.com/…" aria-label="Odkaz na Google Disk">
       ${ddBtn('lCat', lk ? lk.name : 'Kategorie', lk ? lk.color : '', 'id="lCat" aria-label="Kategorie odkazu (povinné)" data-hint="Kategorie|Beat, track, jiné · + dole přidá novou"')}
@@ -1718,7 +1733,7 @@ function renderDetail(){
       <button class="btn primary" type="submit">+ Přidat</button>
     </form>
     <div class="dlg-err" id="lErr"></div>`
-    : `<div class="links-empty">${me ? (b.type==='open' && !past ? 'Odkazy můžou přidávat lidi ze session, přidej se.' : 'Odkazy můžou přidávat jen lidi ze session.') : 'Nejdřív se armni v channel racku.'}</div>`;
+    : `<div class="links-empty">Nejdřív se armni v channel racku.</div>`;
 
   $('#inspBody').innerHTML = `
     <div class="det-head" style="${pcv(b.owner)}">
@@ -1797,13 +1812,14 @@ function timeOptions(from, to, sel){
 
 function openEditor(b, isNew){
   if (!b) return;
-  ins = { mode:'edit', isNew, orig:{ ...b, members:[...b.members] }, type:b.type, armDelete:false };
+  ins = { mode:'edit', isNew, orig:{ ...b, members:[...b.members], guests:[...(b.guests || [])] }, type:b.type, armDelete:false,
+          members:[...b.members], guests:[...(b.guests || [])] };
   state.selected = isNew ? null : b.id;
   if (isNew){ state.draft = b; state.mday = b.day; }
   const body = $('#inspBody');
   $('#inspTitle').textContent = isNew ? 'Nová session' : 'Upravit session';
   const days = weekDays(); if (!days.includes(b.day)) days.unshift(b.day);
-  const others = b.members.filter(m => m !== b.owner);
+  const me = state.user, canDel = b.owner === me || b.members.includes(me);
   body.innerHTML = `
     <div class="field-row">
       <label class="field"><span>Den</span><select id="fDay">${days.map(d => `<option value="${d}"${d===b.day?' selected':''}>${DAY_NAMES[dayIdx(d)]} ${fmtDate(d)}</option>`).join('')}</select></label>
@@ -1813,20 +1829,57 @@ function openEditor(b, isNew){
     <div class="field"><span>Typ session</span>
       <div class="seg" role="radiogroup">
         <button type="button" role="radio" data-type="open"><i class="led"></i>Otevřená<small>ostatní se můžou přidat</small></button>
-        <button type="button" role="radio" data-type="private"><i class="led"></i>Soukromá<small>studio jen pro tebe</small></button>
+        <button type="button" role="radio" data-type="private"><i class="led"></i>Soukromá<small>nikdo další se nepřidá</small></button>
       </div>
     </div>
+    <div class="field"><span>Kdo jde</span><div class="pick" id="fPick"></div></div>
     <label class="field"><span>Poznámka</span><input type="text" id="fNote" maxlength="60" placeholder="např. nahráváme vokály" value="${esc(b.note||'')}"></label>
-    ${others.length ? `<div class="dlg-note" id="privWarn" hidden>Když session přepneš na soukromou, ${esc(others.join(', '))} z ní vypadne.</div>` : ''}
     <div class="dlg-err" id="fErr"></div>
     <div class="dlg-actions">
-      ${!isNew ? '<button class="btn danger" id="bDel">Smazat</button>' : ''}
+      ${!isNew && canDel ? '<button class="btn danger" id="bDel">Smazat</button>' : ''}
       <button class="btn" id="bCancel">${isNew ? 'Zrušit' : 'Zpět'}</button>
       <button class="btn primary" id="bSave">${isNew ? '● Rezervovat' : 'Uložit'}</button>
     </div>`;
+  // účastníci: čipy lidí z PEOPLE (kromě majitele), šedí hosté a „+ Někdo jiný“ s textovým polem
+  const pick = $('#fPick');
+  const renderPick = () => {
+    pick.innerHTML = PEOPLE.filter(p => p.name !== b.owner).map(p => {
+      const on = ins.members.includes(p.name);
+      return `<button type="button" class="mchip" style="${pcv(p.name,'m')}" data-pm="${esc(p.name)}" aria-pressed="${on}"><i class="led"></i>${esc(p.name)}</button>`;
+    }).join('')
+    + ins.guests.map((g, i) => `<button type="button" class="mchip guest" style="${pcv(g,'m')}" data-pg="${i}" aria-pressed="true" aria-label="Odebrat hosta ${esc(g)}"><i class="led"></i>${esc(g)} <small>· host</small><span class="x">✕</span></button>`).join('')
+    + (ins.guests.length < 8 ? `<button type="button" class="mchip add" id="fGuestBtn" aria-pressed="false" data-hint="Host|Někdo, kdo nemá kanál v channel racku – bude šedý"><i class="led"></i>+ Někdo jiný</button>
+       <input type="text" id="fGuest" maxlength="20" enterkeyhint="done" autocomplete="off" placeholder="Jméno hosta" aria-label="Jméno hosta" hidden>` : '');
+  };
+  const addGuest = () => {
+    const inp = $('#fGuest'); if (!inp) return true;
+    const n = inp.value.trim().replace(/\s+/g, ' ');
+    if (!n){ inp.hidden = true; $('#fGuestBtn').hidden = false; return true; }
+    const lc = n.toLowerCase();
+    if (PEOPLE.some(p => p.name.toLowerCase() === lc)){ $('#fErr').textContent = `${n} má svůj kanál – vyber ho čipem`; return false; }
+    if (ins.guests.some(g => g.toLowerCase() === lc)){ $('#fErr').textContent = `${n} už tam je`; return false; }
+    ins.guests.push(n); renderPick(); sync(); return true;
+  };
+  ins.addGuest = addGuest;
+  pick.addEventListener('click', e => {
+    const pm = e.target.closest('[data-pm]'), pg = e.target.closest('[data-pg]');
+    if (pm){ const n = pm.dataset.pm; ins.members = ins.members.includes(n) ? ins.members.filter(x => x !== n) : [...ins.members, n]; renderPick(); sync(); }
+    else if (pg){ ins.guests.splice(+pg.dataset.pg, 1); renderPick(); sync(); }
+    else if (e.target.closest('#fGuestBtn')){
+      // fokus hned v gestu, ať na mobilu vyjede klávesnice
+      $('#fGuestBtn').hidden = true; const inp = $('#fGuest'); inp.hidden = false; inp.focus();
+    }
+  });
+  pick.addEventListener('keydown', e => {
+    if (e.target.id !== 'fGuest') return;
+    if (e.key === 'Enter'){ e.preventDefault(); if (addGuest()){ const b2 = $('#fGuestBtn'); if (b2) b2.focus(); } }
+    else if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); e.target.value = ''; addGuest(); }
+  });
+  pick.addEventListener('focusout', e => { if (e.target.id === 'fGuest' && e.target.value.trim()) addGuest(); });
+  renderPick();
+
   const sync = () => {
     body.querySelectorAll('.seg button').forEach(x => { const on = x.dataset.type === ins.type; x.classList.toggle('on', on); x.setAttribute('aria-checked', on); });
-    const w = $('#privWarn'); if (w) w.hidden = ins.type !== 'private';
     const c = readForm();
     $('#fErr').textContent = validate(c, isNew ? null : c.id, isNew ? null : ins.orig) || '';
     if (isNew){ state.draft = c; state.mday = c.day; renderPlaylist(); }
@@ -1850,20 +1903,23 @@ function openEditor(b, isNew){
 
 function readForm(){
   const cur = find(ins.orig.id);
-  return { ...ins.orig, members:[...ins.orig.members], links: cur ? (cur.links || []) : [],
+  return { ...ins.orig, members:[...ins.members], guests:[...ins.guests], links: cur ? (cur.links || []) : [],
     day:$('#fDay').value, start:+$('#fStart').value, end:+$('#fEnd').value, type:ins.type, note:$('#fNote').value.trim() };
 }
 function saveEditor(){
   const wasNew = ins.isNew;
+  const gi = $('#fGuest'); if (gi && gi.value.trim() && !ins.addGuest()) return;   // rozepsaný host se uloží taky
   const c = readForm();
-  if (c.type === 'private') c.members = [c.owner];
   const err = validate(c, wasNew ? null : c.id, wasNew ? null : ins.orig);
   if (err){ $('#fErr').textContent = err; return; }
   if (wasNew) api.create(c);
   else {
-    const patch = { day:c.day, start:c.start, end:c.end, type:c.type, note:c.note };
-    if (c.type === 'private') patch.members = c.members;   // jinak členy nepřepisuj (mohl se mezitím někdo přidat)
-    api.update(c.id, patch);
+    // členy počítej jako rozdíl vůči původnímu stavu, ať se nepřepíše někdo, kdo se mezitím přidal
+    const cur = find(c.id), was = ins.orig.members;
+    const add = c.members.filter(m => !was.includes(m)), rem = was.filter(m => !c.members.includes(m));
+    const members = [...(cur ? cur.members : was).filter(m => !rem.includes(m)), ...add.filter(m => !(cur ? cur.members : was).includes(m))];
+    if (!members.includes(c.owner)) members.unshift(c.owner);
+    api.update(c.id, { day:c.day, start:c.start, end:c.end, type:c.type, note:c.note, members, guests:c.guests });
   }
   closeInspector();
   if (!weekDays().includes(c.day)) state.week = startOfWeek(parseYmd(c.day));

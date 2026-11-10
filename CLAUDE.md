@@ -38,11 +38,14 @@ F5 záměrně přebíjí reload (jako v FL); Ctrl/Shift+F5 reload nechává.
 day: 'YYYY-MM-DD'      start, end: int minuty od půlnoci dne `day` (480–1800; >1440 = po půlnoci, „+1“)
 owner: jméno z PEOPLE  type: 'open' | 'private'    members: [1–4 jmen, vždy včetně owner]
 note: ≤ 60 znaků       links: [{ id, url, label, cat, by, at }] (≤ 30; cat = id kategorie, chybí u starých = „jiné“)
+guests: [≤ 8 volných jmen] – hosté bez kanálu (nepovinné, u starých chybí), v UI šedí (fallback `pcv`)
 ```
 Časová osa: 08:00 až 06:00 dalšího dne (`MIN_START`, `MAX_END`), výchozí zobrazení 10–24, snap 30 min, týdny podle ISO.
-Otevřená session = ostatní se můžou přidat; soukromá = studio jen pro majitele. Překryvy hlídá `validate()`.
-Budoucí session upravuje/maže jen majitel (editor); proběhlou může smazat kdokoli z `members` (tlačítko v detailu),
-s ní zmizí i její odkazy z Tracky.
+Rezervovat jde i zpětně do minulosti. Účastníky (čipy z `PEOPLE` + „Někdo jiný“ = host) vybírá editor (`#fPick`).
+Otevřená session = ostatní se můžou přidat; soukromá = nikdo další se nepřidá (vybraní účastníci zůstávají). Překryvy hlídá `validate()`.
+Budoucí session upravuje/maže jen majitel (editor); proběhlou může upravit kdokoli (`canEditB`, ale ne posunout
+do budoucna) a smazat kdokoli z `members` (tlačítko v detailu), s ní zmizí i její odkazy z Tracky.
+Odkaz může přidat kdokoli armnutý ke kterékoli session (členem se tím nestane).
 
 ### Firestore `cats/{id}` – vlastní kategorie odkazů
 `name ≤ 20, color '#rrggbb' (z `CAT_PALETTE`), by, at`; id `k` + uid. Pevné kategorie `CATS` (beat, track, jiné) jsou jen v kódu.
